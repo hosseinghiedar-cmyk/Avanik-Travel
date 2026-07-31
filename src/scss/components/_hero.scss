@@ -1,0 +1,16 @@
+@use "../abstracts" as *;
+
+.av-hero {
+  padding: 100px 0;
+  position: relative;
+}
+
+.av-hero__content { max-width: 650px; }
+
+.av-hero__search { margin-top: 40px; }
+
+.av-hero__image {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}

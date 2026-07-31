@@ -1,0 +1,38 @@
+@use "../abstracts" as *;
+
+.av-navbar {
+  height: 90px;
+  display: flex;
+  align-items: center;
+  background: $white;
+}
+
+.av-navbar__wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.av-navbar__logo img {
+  height: 60px;
+  width: auto;
+}
+
+.av-menu {
+  display: flex;
+  gap: 32px;
+}
+
+.av-menu li { position: relative; }
+
+.av-menu a {
+  font-weight: 500;
+  transition: .3s;
+}
+
+.av-menu a:hover { color: $secondary; }
+
+.av-navbar__actions {
+  display: flex;
+  gap: 16px;
+}

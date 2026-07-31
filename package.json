@@ -1,0 +1,18 @@
+{
+  "name": "avanik-travel",
+  "version": "0.2.5",
+  "private": true,
+  "description": "Avanik Travel WordPress theme development workspace",
+  "scripts": {
+    "build": "npm run clean && npm run build:css && npm run build:js",
+    "build:css": "sass src/scss/main.scss wordpress/avanik/assets/css/main.css --style=compressed --source-map",
+    "build:js": "esbuild src/js/main.js --bundle --minify --sourcemap --outfile=wordpress/avanik/assets/js/main.js",
+    "watch:css": "sass --watch src/scss/main.scss:wordpress/avanik/assets/css/main.css --style=expanded",
+    "watch:js": "esbuild src/js/main.js --bundle --sourcemap --outfile=wordpress/avanik/assets/js/main.js --watch",
+    "clean": "node -e \"const fs=require('fs'); for (const p of ['wordpress/avanik/assets/css/main.css','wordpress/avanik/assets/css/main.css.map','wordpress/avanik/assets/js/main.js','wordpress/avanik/assets/js/main.js.map']) { try { fs.rmSync(p,{force:true}); } catch(e) {} }\""
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "sass": "^1.89.0"
+  }
+}

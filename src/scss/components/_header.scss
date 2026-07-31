@@ -1,0 +1,9 @@
+@use "../abstracts" as *;
+
+.av-header {
+  position: relative;
+  width: 100%;
+  background: $white;
+  box-shadow: $shadow-sm;
+  z-index: 999;
+}
