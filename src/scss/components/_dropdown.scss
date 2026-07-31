@@ -1,1 +1,7 @@
-/* Dropdown component reserved for Sprint 0.2.8. */
+@use "../abstracts" as *;
+
+.av-dropdown{position:relative}
+.av-dropdown__menu{position:absolute;top:calc(100% + 10px);inset-inline-end:0;min-width:220px;padding:8px;background:$white;border:1px solid $gray-200;border-radius:$radius-md;box-shadow:$shadow-md;z-index:1000;opacity:0;visibility:hidden;transform:translateY(-6px);transition:.2s ease}
+.av-dropdown.is-open .av-dropdown__menu{opacity:1;visibility:visible;transform:translateY(0)}
+.av-dropdown__item{display:block;padding:10px 12px;border-radius:$radius-sm}
+.av-dropdown__item:hover{background:$gray-100;color:$primary}

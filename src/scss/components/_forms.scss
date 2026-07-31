@@ -1,1 +1,11 @@
-/* Forms component reserved for Sprint 0.2.8. */
+@use "../abstracts" as *;
+
+.av-form-group{display:flex;flex-direction:column;gap:8px}
+.av-label{color:$gray-700;font-size:$small;font-weight:600}
+.av-input,.av-select,.av-textarea{width:100%;min-height:52px;padding:12px 16px;border:1px solid $gray-300;border-radius:$radius-md;background:$white;color:$gray-800;outline:none;transition:border-color .2s ease,box-shadow .2s ease}
+.av-input::placeholder,.av-textarea::placeholder{color:$gray-400}
+.av-input:focus,.av-select:focus,.av-textarea:focus{border-color:$accent;box-shadow:0 0 0 4px rgba(0,153,255,.10)}
+.av-input[aria-invalid="true"]{border-color:$danger}
+.av-form-help,.av-form-error{font-size:$caption}
+.av-form-help{color:$gray-500}
+.av-form-error{color:$danger}

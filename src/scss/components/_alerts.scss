@@ -1,0 +1,7 @@
+@use "../abstracts" as *;
+
+.av-alert{display:flex;align-items:flex-start;gap:12px;padding:16px 18px;border-radius:$radius-md;border:1px solid transparent}
+.av-alert--info{background:rgba(0,153,255,.08);border-color:rgba(0,153,255,.18);color:$primary}
+.av-alert--success{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.18);color:#166534}
+.av-alert--warning{background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.18);color:#92400E}
+.av-alert--danger{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.18);color:#991B1B}

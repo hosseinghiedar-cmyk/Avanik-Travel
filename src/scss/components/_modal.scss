@@ -1,1 +1,8 @@
-/* Modal component reserved for Sprint 0.2.8. */
+@use "../abstracts" as *;
+
+.av-modal{position:fixed;inset:0;display:grid;place-items:center;padding:20px;background:rgba(15,23,42,.55);z-index:2000;opacity:0;visibility:hidden;transition:.2s ease}
+.av-modal.is-open{opacity:1;visibility:visible}
+.av-modal__dialog{width:min(100%,620px);max-height:calc(100vh - 40px);overflow:auto;background:$white;border-radius:$radius-xl;box-shadow:$shadow-lg}
+.av-modal__header,.av-modal__body,.av-modal__footer{padding:24px}
+.av-modal__header{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid $gray-200}
+.av-modal__footer{display:flex;gap:12px;border-top:1px solid $gray-200}
