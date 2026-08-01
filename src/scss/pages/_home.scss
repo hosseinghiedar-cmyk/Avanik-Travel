@@ -1,1 +1,35 @@
-/* Home page styles reserved for the Home sprint. */
+@use "../abstracts" as *;
+.av-home{background:$gray-50;min-height:100vh}
+.av-hero{position:relative;overflow:visible;background:$white}
+.av-hero__image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.av-hero__content{position:relative;z-index:2;padding:70px 0 130px}
+.av-hero__title{margin:0 0 12px;color:$primary;font-size:clamp(32px,4vw,54px);font-weight:800}
+.av-hero__subtitle{margin:0 0 28px;color:$gray-700;font-size:18px}
+.av-hero__search{position:relative;z-index:5;margin:-80px auto 0;max-width:1120px}
+.av-search-card{background:$white;border:1px solid $gray-200;border-radius:$radius-xl;box-shadow:$shadow-lg;padding:18px}
+.av-search-tabs{display:flex;gap:4px;border-bottom:1px solid $gray-200;overflow:auto}
+.av-search-tab{border:0;background:transparent;padding:14px 20px;color:$gray-600;font-weight:700;white-space:nowrap;cursor:pointer}
+.av-search-tab.is-active{color:$primary;border-bottom:3px solid $primary}
+.av-search-options{display:flex;align-items:center;gap:18px;padding:16px 4px}
+.av-radio{display:inline-flex;align-items:center;gap:7px;color:$gray-700}
+.av-search-form{display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:10px}
+.av-field{min-height:58px;border:1px solid $gray-300;border-radius:$radius-md;background:$white;padding:9px 13px}
+.av-field__label{display:block;color:$gray-500;font-size:12px;margin-bottom:5px}
+.av-field__value{display:block;color:$gray-800;font-weight:700}
+.av-search-submit{min-height:58px;padding:0 28px}
+.av-services{padding:55px 0 25px}
+.av-service-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.av-service-card{background:$white;border:1px solid $gray-200;border-radius:$radius-lg;padding:24px;text-align:center;box-shadow:$shadow-sm}
+.av-service-card__icon{font-size:28px;color:$primary;margin-bottom:10px}
+.av-service-card__title{margin:0 0 6px;font-weight:800;color:$gray-800}
+.av-service-card__text{margin:0;color:$gray-500;font-size:13px}
+.av-airlines{padding:25px 0 70px}
+.av-airlines__title{text-align:center;margin-bottom:25px;color:$gray-800}
+.av-airlines__grid{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px}
+.av-airline{display:flex;align-items:center;justify-content:center;min-width:130px;min-height:70px;padding:12px 18px;background:$white;border:1px solid $gray-200;border-radius:$radius-md;color:$gray-700;font-weight:800}
+@media (max-width:$tablet){
+.av-hero__content{padding:50px 0 110px}.av-search-form{grid-template-columns:1fr 1fr}.av-search-submit{grid-column:1/-1}.av-service-grid{grid-template-columns:1fr 1fr}
+}
+@media (max-width:$mobile){
+.av-hero__content{padding:38px 0 100px}.av-hero__title{font-size:32px}.av-search-card{padding:12px}.av-search-options{flex-wrap:wrap}.av-search-form{grid-template-columns:1fr}.av-search-submit{grid-column:auto}.av-service-grid{grid-template-columns:1fr 1fr}.av-airline{min-width:110px}
+}
