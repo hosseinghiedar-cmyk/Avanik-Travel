@@ -1,0 +1,50 @@
+@use "../abstracts" as *;
+
+.av-tour-details{background:$gray-50;padding:25px 0 80px}
+.av-tour-gallery{display:grid;grid-template-columns:2fr 1fr;gap:10px;margin-bottom:22px}
+.av-tour-gallery__main,.av-tour-gallery__side{min-height:330px}
+.av-tour-gallery__side{display:grid;grid-template-rows:1fr 1fr;gap:10px}
+.av-tour-image-placeholder{display:grid;place-items:center;height:100%;min-height:155px;border-radius:$radius-lg;background:$gray-100;color:$gray-500;font-size:13px;font-weight:800;letter-spacing:2px}
+.av-tour-gallery__main .av-tour-image-placeholder{min-height:330px}
+.av-tour-layout{display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:22px;align-items:start}
+.av-tour-content,.av-tour-booking-card,.av-tour-section{background:$white;border:1px solid $gray-200;border-radius:$radius-lg}
+.av-tour-header{padding:25px;background:$white;border:1px solid $gray-200;border-radius:$radius-lg}
+.av-tour-meta-top,.av-tour-facts{display:flex;flex-wrap:wrap;gap:12px;color:$gray-500;font-size:12px}
+.av-tour-header h1{margin:13px 0 17px;color:$gray-900;font-size:30px;line-height:1.45}
+.av-tour-facts span{padding:7px 10px;border-radius:$radius-md;background:$gray-50;color:$gray-600}
+.av-tour-section{margin-top:15px;padding:25px}
+.av-tour-section h2{margin:0 0 15px;color:$gray-900;font-size:19px}
+.av-tour-section>p{margin:0;color:$gray-600;line-height:2}
+.av-itinerary{display:grid;gap:16px}
+.av-itinerary__item{display:grid;grid-template-columns:82px 1fr;gap:15px;padding-bottom:16px;border-bottom:1px solid $gray-100}
+.av-itinerary__item:last-child{padding-bottom:0;border-bottom:0}
+.av-itinerary__day{color:$primary;font-weight:800;font-size:13px}
+.av-itinerary__item h3{margin:0 0 5px;color:$gray-800;font-size:15px}
+.av-itinerary__item p{margin:0;color:$gray-500;font-size:13px;line-height:1.8}
+.av-tour-inclusions{display:grid;grid-template-columns:1fr 1fr;gap:25px}
+.av-tour-inclusions ul{margin:0;padding:0 20px 0 0;color:$gray-600;line-height:2.2;font-size:13px}
+.av-tour-booking-card{position:sticky;top:20px;padding:22px}
+.av-tour-booking-card__header{padding-bottom:18px;border-bottom:1px solid $gray-100}
+.av-tour-booking-card__header span,.av-tour-booking-card__header small{display:block;color:$gray-500;font-size:12px}
+.av-tour-booking-card__header strong{display:block;margin:5px 0;color:$primary;font-size:22px}
+.av-tour-booking-field{margin-top:17px}
+.av-tour-booking-field label{display:block;margin-bottom:7px;color:$gray-700;font-size:12px;font-weight:700}
+.av-tour-booking-field select{width:100%;min-height:46px;padding:0 12px;border:1px solid $gray-200;border-radius:$radius-md;background:$white;color:$gray-800;font:inherit}
+.av-tour-booking-total{display:flex;justify-content:space-between;gap:10px;padding:18px 0;margin-top:18px;border-top:1px solid $gray-100}
+.av-tour-booking-total span{color:$gray-500;font-size:12px}
+.av-tour-booking-total strong{color:$gray-900;font-size:15px}
+.av-tour-booking-cta{width:100%;min-height:50px}
+.av-tour-booking-note{margin:12px 0 0;color:$gray-500;text-align:center;font-size:11px;line-height:1.8}
+
+@media (max-width:$tablet){
+.av-tour-layout{grid-template-columns:1fr}
+.av-tour-booking-card{position:static;order:-1}
+}
+@media (max-width:$mobile){
+.av-tour-gallery{grid-template-columns:1fr}
+.av-tour-gallery__side{grid-template-columns:1fr 1fr;grid-template-rows:1fr;min-height:150px}
+.av-tour-gallery__main,.av-tour-gallery__main .av-tour-image-placeholder{min-height:230px}
+.av-tour-header,.av-tour-section,.av-tour-booking-card{padding:17px}
+.av-tour-header h1{font-size:22px}
+.av-tour-inclusions{grid-template-columns:1fr;gap:18px}
+}
