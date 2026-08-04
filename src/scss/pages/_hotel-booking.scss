@@ -1,0 +1,53 @@
+@use "../abstracts" as *;
+
+.av-hotel-booking{background:$gray-50;padding:25px 0 80px}
+.av-booking-header{display:flex;justify-content:space-between;align-items:end;gap:25px;background:$white;border:1px solid $gray-200;border-radius:$radius-lg;padding:25px;margin-bottom:20px}
+.av-booking-header h1{margin:8px 0;color:$gray-900;font-size:27px}
+.av-booking-header p{margin:0;color:$gray-500;font-size:12px}
+.av-booking-steps{display:flex;gap:7px;flex-wrap:wrap}
+.av-booking-steps span{padding:9px 12px;border-radius:$radius-md;background:$gray-50;color:$gray-500;font-size:11px}
+.av-booking-steps .is-active,.av-booking-steps .is-complete{background:$primary;color:$white}
+.av-booking-layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px}
+.av-booking-card,.av-booking-summary{background:$white;border:1px solid $gray-200;border-radius:$radius-lg;padding:22px;margin-bottom:15px}
+.av-booking-card__header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.av-booking-card__header h2{margin:0;color:$gray-900;font-size:18px}
+.av-booking-card__header span{color:$gray-500;font-size:10px}
+.av-booking-form{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.av-form-field label{display:block;margin-bottom:7px;color:$gray-700;font-size:12px;font-weight:700}
+.av-form-field input{width:100%;min-height:46px;padding:0 12px;border:1px solid $gray-200;border-radius:$radius-md;font:inherit}
+.av-form-field--full{grid-column:1/-1}
+.av-booking-textarea{width:100%;min-height:120px;padding:12px;border:1px solid $gray-200;border-radius:$radius-md;resize:vertical;font:inherit}
+.av-booking-checkbox{display:flex;align-items:flex-start;gap:9px;color:$gray-600;font-size:12px;line-height:1.8}
+.av-booking-submit{margin-top:20px;min-width:210px}
+.av-booking-summary{position:sticky;top:20px;height:max-content}
+.av-booking-summary__hotel{display:flex;gap:12px;align-items:center;padding-bottom:18px;border-bottom:1px solid $gray-100}
+.av-booking-summary__image{display:grid;place-items:center;width:82px;height:65px;flex:none;border-radius:$radius-md;background:$gray-100;color:$gray-500;font-size:10px;font-weight:800}
+.av-booking-summary__hotel strong,.av-booking-summary__hotel span{display:block}
+.av-booking-summary__hotel strong{color:$gray-900;font-size:13px}
+.av-booking-summary__hotel span{margin-top:5px;color:$primary;font-size:10px}
+.av-booking-summary__room{padding:16px 0;border-bottom:1px solid $gray-100}
+.av-booking-summary__room h3{margin:0 0 5px;color:$gray-900;font-size:14px}
+.av-booking-summary__room span{color:$gray-500;font-size:11px}
+.av-booking-summary__dates{padding:12px 0;border-bottom:1px solid $gray-100}
+.av-booking-summary__dates div,.av-booking-summary__price div{display:flex;justify-content:space-between;gap:10px;padding:8px 0;font-size:11px}
+.av-booking-summary__dates span,.av-booking-summary__price span{color:$gray-500}
+.av-booking-summary strong{color:$gray-800}
+.av-booking-summary__price hr{border:0;border-top:1px solid $gray-100}
+.av-booking-summary__price .is-total{font-size:13px}
+.av-booking-summary__price .is-total strong{color:$primary;font-size:17px}
+.av-booking-review{max-width:920px;margin:0 auto}
+.av-booking-edit{border:0;background:none;color:$primary;cursor:pointer}
+.av-review-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.av-review-grid span,.av-review-grid strong{display:block}
+.av-review-grid span,.av-review-dates span{color:$gray-500;font-size:10px;margin-bottom:5px}
+.av-review-grid strong{color:$gray-800;font-size:12px}
+.av-review-hotel{display:flex;gap:14px;align-items:center}
+.av-review-hotel h3{margin:0 0 5px;color:$gray-900;font-size:15px}
+.av-review-hotel p{margin:0;color:$gray-500;font-size:11px}
+.av-review-dates{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px;padding-top:18px;border-top:1px solid $gray-100}
+.av-review-dates strong{font-size:12px;color:$gray-800}
+.av-review-total{display:flex;align-items:center;justify-content:space-between;gap:15px}
+.av-review-total>span{color:$gray-500;font-size:12px}
+.av-review-total>strong{color:$primary;font-size:20px}
+@media(max-width:$tablet){.av-booking-layout{grid-template-columns:1fr}.av-booking-summary{position:static}.av-booking-header{display:block}.av-booking-steps{margin-top:18px}}
+@media(max-width:$mobile){.av-booking-form,.av-review-grid,.av-review-dates{grid-template-columns:1fr}.av-form-field--full{grid-column:auto}.av-review-total{display:block}.av-review-total .av-btn{width:100%;margin-top:15px}}

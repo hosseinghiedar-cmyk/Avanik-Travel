@@ -1,4 +1,5 @@
-# Avanik Travel — Sprint 009 v0.3.3
-## Hotel Search & Hotel Details
+# Avanik Travel — Sprint 010 v0.3.4
+## Hotel Booking Flow & Checkout
 
-Additive sprint. Do not replace Sprint 001–008.
+This is an additive sprint.
+Do not replace or modify Sprint 001–009.
