@@ -1,0 +1,14 @@
+<?php
+/* Template Name: Avanik Hotel Details */
+defined('ABSPATH') || exit; get_header(); ?>
+<main class="av-hotel-details" dir="rtl"><div class="av-container">
+<div class="av-hotel-detail-gallery"><div class="av-hotel-detail-gallery__main">HOTEL MAIN IMAGE</div><div>ROOM IMAGE</div><div>POOL IMAGE</div><div>LOBBY IMAGE</div></div>
+<header class="av-hotel-detail-header"><div><div class="av-hotel-card__rating">★ 4.8 <span>(۳۲۴ نظر)</span></div><h1>هتل نمونه آوانیک استانبول</h1><p>استانبول، منطقه تکسیم · ۵ دقیقه تا میدان تکسیم</p></div><div class="av-hotel-detail-price"><small>شروع قیمت از</small><strong>۷,۸۵۰,۰۰۰ تومان</strong><small>هر شب</small></div></header>
+<div class="av-hotel-detail-layout"><article>
+<section class="av-hotel-detail-section"><h2>درباره هتل</h2><p>هتلی مدرن با دسترسی مناسب به مراکز خرید، جاذبه‌های گردشگری و حمل‌ونقل عمومی.</p></section>
+<section class="av-hotel-detail-section"><h2>امکانات هتل</h2><div class="av-hotel-amenities-grid"><span>✓ اینترنت رایگان</span><span>✓ صبحانه</span><span>✓ استخر</span><span>✓ سالن ورزشی</span><span>✓ پذیرش ۲۴ ساعته</span><span>✓ پارکینگ</span></div></section>
+<section class="av-hotel-detail-section"><h2>انتخاب اتاق</h2>
+<article class="av-room-card"><div class="av-room-card__image">ROOM</div><div class="av-room-card__body"><h3>اتاق دبل استاندارد</h3><p>۲ نفر · تخت دبل · صبحانه</p><span>لغو رایگان تا ۴۸ ساعت قبل</span><div class="av-room-card__footer"><strong>۸,۲۵۰,۰۰۰ تومان</strong><button class="av-btn av-btn--primary">انتخاب اتاق</button></div></div></article>
+<article class="av-room-card"><div class="av-room-card__image">ROOM</div><div class="av-room-card__body"><h3>اتاق دلوکس</h3><p>۲ نفر · تخت کینگ · صبحانه</p><span>لغو رایگان تا ۴۸ ساعت قبل</span><div class="av-room-card__footer"><strong>۱۰,۹۰۰,۰۰۰ تومان</strong><button class="av-btn av-btn--primary">انتخاب اتاق</button></div></div></article></section>
+<section class="av-hotel-detail-section"><h2>قوانین لغو رزرو</h2><p>شرایط لغو بسته به نوع اتاق و زمان لغو متفاوت است.</p></section></article>
+<aside class="av-hotel-booking-summary"><span>خلاصه رزرو</span><h2>هتل نمونه آوانیک</h2><div><span>ورود</span><strong>۱۴۰۵/۰۶/۱۵</strong></div><div><span>خروج</span><strong>۱۴۰۵/۰۶/۱۸</strong></div><div><span>مسافر</span><strong>۲ بزرگسال</strong></div><hr><div><span>مبلغ تقریبی</span><strong>۲۴,۷۵۰,۰۰۰ تومان</strong></div><button class="av-btn av-btn--primary">ادامه رزرو</button></aside></div></div></main><?php get_footer(); ?>

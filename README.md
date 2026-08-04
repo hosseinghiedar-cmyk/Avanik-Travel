@@ -1,4 +1,4 @@
-# Avanik Travel — Sprint 008 v0.3.2
+# Avanik Travel — Sprint 009 v0.3.3
+## Hotel Search & Hotel Details
 
-Tour Details & Booking Foundation.
-Sprint 001–007 are not replaced.
+Additive sprint. Do not replace Sprint 001–008.
