@@ -1,13 +1,1 @@
-// Avanik Travel — Sprint 013
-// Page-level SCSS aggregation.
-// Keep imports additive and centralized.
-
-@forward "home";
-@forward "flight-search";
-@forward "flight-details";
-@forward "hotel-search";
-@forward "hotel-details";
-@forward "hotel-booking";
-@forward "payment";
-@forward "tour-details";
 @forward "dashboard";
