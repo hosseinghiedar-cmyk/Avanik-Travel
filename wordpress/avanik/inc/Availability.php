@@ -1,0 +1,11 @@
+<?php
+namespace Avanik;
+defined('ABSPATH') || exit;
+final class Availability {
+ public static function install(): void { global $wpdb; $table=$wpdb->prefix.'avanik_inventory_holds'; $charset=$wpdb->get_charset_collate(); require_once ABSPATH.'wp-admin/includes/upgrade.php'; dbDelta("CREATE TABLE {$table} (id bigint unsigned NOT NULL AUTO_INCREMENT, product_id bigint unsigned NOT NULL, booking_id bigint unsigned NOT NULL, quantity int unsigned NOT NULL, status varchar(30) NOT NULL DEFAULT 'held', expires_at datetime NOT NULL, created_at datetime NOT NULL, PRIMARY KEY(id), KEY product_status(product_id,status), KEY booking_status(booking_id,status)) {$charset};"); }
+ public static function available(int $product_id,int $requested): bool { global $wpdb; $p=$wpdb->get_row($wpdb->prepare('SELECT capacity FROM '.ProductRepository::table_name().' WHERE id=%d AND status=%s',$product_id,Product::PUBLISHED),ARRAY_A); if(!$p)return false; self::release_expired(); $held=(int)$wpdb->get_var($wpdb->prepare("SELECT COALESCE(SUM(quantity),0) FROM {$wpdb->prefix}avanik_inventory_holds WHERE product_id=%d AND status='held'",$product_id)); return ($held+$requested)<=(int)$p['capacity']; }
+ public static function hold(int $product_id,int $booking_id,int $quantity,int $minutes=15): bool { if($quantity<1||!self::available($product_id,$quantity))return false; global $wpdb; $now=current_time('mysql'); $expires=date('Y-m-d H:i:s',current_time('timestamp')+($minutes*60)); return false!==$wpdb->insert($wpdb->prefix.'avanik_inventory_holds',['product_id'=>$product_id,'booking_id'=>$booking_id,'quantity'=>$quantity,'status'=>'held','expires_at'=>$expires,'created_at'=>$now],['%d','%d','%d','%s','%s','%s']); }
+ public static function confirm(int $booking_id): void { global $wpdb; $wpdb->update($wpdb->prefix.'avanik_inventory_holds',['status'=>'confirmed'],['booking_id'=>$booking_id,'status'=>'held'],['%s'],['%d','%s']); }
+ public static function release(int $booking_id): void { global $wpdb; $wpdb->update($wpdb->prefix.'avanik_inventory_holds',['status'=>'released'],['booking_id'=>$booking_id,'status'=>'held'],['%s'],['%d','%s']); }
+ public static function release_expired(): void { global $wpdb; $wpdb->query($wpdb->prepare("UPDATE {$wpdb->prefix}avanik_inventory_holds SET status='released' WHERE status='held' AND expires_at < %s",current_time('mysql'))); }
+}
