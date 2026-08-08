@@ -1,0 +1,7 @@
+<?php
+namespace Avanik;
+defined('ABSPATH') || exit;
+final class ProductDetail {
+ public static function register(): void { add_shortcode('avanik_product_detail',[self::class,'render']); }
+ public static function render(): string { global $wpdb; $id=(int)($_GET['product_id']??0); if(!$id)return '<p>محصولی انتخاب نشده است.</p>'; $p=$wpdb->get_row($wpdb->prepare('SELECT * FROM '.ProductRepository::table_name().' WHERE id=%d AND status=%s',$id,Product::PUBLISHED),ARRAY_A); if(!$p)return '<p>محصول پیدا نشد.</p>'; $m=json_decode((string)$p['metadata'],true)?:[]; ob_start(); ?><article class="avanik-product-detail" dir="rtl"><h1><?php echo esc_html($p['title']); ?></h1><p>نوع: <?php echo esc_html($p['type']); ?></p><p>مقصد: <?php echo esc_html($m['destination']??''); ?></p><p>از <?php echo esc_html($m['start_date']??''); ?> تا <?php echo esc_html($m['end_date']??''); ?></p><p>ظرفیت: <?php echo esc_html($p['capacity']); ?></p><div><?php echo nl2br(esc_html($m['description']??'')); ?></div><h2><?php echo esc_html(number_format((float)$p['price'])); ?> <?php echo esc_html($p['currency']); ?></h2><form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>"><input type="hidden" name="action" value="avanik_product_booking_start"><input type="hidden" name="product_id" value="<?php echo esc_attr($p['id']); ?>"><?php wp_nonce_field('avanik_product_booking_start'); ?><button type="submit">رزرو این محصول</button></form></article><?php return (string)ob_get_clean(); }
+}
