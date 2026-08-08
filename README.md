@@ -1,8 +1,8 @@
-# Avanik Travel — Sprint 016 v0.4.0
+# Avanik Travel — Sprint 017 v0.4.1
 
-Booking Engine Core
+Booking Persistence Foundation
 
-Additive sprint. Sprint 001-015 remain unchanged.
+Additive sprint. Sprint 001-016 remain unchanged.
 
 Features:
 - Booking core foundation
@@ -11,9 +11,14 @@ Features:
 - Booking metadata foundation
 - Booking form and summary templates
 - Booking page foundation
+- Booking repository
+- Booking database schema
+- Booking lookup by booking ID
+- Booking lifecycle registration
 
 Not included yet:
 - Payment processing
 - External flight/hotel API integration
 - Ticket issuance
-- Final booking persistence
+- Customer-facing booking history
+- Cancellation/refund workflow
