@@ -15,6 +15,8 @@ require_once __DIR__ . '/inc/PaymentRepository.php';
 require_once __DIR__ . '/inc/PaymentSchema.php';
 require_once __DIR__ . '/inc/PaymentService.php';
 require_once __DIR__ . '/inc/PaymentLifecycle.php';
+require_once __DIR__ . '/inc/PaymentGatewayInterface.php';
+require_once __DIR__ . '/inc/CardToCardGateway.php';
 \Avanik\BookingLifecycle::register();
 \Avanik\BookingActions::register();
 \Avanik\PaymentLifecycle::register();
