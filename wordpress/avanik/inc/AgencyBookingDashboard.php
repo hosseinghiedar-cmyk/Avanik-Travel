@@ -1,0 +1,7 @@
+<?php
+namespace Avanik;
+defined('ABSPATH') || exit;
+final class AgencyBookingDashboard {
+ public static function register(): void { add_shortcode('avanik_agency_bookings',[self::class,'render']); }
+ public static function render(): string { if(!is_user_logged_in())return '<p>برای مشاهده رزروها وارد حساب شوید.</p>'; global $wpdb; $pt=ProductRepository::table_name(); $bt=BookingRepository::table_name(); $products=ProductRepository::for_supplier(get_current_user_id()); if(!$products)return '<p>محصولی برای فروش ثبت نشده است.</p>'; $ids=array_map('intval',array_column($products,'id')); $ph=implode(',',array_fill(0,count($ids),'%d')); $rows=$wpdb->get_results($wpdb->prepare("SELECT b.* FROM {$bt} b WHERE JSON_EXTRACT(b.metadata,'$.product_id') IN ({$ph}) ORDER BY b.created_at DESC",...$ids),ARRAY_A)?:[]; ob_start(); ?><section dir="rtl"><h2>رزروهای محصولات من</h2><table><thead><tr><th>رزرو</th><th>مسافر</th><th>تاریخ</th><th>مبلغ</th><th>وضعیت</th></tr></thead><tbody><?php foreach($rows as $b): $m=json_decode((string)$b['metadata'],true)?:[]; ?><tr><td>#<?php echo esc_html($b['booking_id']); ?></td><td><?php echo esc_html($m['passenger_name']??''); ?></td><td><?php echo esc_html($b['travel_date']??''); ?></td><td><?php echo esc_html(number_format((float)$b['total_amount']).' '.$b['currency']); ?></td><td><?php echo esc_html($b['status']); ?></td></tr><?php endforeach; if(!$rows): ?><tr><td colspan="5">رزروی وجود ندارد.</td></tr><?php endif; ?></tbody></table></section><?php return (string)ob_get_clean(); }
+}
