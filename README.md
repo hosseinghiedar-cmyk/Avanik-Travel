@@ -1,24 +1,23 @@
-# Avanik Travel — Sprint 017 v0.4.1
+# Avanik Travel — Sprint 019 v0.4.3
 
-Booking Persistence Foundation
+Payment Preparation Foundation
 
-Additive sprint. Sprint 001-016 remain unchanged.
+Additive sprint. Sprint 001-018 remain unchanged except for payment integration points.
 
 Features:
-- Booking core foundation
-- Booking status model
-- Booking ID generation
-- Booking metadata foundation
-- Booking form and summary templates
-- Booking page foundation
-- Booking repository
-- Booking database schema
-- Booking lookup by booking ID
-- Booking lifecycle registration
+- Booking core and persistence foundation
+- Booking service layer
+- Payment status model
+- Payment transaction ID generation
+- Payment repository
+- Payment database schema
+- Payment service foundation
+- Payment lifecycle registration
 
 Not included yet:
-- Payment processing
+- Live payment gateway
+- Gateway credentials
+- Production callback verification
+- Refund processing
 - External flight/hotel API integration
 - Ticket issuance
-- Customer-facing booking history
-- Cancellation/refund workflow
