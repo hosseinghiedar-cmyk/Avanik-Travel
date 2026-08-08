@@ -1,23 +1,27 @@
-# Avanik Travel — Sprint 019 v0.4.3
+# Avanik Travel — Sprint 020 v0.4.4
 
-Payment Preparation Foundation
+Production Readiness & Integration Foundation
 
-Additive sprint. Sprint 001-018 remain unchanged except for payment integration points.
+Sprints 001-020 now establish the application's core foundation for authentication, booking persistence, booking services, and payment preparation.
 
 Features:
-- Booking core and persistence foundation
+- Authentication foundation
+- Booking core and persistence
 - Booking service layer
-- Payment status model
-- Payment transaction ID generation
-- Payment repository
-- Payment database schema
-- Payment service foundation
-- Payment lifecycle registration
+- Payment transaction foundation
+- Payment schema and service foundation
+- Runtime health checks
+- Production release checklist
+- Integration boundaries for future supplier APIs and live payment
 
-Not included yet:
-- Live payment gateway
-- Gateway credentials
-- Production callback verification
-- Refund processing
-- External flight/hotel API integration
-- Ticket issuance
+Important:
+This milestone is **not** a live production booking system yet.
+
+Still required before real transactions:
+- Live payment gateway integration and verification
+- Flight/hotel supplier API integration
+- Ticket/voucher issuance
+- Production secrets and deployment configuration
+- Security audit
+- End-to-end and load testing
+- Monitoring, backups and rollback validation
