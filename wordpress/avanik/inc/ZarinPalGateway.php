@@ -1,0 +1,7 @@
+<?php
+namespace Avanik;
+defined('ABSPATH') || exit;
+final class ZarinPalGateway implements PaymentGatewayInterface {
+ public function initiate(array $payment): array { $s=PaymentSettings::get(); if($s['zarinpal_mode']==='plugin') return ['method'=>'zarinpal','status'=>Payment::STATUS_PENDING,'adapter'=>'plugin','requires_plugin_bridge'=>true,'transaction_id'=>$payment['transaction_id']??Payment::generate_transaction_id()]; if($s['zarinpal_mode']==='disabled') return ['method'=>'zarinpal','status'=>Payment::STATUS_PENDING,'adapter'=>'disabled','requires_configuration'=>true,'transaction_id'=>$payment['transaction_id']??Payment::generate_transaction_id()]; return ['method'=>'zarinpal','status'=>Payment::STATUS_PENDING,'adapter'=>'http','endpoint'=>$s['zarinpal_endpoint'],'callback_url'=>$s['zarinpal_callback_url'],'requires_configuration'=>empty($s['zarinpal_merchant_id'])||empty($s['zarinpal_endpoint']),'transaction_id'=>$payment['transaction_id']??Payment::generate_transaction_id()]; }
+ public function verify(array $payload): array { $s=PaymentSettings::get(); return ['verified'=>false,'status'=>Payment::STATUS_PENDING,'adapter'=>$s['zarinpal_mode'],'reason'=>'ZarinPal API verification is intentionally not hard-coded until the production API/credentials or plugin bridge are configured.']; }
+}
