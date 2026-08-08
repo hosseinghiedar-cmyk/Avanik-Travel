@@ -1,0 +1,7 @@
+<?php
+namespace Avanik;
+defined('ABSPATH') || exit;
+final class ProductBooking {
+ public static function register(): void { add_action('admin_post_avanik_product_booking_start',[self::class,'start']); add_action('admin_post_nopriv_avanik_product_booking_start',[self::class,'start']); }
+ public static function start(): void { if(!check_admin_referer('avanik_product_booking_start'))wp_die('Invalid request'); global $wpdb; $id=(int)($_POST['product_id']??0); $p=$wpdb->get_row($wpdb->prepare('SELECT * FROM '.ProductRepository::table_name().' WHERE id=%d AND status=%s',$id,Product::PUBLISHED),ARRAY_A); if(!$p)wp_die('Product unavailable'); $qty=max(1,min((int)$p['capacity']?:1,(int)($_POST['quantity']??1))); $user=is_user_logged_in()?get_current_user_id():0; $now=current_time('mysql'); $data=['customer_user_id'=>$user,'status'=>'pending','total_amount'=>((float)$p['price']*$qty),'currency'=>$p['currency'],'metadata'=>wp_json_encode(['product_id'=>$id,'quantity'=>$qty,'product_title'=>$p['title']]),'created_at'=>$now,'updated_at'=>$now]; $table=BookingRepository::table_name(); $wpdb->insert($table,$data); $booking=(int)$wpdb->insert_id; wp_safe_redirect(home_url('/booking/?booking_id='.$booking)); exit; }
+}
