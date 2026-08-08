@@ -1,0 +1,8 @@
+<?php
+namespace Avanik;
+defined('ABSPATH') || exit;
+final class BookingPassengers {
+ public static function install(): void { global $wpdb; $t=$wpdb->prefix.'avanik_booking_passengers'; $c=$wpdb->get_charset_collate(); require_once ABSPATH.'wp-admin/includes/upgrade.php'; dbDelta("CREATE TABLE {$t} (id bigint unsigned NOT NULL AUTO_INCREMENT, booking_id bigint unsigned NOT NULL, first_name varchar(100) NOT NULL, last_name varchar(100) NOT NULL, phone varchar(40) DEFAULT '', email varchar(190) DEFAULT '', passport_no varchar(100) DEFAULT '', passenger_type varchar(30) NOT NULL DEFAULT 'adult', created_at datetime NOT NULL, updated_at datetime NOT NULL, PRIMARY KEY(id), KEY booking_id(booking_id)) {$c};"); }
+ public static function for_booking(int $booking_id): array { global $wpdb; return $wpdb->get_results($wpdb->prepare('SELECT * FROM '.$wpdb->prefix.'avanik_booking_passengers WHERE booking_id=%d ORDER BY id ASC',$booking_id),ARRAY_A)?:[]; }
+ public static function add(int $booking_id,array $data): int { global $wpdb; $now=current_time('mysql'); $ok=$wpdb->insert($wpdb->prefix.'avanik_booking_passengers',['booking_id'=>$booking_id,'first_name'=>sanitize_text_field($data['first_name']??''),'last_name'=>sanitize_text_field($data['last_name']??''),'phone'=>sanitize_text_field($data['phone']??''),'email'=>sanitize_email($data['email']??''),'passport_no'=>sanitize_text_field($data['passport_no']??''),'passenger_type'=>sanitize_key($data['passenger_type']??'adult'),'created_at'=>$now,'updated_at'=>$now]); return $ok?(int)$wpdb->insert_id:0; }
+}
