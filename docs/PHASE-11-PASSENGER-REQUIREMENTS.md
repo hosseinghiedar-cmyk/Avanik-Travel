@@ -1,16 +1,21 @@
-# Phase 11 — Dynamic Passenger Requirements
+# Phase 11 — Configurable Passenger Requirements
 
-Passenger data collection is now product-type driven.
+Passenger data collection is product-type driven and configurable by the selling agency.
 
 ## Domestic flight
-Basic passenger information plus national ID can be requested. Passport fields are not requested.
+Basic passenger information plus national ID can be requested. Passport fields are not requested by default.
 
 ## International flight
-Basic passenger information plus nationality, date of birth, passport number and passport expiry are requested.
+Basic passenger information plus nationality, date of birth, passport number and passport expiry are requested by default.
+
+## Agency product configuration
+The agency product editor exposes passenger field checkboxes. Selected fields are persisted in product metadata. Basic identity/contact fields remain mandatory in the configuration layer.
 
 ## Extensible products
-Other product types do not inherit passport fields automatically. Agencies can add product-specific requirements through the `avanik_product_passenger_requirements` filter in a future admin UI.
+Tour, hotel and package products do not automatically inherit passport requirements. They can define their own selected passenger fields.
 
-The form renderer and validation are separate from booking and payment. This allows the agency/product configuration to change without coupling passenger collection to a payment gateway.
+## Privacy
+Passport and identity information is sensitive. Production hardening must include encryption at rest, role-based access, audit logging, masking in list views and controlled exports.
 
-Future work: persist per-product requirements in the database and expose them in the agency product editor, add secure encryption/access controls for sensitive passport data, and connect the dynamic form to multi-passenger booking creation.
+## Next
+Render the persisted requirements dynamically during checkout, persist all selected values per passenger, add agency-defined custom fields, and implement privacy/security controls.
