@@ -1,0 +1,28 @@
+.av-booking-page {
+  padding-block: 2rem 4rem;
+}
+
+.av-booking-page__header {
+  margin-block-end: 2rem;
+}
+
+.av-booking-form {
+  display: grid;
+  gap: 1rem;
+  margin-block-end: 2rem;
+}
+
+.av-booking-form__field {
+  display: grid;
+  gap: .5rem;
+}
+
+.av-booking-form input {
+  width: 100%;
+}
+
+.av-booking-summary {
+  padding: 1.5rem;
+  border: 1px solid var(--av-border, #ddd);
+  border-radius: 1rem;
+}
