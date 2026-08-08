@@ -1,0 +1,6 @@
+<?php
+namespace Avanik;
+defined('ABSPATH') || exit;
+final class ProductTypeFields {
+ public static function normalize(string $type,array $data): array { $base=['destination'=>sanitize_text_field($data['destination']??''),'start_date'=>sanitize_text_field($data['start_date']??''),'end_date'=>sanitize_text_field($data['end_date']??''),'description'=>sanitize_textarea_field($data['description']??'')]; if($type===Product::HOTEL){$base['stars']=max(0,min(7,(int)($data['stars']??0)));$base['rooms']=max(0,(int)($data['rooms']??0));} elseif($type===Product::FLIGHT){$base['origin']=sanitize_text_field($data['origin']??'');$base['destination']=sanitize_text_field($data['destination']??'');$base['flight_number']=sanitize_text_field($data['flight_number']??'');} elseif($type===Product::TOUR){$base['nights']=max(0,(int)($data['nights']??0));$base['included']=sanitize_textarea_field($data['included']??'');} elseif($type===Product::PACKAGE){$base['components']=sanitize_textarea_field($data['components']??'');} return $base; }
+}
