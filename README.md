@@ -1,11 +1,19 @@
-# Avanik Travel — Sprint 015 v0.3.9
+# Avanik Travel — Sprint 016 v0.4.0
 
-User Authentication Foundation
+Booking Engine Core
 
-Additive sprint. Sprint 001-014 remain unchanged.
+Additive sprint. Sprint 001-015 remain unchanged.
 
 Features:
-- Login foundation
-- Register foundation
-- User roles preparation
-- My Account structure preparation
+- Booking core foundation
+- Booking status model
+- Booking ID generation
+- Booking metadata foundation
+- Booking form and summary templates
+- Booking page foundation
+
+Not included yet:
+- Payment processing
+- External flight/hotel API integration
+- Ticket issuance
+- Final booking persistence
