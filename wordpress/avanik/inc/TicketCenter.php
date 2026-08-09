@@ -1,0 +1,8 @@
+<?php
+namespace Avanik;
+defined('ABSPATH') || exit;
+final class TicketCenter {
+ public static function register(): void { add_shortcode('avanik_ticket_center',[self::class,'render']); }
+ public static function render(): string { if(!is_user_logged_in())return '<p>برای مشاهده بلیت‌های خود وارد حساب کاربری شوید.</p>'; $uid=get_current_user_id(); $role=self::role(); $bookings=BookingRepository::find_for_user($uid,$role); ob_start(); echo '<div class="avanik-ticket-center"><h2>بلیت‌های من</h2>'; foreach((array)$bookings as $b){$id=sanitize_text_field($b['id']??$b['booking_id']??''); if(!$id)continue; $tickets=TicketRepository::find_by_booking($id); echo '<section class="avanik-ticket-booking"><h3>Booking '.esc_html($id).'</h3>'; if(!$tickets){echo '<p>هنوز بلیتی برای این رزرو صادر نشده است.</p></section>';continue;} echo '<table><thead><tr><th>PNR</th><th>Ticket</th><th>Voucher</th><th>Status</th><th>Issued</th></tr></thead><tbody>'; foreach($tickets as $t){echo '<tr><td>'.esc_html($t['pnr']).'</td><td>'.esc_html($t['ticket_number']).'</td><td>'.esc_html($t['voucher_reference']).'</td><td>'.esc_html($t['status']).'</td><td>'.esc_html($t['issued_at']).'</td></tr>';} echo '</tbody></table></section>'; } if(!$bookings)echo '<p>رزروی برای نمایش وجود ندارد.</p>'; echo '</div>'; return ob_get_clean(); }
+ private static function role(): string { if(current_user_can('manage_options'))return 'admin'; if(current_user_can('edit_products'))return 'agency'; return 'customer'; }
+}
