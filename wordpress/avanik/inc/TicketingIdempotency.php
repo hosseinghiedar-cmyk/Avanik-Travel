@@ -1,0 +1,8 @@
+<?php
+namespace Avanik;
+defined('ABSPATH') || exit;
+final class TicketingIdempotency {
+ public static function install(): void { global $wpdb; require_once ABSPATH.'wp-admin/includes/upgrade.php'; $t=$wpdb->prefix.'avanik_ticket_requests'; $c=$wpdb->get_charset_collate(); dbDelta("CREATE TABLE {$t} (id bigint unsigned NOT NULL AUTO_INCREMENT, request_key varchar(190) NOT NULL, booking_id varchar(40) NOT NULL, status varchar(20) NOT NULL DEFAULT 'processing', ticket_id varchar(40) NOT NULL DEFAULT '', response_hash char(64) NOT NULL DEFAULT '', created_at datetime NOT NULL, completed_at datetime DEFAULT NULL, PRIMARY KEY(id), UNIQUE KEY request_key(request_key), KEY booking_id(booking_id)) {$c};"); }
+ public static function claim(string $booking_id,string $request_key): bool { global $wpdb; return (bool)$wpdb->insert($wpdb->prefix.'avanik_ticket_requests',['request_key'=>sanitize_text_field($request_key),'booking_id'=>sanitize_text_field($booking_id),'status'=>'processing','created_at'=>current_time('mysql')],['%s','%s','%s','%s']); }
+ public static function complete(string $request_key,string $ticket_id,string $hash=''): void { global $wpdb; $wpdb->update($wpdb->prefix.'avanik_ticket_requests',['status'=>'completed','ticket_id'=>sanitize_text_field($ticket_id),'response_hash'=>sanitize_text_field($hash),'completed_at'=>current_time('mysql')],['request_key'=>sanitize_text_field($request_key)],['%s','%s','%s','%s']); }
+}
