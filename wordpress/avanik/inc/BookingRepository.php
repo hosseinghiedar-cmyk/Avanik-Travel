@@ -2,8 +2,8 @@
 namespace Avanik;
 defined('ABSPATH') || exit;
 final class BookingRepository {
-  public static function table_name(): string { global $wpdb; return $wpdb->prefix.'avanik_bookings'; }
-  public static function create(array $data) {
+ public static function table_name(): string { global $wpdb; return $wpdb->prefix.'avanik_bookings'; }
+ public static function create(array $data) {
     global $wpdb; $record=[
       'booking_id'=>sanitize_text_field($data['booking_id']??Booking::generate_id()), 'customer_id'=>absint($data['customer_id']??get_current_user_id()),
       'product_id'=>absint($data['product_id']??0), 'booking_type'=>sanitize_key($data['booking_type']??'flight'),
@@ -17,4 +17,5 @@ final class BookingRepository {
     return $ok?$record['booking_id']:false;
   }
   public static function find_by_id(string $booking_id): ?array { global $wpdb; $row=$wpdb->get_row($wpdb->prepare('SELECT * FROM '.self::table_name().' WHERE booking_id=%s LIMIT 1',$booking_id),ARRAY_A); return is_array($row)?$row:null; }
+  public static function delete_by_id(string $booking_id): bool { global $wpdb; return false!==$wpdb->delete(self::table_name(),['booking_id'=>$booking_id],['%s']); }
 }
