@@ -1,0 +1,7 @@
+<?php
+namespace Avanik;
+defined('ABSPATH') || exit;
+final class PassengerSecurityAuditAdmin {
+ public static function register(): void { add_management_page('Avanik Passenger Audit','Passenger Audit','manage_options','avanik-passenger-audit',[self::class,'render']); }
+ public static function render(): void { if(!current_user_can('manage_options'))wp_die('Unauthorized'); $booking=sanitize_text_field($_GET['booking_id']??''); echo '<div class="wrap"><h1>Avanik Passenger Audit</h1><form method="get"><input type="hidden" name="page" value="avanik-passenger-audit"><input name="booking_id" placeholder="Booking ID" value="'.esc_attr($booking).'"> <button class="button">View</button></form>'; if($booking){$rows=PassengerAuditLog::recent_for_booking($booking);echo '<table class="widefat striped"><thead><tr><th>Time</th><th>User</th><th>Passenger</th><th>Action</th><th>Fields</th><th>IP</th></tr></thead><tbody>';foreach($rows as $r)echo '<tr><td>'.esc_html($r['created_at']).'</td><td>'.esc_html($r['user_id']).'</td><td>'.esc_html($r['passenger_id']).'</td><td>'.esc_html($r['action']).'</td><td>'.esc_html(implode(', ',(array)(json_decode($r['fields'],true)?:[]))).'</td><td>'.esc_html($r['ip_address']).'</td></tr>';echo '</tbody></table>';}echo '</div>'; }
+}
