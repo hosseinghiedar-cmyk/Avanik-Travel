@@ -1,0 +1,8 @@
+<?php
+namespace Avanik;
+defined('ABSPATH') || exit;
+final class TicketOperations {
+ public static function list_for_booking(string $booking_id): array { if(!self::can_access($booking_id)) return []; return TicketRepository::find_by_booking($booking_id); }
+ public static function can_access(string $booking_id): bool { $booking=BookingRepository::find_by_id($booking_id); if(!$booking)return false; if(current_user_can('manage_options'))return true; $uid=get_current_user_id(); return $uid>0 && ((int)($booking['customer_id']??0)===$uid || (int)($booking['agency_id']??0)===$uid); }
+ public static function cancel(string $booking_id,string $provider_reference): array|\WP_Error { if(!self::can_access($booking_id))return new \WP_Error('avanik_ticket_forbidden','دسترسی به Ticket مجاز نیست.'); $booking=BookingRepository::find_by_id($booking_id); if(!$booking)return new \WP_Error('avanik_booking_not_found','Booking پیدا نشد.'); $provider_key=sanitize_key($booking['provider']??$booking['provider_key']??''); $manager=apply_filters('avanik_provider_manager',null); if(!$manager instanceof ProviderManager)return new \WP_Error('avanik_provider_manager_missing','Provider Manager در دسترس نیست.'); $provider=$manager->get($provider_key); if(!$provider||!method_exists($provider,'cancel_ticket'))return new \WP_Error('avanik_ticket_cancel_unsupported','لغو Ticket توسط Provider پشتیبانی نمی‌شود.'); $result=$provider->cancel_ticket($provider_reference); if(empty($result['success']))return new \WP_Error('avanik_ticket_cancel_failed',$result['message']??'لغو Ticket ناموفق بود.'); do_action('avanik_ticket_cancelled',$booking_id,$provider_reference,$result); return $result; }
+}
