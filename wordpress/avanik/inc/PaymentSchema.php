@@ -1,33 +1,6 @@
 <?php
 namespace Avanik;
-
 defined('ABSPATH') || exit;
-
 final class PaymentSchema {
-  public static function install(): void {
-    global $wpdb;
-    require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-    $table = PaymentRepository::table_name();
-    $charset = $wpdb->get_charset_collate();
-    $sql = "CREATE TABLE {$table} (
-      id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-      transaction_id varchar(40) NOT NULL,
-      booking_id varchar(32) NOT NULL,
-      customer_id bigint(20) unsigned NOT NULL DEFAULT 0,
-      amount decimal(14,2) NOT NULL DEFAULT 0.00,
-      currency varchar(8) NOT NULL DEFAULT 'IRR',
-      gateway varchar(32) NOT NULL DEFAULT 'manual',
-      status varchar(20) NOT NULL DEFAULT 'pending',
-      gateway_reference varchar(128) NOT NULL DEFAULT '',
-      created_at datetime NOT NULL,
-      updated_at datetime NOT NULL,
-      PRIMARY KEY (id),
-      UNIQUE KEY transaction_id (transaction_id),
-      KEY booking_id (booking_id),
-      KEY customer_id (customer_id),
-      KEY status (status)
-    ) {$charset};";
-    dbDelta($sql);
-    update_option('avanik_payment_schema_version', '0.1.0');
-  }
+ public static function install(): void { global $wpdb; require_once ABSPATH.'wp-admin/includes/upgrade.php'; $table=PaymentRepository::table_name(); $charset=$wpdb->get_charset_collate(); $sql="CREATE TABLE {$table} (id bigint(20) unsigned NOT NULL AUTO_INCREMENT, transaction_id varchar(40) NOT NULL, booking_id varchar(32) NOT NULL, customer_id bigint(20) unsigned NOT NULL DEFAULT 0, amount decimal(14,2) NOT NULL DEFAULT 0.00, currency varchar(8) NOT NULL DEFAULT 'IRR', gateway varchar(32) NOT NULL DEFAULT 'manual', status varchar(20) NOT NULL DEFAULT 'pending', gateway_reference varchar(128) NOT NULL DEFAULT '', created_at datetime NOT NULL, updated_at datetime NOT NULL, PRIMARY KEY (id), UNIQUE KEY transaction_id (transaction_id), KEY booking_id (booking_id), KEY customer_id (customer_id), KEY status (status)) {$charset};"; dbDelta($sql); PaymentIdempotency::install(); update_option('avanik_payment_schema_version','0.2.0'); }
 }
