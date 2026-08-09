@@ -1,0 +1,9 @@
+<?php
+namespace Avanik;
+defined('ABSPATH') || exit;
+final class PaymentIdempotency {
+ public static function install(): void { global $wpdb; require_once ABSPATH.'wp-admin/includes/upgrade.php'; $t=$wpdb->prefix.'avanik_payment_callbacks'; $c=$wpdb->get_charset_collate(); dbDelta("CREATE TABLE {$t} (id bigint unsigned NOT NULL AUTO_INCREMENT, transaction_id varchar(40) NOT NULL, gateway varchar(32) NOT NULL, callback_key varchar(190) NOT NULL, status varchar(20) NOT NULL DEFAULT 'processing', response_hash char(64) DEFAULT '', created_at datetime NOT NULL, processed_at datetime DEFAULT NULL, PRIMARY KEY(id), UNIQUE KEY callback_key(callback_key), KEY transaction_id(transaction_id), KEY gateway(gateway)) {$c};"); }
+ public static function claim(string $gateway,string $callback_key,string $transaction_id=''): bool { global $wpdb; $key=sanitize_text_field($gateway).'|'.sanitize_text_field($callback_key); $ok=$wpdb->insert($wpdb->prefix.'avanik_payment_callbacks',['transaction_id'=>sanitize_text_field($transaction_id),'gateway'=>sanitize_key($gateway),'callback_key'=>$key,'status'=>'processing','created_at'=>current_time('mysql')],['%s','%s','%s','%s','%s']); return (bool)$ok; }
+ public static function complete(string $gateway,string $callback_key,string $hash=''): void { global $wpdb; $key=sanitize_text_field($gateway).'|'.sanitize_text_field($callback_key); $wpdb->update($wpdb->prefix.'avanik_payment_callbacks',['status'=>'completed','response_hash'=>sanitize_text_field($hash),'processed_at'=>current_time('mysql')],['callback_key'=>$key],['%s','%s','%s'],['%s']); }
+ public static function release(string $gateway,string $callback_key): void { global $wpdb; $key=sanitize_text_field($gateway).'|'.sanitize_text_field($callback_key); $wpdb->delete($wpdb->prefix.'avanik_payment_callbacks',['callback_key'=>$key],['%s']); }
+}
