@@ -1,0 +1,14 @@
+<?php
+namespace Avanik;
+defined('ABSPATH') || exit;
+final class NotificationTemplates {
+ private const OPT='avanik_notification_templates';
+ public static function register(): void { add_action('admin_menu',[self::class,'menu']); add_action('admin_post_avanik_save_notification_templates',[self::class,'save']); }
+ public static function defaults(): array { return ['refund_status'=>['fa'=>'وضعیت بازپرداخت شما در آوانیک تغییر کرد.\nشماره بازپرداخت: {refund_id}\nشماره رزرو: {booking_id}\nوضعیت: {status}\nبرای مشاهده جزئیات وارد حساب کاربری خود شوید.','en'=>'Your Avanik refund status has changed.\nRefund: {refund_id}\nBooking: {booking_id}\nStatus: {status}\nSign in to your account for details.'],'booking_confirmed'=>['fa'=>'رزرو شما با موفقیت تأیید شد.\nشماره رزرو: {booking_id}','en'=>'Your booking has been confirmed.\nBooking: {booking_id}']]; }
+ public static function all(): array { return wp_parse_args((array)get_option(self::OPT,[]),self::defaults()); }
+ public static function get(string $event,string $locale='fa'): string { $all=self::all(); $locale=$locale==='en'?'en':'fa'; return (string)($all[$event][$locale]??$all[$event]['fa']??''); }
+ public static function render(string $event,array $vars,string $locale='fa'): string { $text=self::get($event,$locale); foreach($vars as $k=>$v)$text=str_replace('{'.sanitize_key($k).'}',(string)$v,$text); return $text; }
+ public static function menu(): void { add_options_page('Avanik Notification Templates','Notification Templates','manage_options','avanik-notification-templates',[self::class,'page']); }
+ public static function page(): void { if(!current_user_can('manage_options'))return; $all=self::all(); echo '<div class="wrap"><h1>Avanik Notification Templates</h1><form method="post" action="'.esc_url(admin_url('admin-post.php')).'"><input type="hidden" name="action" value="avanik_save_notification_templates">'.wp_nonce_field('avanik_save_notification_templates','_wpnonce',true,false); foreach($all as $event=>$locales){echo '<h2>'.esc_html($event).'</h2><p><label>فارسی</label><br><textarea name="t['.esc_attr($event).'][fa]" rows="6" class="large-text">'.esc_textarea($locales['fa']).'</textarea></p><p><label>English</label><br><textarea name="t['.esc_attr($event).'][en]" rows="6" class="large-text">'.esc_textarea($locales['en']).'</textarea></p>';} echo '<p><button class="button button-primary">Save Templates</button></p></form></div>'; }
+ public static function save(): void { if(!current_user_can('manage_options'))wp_die('Forbidden',403); check_admin_referer('avanik_save_notification_templates'); $base=self::defaults(); $in=(array)($_POST['t']??[]); foreach($base as $event=>$locales)foreach($locales as $locale=>$_)$base[$event][$locale]=sanitize_textarea_field($in[$event][$locale]??$base[$event][$locale]); update_option(self::OPT,$base,false); wp_safe_redirect(admin_url('options-general.php?page=avanik-notification-templates&updated=1')); exit; }
+}
