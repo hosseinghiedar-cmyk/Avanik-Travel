@@ -53,6 +53,8 @@ require_once __DIR__ . '/inc/TicketOperations.php';
 require_once __DIR__ . '/inc/TicketAdmin.php';
 require_once __DIR__ . '/inc/TicketCenter.php';
 require_once __DIR__ . '/inc/TicketDocumentService.php';
+require_once __DIR__ . '/inc/TicketPdfRenderer.php';
+require_once __DIR__ . '/inc/TicketPrivateStorage.php';
 require_once __DIR__ . '/inc/TicketDocumentEndpoint.php';
 require_once __DIR__ . '/inc/Marketplace.php';
 require_once __DIR__ . '/inc/MarketplaceSchema.php';
