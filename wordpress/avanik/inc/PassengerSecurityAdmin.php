@@ -1,0 +1,9 @@
+<?php
+namespace Avanik;
+defined('ABSPATH') || exit;
+final class PassengerSecurityAdmin {
+ public static function register(): void { add_action('admin_menu',[self::class,'menu']); add_action('admin_post_avanik_passenger_migrate',[self::class,'migrate']); }
+ public static function menu(): void { add_management_page('Avanik Passenger Security','Passenger Security','manage_options','avanik-passenger-security',[self::class,'render']); }
+ public static function render(): void { if(!current_user_can('manage_options'))wp_die('Unauthorized'); $ready=PassengerDataSecurity::encryption_ready(); echo '<div class="wrap"><h1>Avanik Passenger Security</h1><p>Encryption key: <strong>'.($ready?'Configured':'Not configured').'</strong></p><p>Run migration only after a verified database backup.</p><form method="post" action="'.esc_url(admin_url('admin-post.php')).'">'.wp_nonce_field('avanik_passenger_migrate','_wpnonce',true,false).'<input type="hidden" name="action" value="avanik_passenger_migrate"><label>Batch size <input name="limit" type="number" min="1" max="500" value="100"></label> <button class="button button-primary" '.($ready?'':'disabled').'>Migrate legacy passenger data</button></form></div>'; }
+ public static function migrate(): void { if(!current_user_can('manage_options')||!check_admin_referer('avanik_passenger_migrate'))wp_die('Unauthorized'); PassengerProductionGuard::require_key_for_sensitive_write(); $count=PassengerLegacyMigration::migrate_batch(absint($_POST['limit']??100)); wp_safe_redirect(add_query_arg(['page'=>'avanik-passenger-security','migrated'=>$count],admin_url('tools.php'))); exit; }
+}
