@@ -1,0 +1,8 @@
+<?php
+namespace Avanik;
+defined('ABSPATH') || exit;
+final class RefundAdmin {
+ public static function register(): void { add_action('admin_menu',[self::class,'menu']); }
+ public static function menu(): void { add_management_page('Avanik Refunds','Avanik Refunds','manage_options','avanik-refunds',[self::class,'render']); }
+ public static function render(): void { if(!current_user_can('manage_options'))return; global $wpdb; $rows=$wpdb->get_results('SELECT * FROM '.RefundRepository::table_name().' ORDER BY id DESC LIMIT 100',ARRAY_A); echo '<div class="wrap"><h1>Avanik Refunds</h1><table class="widefat striped"><thead><tr><th>Refund</th><th>Booking</th><th>Gross</th><th>Customer Refund</th><th>Status</th><th>Action</th></tr></thead><tbody>'; foreach($rows as $r){echo '<tr><td>'.esc_html($r['refund_id']).'</td><td>'.esc_html($r['booking_id']).'</td><td>'.esc_html($r['gross_amount'].' '.$r['currency']).'</td><td>'.esc_html($r['customer_refund'].' '.$r['currency']).'</td><td>'.esc_html($r['status']).'</td><td>'; if($r['status']==='requested'){echo '<form method="post" action="'.esc_url(admin_url('admin-post.php')).'"><input type="hidden" name="action" value="avanik_refund_decision"><input type="hidden" name="refund_id" value="'.esc_attr($r['refund_id']).'">'.wp_nonce_field('avanik_refund_decision','_wpnonce',true,false).'<button name="decision" value="approve" class="button button-primary">Approve</button> <button name="decision" value="reject" class="button">Reject</button></form>';} elseif($r['status']==='approved'){echo '<span>Ready for settlement</span>';} else {echo '—';} echo '</td></tr>';} echo '</tbody></table></div>'; }
+}
