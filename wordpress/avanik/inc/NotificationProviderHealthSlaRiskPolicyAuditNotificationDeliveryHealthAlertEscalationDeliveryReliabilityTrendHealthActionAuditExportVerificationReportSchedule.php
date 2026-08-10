@@ -9,6 +9,7 @@ final class NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHeal
     public static function register(): void {
         add_action(self::HOOK, [self::class, 'refresh']);
         add_options_page('SLA Verification Report Schedule', 'SLA Verification Report Schedule', 'manage_options', 'avanik-sla-verification-report-schedule', [self::class, 'render']);
+        NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryReliabilityTrendHealthActionAuditExportVerificationReportScheduleHealth::register();
         if (!wp_next_scheduled(self::HOOK)) wp_schedule_event(time() + HOUR_IN_SECONDS, 'hourly', self::HOOK);
     }
 
