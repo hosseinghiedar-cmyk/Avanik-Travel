@@ -7,6 +7,8 @@ final class NotificationProviderHealthSlaRiskNotificationPolicy {
 
     public static function register(): void {
         add_options_page('Provider SLA Risk Notification Policy', 'Provider SLA Risk Policy', 'manage_options', 'avanik-provider-sla-risk-notification-policy', [self::class, 'render']);
+        require_once __DIR__ . '/NotificationProviderHealthSlaRiskNotificationPolicyAudit.php';
+        NotificationProviderHealthSlaRiskNotificationPolicyAudit::register();
     }
 
     public static function defaults(): array {
