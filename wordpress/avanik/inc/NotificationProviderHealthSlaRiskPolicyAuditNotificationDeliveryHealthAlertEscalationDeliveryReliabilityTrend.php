@@ -1,0 +1,48 @@
+<?php
+namespace Avanik;
+defined('ABSPATH') || exit;
+
+final class NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryReliabilityTrend {
+    private const OPTION = 'avanik_provider_sla_health_escalation_delivery_reliability_trend';
+    private const MAX_POINTS = 30;
+
+    public static function register(): void {
+        add_action('avanik_provider_sla_notification_health_escalated', [self::class, 'capture'], 30, 4);
+        add_options_page('SLA Escalation Reliability Trend', 'SLA Escalation Reliability Trend', 'manage_options', 'avanik-sla-escalation-reliability-trend', [self::class, 'render']);
+    }
+
+    public static function capture(int $failures, string $provider = '', string $channel = '', string $errorCode = ''): void {
+        $metrics = NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryReliability::metrics();
+        $points = get_option(self::OPTION, []);
+        $points = is_array($points) ? $points : [];
+        $points[] = [
+            'at' => time(),
+            'failures' => max(0, $failures),
+            'attempts' => (int)$metrics['attempts'],
+            'sent' => (int)$metrics['sent'],
+            'retry' => (int)$metrics['retry'],
+            'dead' => (int)$metrics['dead'],
+            'success_rate' => (float)$metrics['success_rate'],
+            'failure_rate' => (float)$metrics['failure_rate'],
+            'retry_rate' => (float)$metrics['retry_rate'],
+        ];
+        if (count($points) > self::MAX_POINTS) $points = array_slice($points, -self::MAX_POINTS);
+        update_option(self::OPTION, $points, false);
+    }
+
+    public static function points(): array {
+        $points = get_option(self::OPTION, []);
+        return is_array($points) ? array_slice($points, -self::MAX_POINTS) : [];
+    }
+
+    public static function render(): void {
+        if (!current_user_can('manage_options')) return;
+        $points = self::points();
+        echo '<div class="wrap"><h1>SLA Escalation Reliability Trend</h1><p>Latest '.count($points).' escalation snapshots are retained.</p><table class="widefat striped"><thead><tr><th>Time</th><th>Failures</th><th>Attempts</th><th>Sent</th><th>Retry %</th><th>Success %</th><th>Failure %</th></tr></thead><tbody>';
+        foreach (array_reverse($points) as $point) {
+            echo '<tr><td>'.esc_html(wp_date('Y-m-d H:i:s', (int)$point['at'])).'</td><td>'.(int)$point['failures'].'</td><td>'.(int)$point['attempts'].'</td><td>'.(int)$point['sent'].'</td><td>'.esc_html((string)$point['retry_rate']).'%</td><td>'.esc_html((string)$point['success_rate']).'%</td><td>'.esc_html((string)$point['failure_rate']).'%</td></tr>';
+        }
+        if (!$points) echo '<tr><td colspan="7">No escalation snapshots recorded yet.</td></tr>';
+        echo '</tbody></table></div>';
+    }
+}
