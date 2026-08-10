@@ -2,6 +2,8 @@
 namespace Avanik;
 defined('ABSPATH') || exit;
 
+require_once __DIR__ . '/NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryReliability.php';
+
 final class NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryAudit {
     private const OPTION = 'avanik_provider_sla_health_escalation_delivery_audit';
     private const MAX = 100;
@@ -10,6 +12,7 @@ final class NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHeal
         add_action('avanik_notification_delivery_attempt', [self::class, 'attempt'], 10, 5);
         add_action('avanik_notification_delivery_result', [self::class, 'result'], 10, 12);
         add_options_page('SLA Escalation Delivery Audit', 'SLA Escalation Delivery Audit', 'manage_options', 'avanik-sla-escalation-delivery-audit', [self::class, 'render']);
+        NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryReliability::register();
     }
 
     public static function attempt(int $id, string $event, string $role, int $userId, string $channel): void {
