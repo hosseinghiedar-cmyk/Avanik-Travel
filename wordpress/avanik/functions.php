@@ -205,7 +205,6 @@ require_once __DIR__ . '/inc/ModerationFilters.php';
 \Avanik\NotificationProviderHealthSlaRiskHistory::register();
 \Avanik\NotificationProviderHealthSlaRiskAlerts::register();
 \Avanik\NotificationProviderHealthSlaRiskNotificationPolicy::register();
-\Avanik\NotificationProviderHealthSlaRiskNotificationPolicyAudit::register();
 \Avanik\NotificationProviderHealthSlaRiskNotificationPolicyAuditMonitor::register();
 \Avanik\NotificationProviderHealthDashboard::register();
 \Avanik\MarketplaceLifecycle::register();
