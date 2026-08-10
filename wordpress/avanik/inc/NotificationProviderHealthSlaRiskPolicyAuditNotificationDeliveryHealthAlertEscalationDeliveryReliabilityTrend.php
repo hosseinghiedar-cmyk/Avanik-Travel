@@ -9,6 +9,7 @@ final class NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHeal
     public static function register(): void {
         add_action('avanik_provider_sla_notification_health_escalated', [self::class, 'capture'], 30, 4);
         add_options_page('SLA Escalation Reliability Trend', 'SLA Escalation Reliability Trend', 'manage_options', 'avanik-sla-escalation-reliability-trend', [self::class, 'render']);
+        NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryReliabilityTrendHealth::register();
     }
 
     public static function capture(int $failures, string $provider = '', string $channel = '', string $errorCode = ''): void {
