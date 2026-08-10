@@ -7,18 +7,13 @@ final class NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHeal
 
     public static function register(): void {
         add_options_page('SLA Audit Export Verification Report', 'SLA Audit Export Verification Report', self::CAPABILITY, 'avanik-sla-audit-export-verification-report', [self::class, 'render']);
+        NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryReliabilityTrendHealthActionAuditExportVerificationReportSchedule::register();
     }
 
     public static function report(): array {
         $entries = NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryReliabilityTrendHealthActionAudit::entries();
         $csv = NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryReliabilityTrendHealthActionAuditExportIntegrity::build_csv();
-        return [
-            'entries' => count($entries),
-            'sha256' => hash('sha256', $csv),
-            'bytes' => strlen($csv),
-            'generated_at' => time(),
-            'status' => $csv !== '' || !$entries ? 'ready' : 'empty',
-        ];
+        return ['entries'=>count($entries),'sha256'=>hash('sha256',$csv),'bytes'=>strlen($csv),'generated_at'=>time(),'status'=>$csv !== '' || !$entries ? 'ready' : 'empty'];
     }
 
     public static function render(): void {
