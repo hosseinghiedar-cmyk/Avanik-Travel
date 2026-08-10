@@ -7,6 +7,7 @@ final class NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHeal
 
     public static function register(): void {
         add_options_page('SLA Escalation Delivery Reliability', 'SLA Escalation Delivery Reliability', 'manage_options', 'avanik-sla-escalation-delivery-reliability', [self::class, 'render']);
+        NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryReliabilityTrend::register();
     }
 
     public static function metrics(): array {
