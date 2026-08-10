@@ -1,0 +1,11 @@
+<?php
+namespace Avanik;
+defined('ABSPATH') || exit;
+final class NotificationRoleInbox {
+ public static function register(): void { add_shortcode('avanik_agency_notifications',[self::class,'agency']); add_shortcode('avanik_admin_notifications',[self::class,'admin']); add_action('admin_post_avanik_role_notification_read',[self::class,'mark_read']); }
+ public static function agency(): string { return self::render('agency'); }
+ public static function admin(): string { return self::render('admin'); }
+ private static function render(string $role): string { if(!is_user_logged_in())return '<p>Please log in.</p>'; $uid=get_current_user_id(); if($role==='admin'&&!current_user_can('manage_options'))return '<p>Access denied.</p>'; $rows=self::rows($uid,$role); ob_start(); echo '<div class="avanik-role-notification-inbox" data-role="'.esc_attr($role).'">'; if(!$rows)echo '<p>No notifications.</p>'; foreach($rows as $r){echo '<article class="'.($r['read_at']?'read':'unread').'"><h3>'.esc_html($r['title']).'</h3><div>'.nl2br(esc_html($r['body'])).'</div><small>'.esc_html($r['created_at']).'</small>'; if(!$r['read_at'])echo ' <a href="'.esc_url(wp_nonce_url(admin_url('admin-post.php?action=avanik_role_notification_read&id='.(int)$r['id'].'&role='.rawurlencode($role)),'avanik_role_notification_read')).'">Mark read</a>'; echo '</article>';} echo '</div>'; return ob_get_clean(); }
+ private static function rows(int $uid,string $role): array { global $wpdb; $t=$wpdb->prefix.'avanik_notifications'; return $wpdb->get_results($wpdb->prepare('SELECT * FROM '.$t.' WHERE user_id=%d AND notification_role=%s ORDER BY id DESC LIMIT 100',$uid,$role),ARRAY_A); }
+ public static function mark_read(): void { if(!is_user_logged_in())wp_die('Forbidden',403); check_admin_referer('avanik_role_notification_read'); $id=absint($_GET['id']??0); $role=sanitize_key($_GET['role']??''); $uid=get_current_user_id(); if($role==='admin'&&!current_user_can('manage_options'))wp_die('Forbidden',403); global $wpdb; $wpdb->query($wpdb->prepare('UPDATE '.$wpdb->prefix.'avanik_notifications SET read_at=%s WHERE id=%d AND user_id=%d AND notification_role=%s',current_time('mysql'),$id,$uid,$role)); wp_safe_redirect(wp_get_referer()?:home_url('/')); exit; }
+}
