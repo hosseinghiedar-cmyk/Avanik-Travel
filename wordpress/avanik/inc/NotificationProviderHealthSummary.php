@@ -1,0 +1,8 @@
+<?php
+namespace Avanik;
+defined('ABSPATH') || exit;
+final class NotificationProviderHealthSummary {
+ public static function register(): void { add_filter('avanik_notification_provider_health_summary',[self::class,'summary'],10,2); }
+ public static function summary(string $provider,array $context=[]): array { $settings=NotificationProviderSettings::get(); $p=(array)($settings[$provider]??[]); $enabled=!empty($p['enabled']); $credentials=NotificationCredentialVault::has($provider); $channels=(array)($p['channels']??[]); $status=$enabled?'configured':'disabled'; if($enabled&&!$credentials)$status='attention'; $last=(array)($context['last_test']??[]); if($last){$result=(string)($last['result']??$last['status']??''); if($result!=='success')$status='unhealthy';} $duration=isset($last['duration_ms'])?(int)$last['duration_ms']:null; $slow=isset($context['slow_threshold_ms'])?(int)$context['slow_threshold_ms']:2000; if($duration!==null&&$duration>$slow&&$status==='configured')$status='slow'; return ['provider'=>$provider,'name'=>(string)($p['name']??$provider),'enabled'=>$enabled,'credentials'=>$credentials,'channels'=>$channels,'status'=>$status,'last_test'=>$last,'duration_ms'=>$duration,'slow_threshold_ms'=>$slow]; }
+ public static function status_label(string $status): string { return ['configured'=>'Healthy','disabled'=>'Disabled','attention'=>'Attention','unhealthy'=>'Unhealthy','slow'=>'Slow'][$status]??'Unknown'; }
+}
