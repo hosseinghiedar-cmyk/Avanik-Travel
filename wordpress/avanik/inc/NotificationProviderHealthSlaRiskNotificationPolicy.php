@@ -46,10 +46,12 @@ final class NotificationProviderHealthSlaRiskNotificationPolicy {
         if (!current_user_can('manage_options')) return;
         $s = self::settings();
         if (isset($_POST['avanik_policy_nonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['avanik_policy_nonce'])), 'avanik_save_risk_policy')) {
+            $before = $s;
             foreach (['critical','high','medium','low'] as $risk) $s[$risk . '_enabled'] = !empty($_POST[$risk . '_enabled']);
             foreach (['critical','high','medium'] as $risk) $s[$risk . '_role'] = sanitize_key((string) ($_POST[$risk . '_role'] ?? 'admin')) ?: 'admin';
             $s['cooldown_minutes'] = max(0, min(1440, absint($_POST['cooldown_minutes'] ?? 0)));
             update_option(self::OPTION, $s, false);
+            do_action('avanik_provider_health_sla_risk_notification_policy_saved', $before, $s);
             echo '<div class="notice notice-success"><p>Risk notification policy saved.</p></div>';
         }
         echo '<div class="wrap"><h1>Provider SLA Risk Notification Policy</h1><form method="post">';
@@ -58,7 +60,7 @@ final class NotificationProviderHealthSlaRiskNotificationPolicy {
             echo '<p><label><input type="checkbox" name="'.esc_attr($risk).'_enabled" value="1" '.checked(!empty($s[$risk.'_enabled']), true, false).'> '.esc_html(ucfirst($risk)).' risk alerts</label></p>';
         }
         foreach (['critical','high','medium'] as $risk) {
-            echo '<p><label>'.esc_html(ucfirst($risk)).' role <input type="text" name="'.esc_attr($risk).'_role" value="'.esc_attr($s[$risk.'_role']).'" class="regular-text"></label></p>';
+            echo '<p><label>'.esc_html(ucfirst($risk)).' role <input type="text" name="'.esc_attr($risk.'_role').'" value="'.esc_attr($s[$risk.'_role']).'" class="regular-text"></label></p>';
         }
         echo '<p><label>Cooldown minutes <input type="number" min="0" max="1440" name="cooldown_minutes" value="'.esc_attr($s['cooldown_minutes']).'"></label></p>';
         echo '<p><button class="button button-primary">Save Policy</button></p></form></div>';
