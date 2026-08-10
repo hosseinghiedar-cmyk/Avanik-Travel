@@ -9,6 +9,8 @@ final class NotificationProviderHealthSlaRiskNotificationPolicyAuditMonitor {
     public static function register(): void {
         require_once __DIR__ . '/NotificationProviderHealthSlaRiskPolicyAuditIntegrityNotification.php';
         NotificationProviderHealthSlaRiskPolicyAuditIntegrityNotification::register();
+        require_once __DIR__ . '/NotificationProviderHealthSlaRiskPolicyAuditIntegrityRecoveryNotification.php';
+        NotificationProviderHealthSlaRiskPolicyAuditIntegrityRecoveryNotification::register();
         add_action(self::CRON, [self::class, 'check']);
         add_action('admin_notices', [self::class, 'notice']);
         if (!wp_next_scheduled(self::CRON)) {
@@ -20,6 +22,7 @@ final class NotificationProviderHealthSlaRiskNotificationPolicyAuditMonitor {
         $result = NotificationProviderHealthSlaRiskNotificationPolicyAudit::integrity();
         $state = get_option(self::OPTION, []);
         if (!is_array($state)) $state = [];
+        $wasFailed = isset($state['valid']) && !$state['valid'] && empty($state['legacy']);
         $state['checked_at'] = time();
         $state['valid'] = !empty($result['valid']);
         $state['legacy'] = !empty($result['legacy']);
@@ -27,6 +30,9 @@ final class NotificationProviderHealthSlaRiskNotificationPolicyAuditMonitor {
             $state['incident_count'] = absint($state['incident_count'] ?? 0) + 1;
             $state['last_failure_at'] = time();
             do_action('avanik_provider_health_sla_risk_notification_policy_audit_integrity_failed', $state);
+        } elseif ($wasFailed && $state['valid'] && empty($state['legacy'])) {
+            $state['recovered_at'] = time();
+            do_action('avanik_provider_health_sla_risk_notification_policy_audit_integrity_recovered', $state);
         }
         update_option(self::OPTION, $state, false);
     }
