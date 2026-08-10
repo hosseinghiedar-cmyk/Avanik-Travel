@@ -16,11 +16,9 @@ final class NotificationProviderHealthSlaRiskAlerts {
         $assessment = NotificationProviderHealthSlaRisk::assess(30);
         $state = get_option(self::OPTION, []);
         if (!is_array($state)) $state = [];
-
         foreach (($assessment['providers'] ?? []) as $row) {
             $provider = (string) ($row['provider'] ?? '');
             if ($provider === '') continue;
-
             $score = isset($row['score']) ? (float) $row['score'] : null;
             $risk = strtolower((string) ($row['risk'] ?? 'unknown'));
             $previous = $state[$provider] ?? [];
@@ -30,42 +28,45 @@ final class NotificationProviderHealthSlaRiskAlerts {
             $riskTransition = $previousRisk !== 'unknown' && $previousRisk !== $risk;
             $thresholdTransition = $previousRisk !== 'unknown' && $previousBelow !== $belowThreshold;
             $shouldNotify = $riskTransition || $thresholdTransition;
-
             $state[$provider] = [
                 'risk' => $risk,
                 'score' => $score,
                 'updated_at' => time(),
-                'last_transition' => ($riskTransition || $thresholdTransition) ? time() : ($previous['last_transition'] ?? null),
+                'last_transition' => $shouldNotify ? time() : ($previous['last_transition'] ?? null),
                 'below_threshold' => $belowThreshold,
-                'last_alerted_at' => $shouldNotify ? time() : ($previous['last_alerted_at'] ?? null),
+                'last_alerted_at' => $shouldNotify && self::policy_allows($risk, $previous) ? time() : ($previous['last_alerted_at'] ?? null),
             ];
-
-            if ($shouldNotify) {
-                self::queue_alert($row, $previous, $riskTransition, $thresholdTransition);
-            }
+            if ($shouldNotify) self::queue_alert($row, $previous, $riskTransition, $thresholdTransition);
         }
-
         update_option(self::OPTION, $state, false);
         do_action('avanik_provider_health_sla_risk_alert_evaluated', $state);
     }
 
+    private static function policy_allows(string $risk, array $previous): bool {
+        if (!NotificationProviderHealthSlaRiskNotificationPolicy::allows($risk)) return false;
+        $cooldown = NotificationProviderHealthSlaRiskNotificationPolicy::cooldown_minutes();
+        if ($cooldown > 0 && !empty($previous['last_alerted_at']) && (time() - (int) $previous['last_alerted_at']) < ($cooldown * 60)) return false;
+        return true;
+    }
+
     private static function queue_alert(array $row, array $previous, bool $riskTransition, bool $thresholdTransition): void {
         if (!class_exists(NotificationCenter::class)) return;
-
+        $risk = strtolower((string) ($row['risk'] ?? 'unknown'));
+        if (!self::policy_allows($risk, $previous)) return;
         $payload = [
             'provider' => (string) ($row['provider'] ?? ''),
             'provider_name' => (string) ($row['name'] ?? ($row['provider'] ?? '')),
-            'risk' => strtolower((string) ($row['risk'] ?? 'unknown')),
+            'risk' => $risk,
             'previous_risk' => strtolower((string) ($previous['risk'] ?? 'unknown')),
             'score' => $row['score'] ?? null,
             'previous_score' => $previous['score'] ?? null,
             'threshold' => self::THRESHOLD,
-            'below_threshold' => !empty($row['score']) && (float) $row['score'] < self::THRESHOLD,
+            'below_threshold' => isset($row['score']) && (float) $row['score'] < self::THRESHOLD,
             'risk_transition' => $riskTransition,
             'threshold_transition' => $thresholdTransition,
+            'escalation_role' => NotificationProviderHealthSlaRiskNotificationPolicy::role($risk),
             'evaluated_at' => current_time('mysql'),
         ];
-
         NotificationCenter::enqueue(self::EVENT, $payload);
     }
 
@@ -77,7 +78,7 @@ final class NotificationProviderHealthSlaRiskAlerts {
     public static function render(): void {
         if (!current_user_can('manage_options')) return;
         $state = self::state();
-        echo '<div class="wrap"><h1>Provider SLA Risk Alerts</h1><p>Read-only alert state. Notifications are queued only when risk or threshold status changes.</p>';
+        echo '<div class="wrap"><h1>Provider SLA Risk Alerts</h1><p>Read-only alert state. Notifications are queued according to the Provider SLA Risk Notification Policy.</p>';
         echo '<table class="widefat striped"><thead><tr><th>Provider</th><th>Risk</th><th>Score</th><th>Threshold</th><th>Last Transition</th><th>Last Alert</th><th>Status</th></tr></thead><tbody>';
         if (!$state) echo '<tr><td colspan="7">No risk evaluations yet.</td></tr>';
         foreach ($state as $provider => $row) {
