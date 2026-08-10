@@ -8,6 +8,7 @@ final class NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHeal
     public static function register(): void {
         add_action('admin_post_avanik_sla_trend_health_audit_export', [self::class, 'export_csv']);
         add_options_page('SLA Trend Health Audit Export', 'SLA Trend Health Audit Export', self::CAPABILITY, 'avanik-sla-trend-health-audit-export', [self::class, 'render']);
+        NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryReliabilityTrendHealthActionAuditExportIntegrity::register();
     }
 
     public static function render(): void {
