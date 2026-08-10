@@ -9,6 +9,7 @@ final class NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHeal
     public static function register(): void {
         add_options_page('SLA Trend Health Action Audit', 'SLA Trend Health Action Audit', 'manage_options', 'avanik-sla-trend-health-action-audit', [self::class, 'render']);
         NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryReliabilityTrendHealthActionAuditSummary::register();
+        NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryReliabilityTrendHealthActionAuditExport::register();
     }
 
     public static function record(string $action, array $health, array $state): void {
