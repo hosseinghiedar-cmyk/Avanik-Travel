@@ -8,6 +8,7 @@ final class NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHeal
 
     public static function register(): void {
         add_options_page('SLA Schedule Health Incident', 'SLA Schedule Health Incident', self::CAPABILITY, 'avanik-sla-schedule-health-incident', [self::class, 'render']);
+        NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryReliabilityTrendHealthActionAuditExportVerificationReportScheduleHealthIncidentEscalation::register();
     }
 
     public static function state(): array {
@@ -16,7 +17,7 @@ final class NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHeal
         $previous = is_array($previous) ? $previous : [];
         $current = !$health['healthy'] ? 'attention' : 'healthy';
         $incident = $current === 'attention' && ($previous['status'] ?? 'healthy') !== 'attention';
-        $state = ['status'=>$current,'transition'=>$incident ? 'opened' : ($current === 'healthy' && ($previous['status'] ?? '') === 'attention' ? 'resolved' : 'steady'),'at'=>time(),'next_run'=>$health['next_run'],'last_refresh'=>$health['last_refresh']];
+        $state = ['status'=>$current,'transition'=>$incident ? 'opened' : ($current === 'healthy' && ($previous['status'] ?? '') === 'attention' ? 'resolved' : 'steady'),'at'=>time(),'next_run'=>(int)($health['next_run'] ?? 0),'last_refresh'=>(int)($health['last_refresh'] ?? 0)];
         update_option(self::OPTION, $state, false);
         return $state;
     }
