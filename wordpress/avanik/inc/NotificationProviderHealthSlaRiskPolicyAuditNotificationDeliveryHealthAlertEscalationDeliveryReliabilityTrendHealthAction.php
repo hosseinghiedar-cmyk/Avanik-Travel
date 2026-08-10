@@ -9,6 +9,7 @@ final class NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHeal
     public static function register(): void {
         add_action('admin_post_avanik_sla_trend_health_acknowledge', [self::class, 'acknowledge']);
         add_options_page('SLA Trend Health Action', 'SLA Trend Health Action', 'manage_options', 'avanik-sla-trend-health-action', [self::class, 'render']);
+        NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryReliabilityTrendHealthActionAudit::register();
     }
 
     public static function state(): array {
@@ -26,6 +27,7 @@ final class NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHeal
         $state['last_status'] = sanitize_key($health['status']);
         $state['action_count']++;
         update_option(self::OPTION, $state, false);
+        NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryReliabilityTrendHealthActionAudit::record('acknowledge', $health, $state);
         wp_safe_redirect(add_query_arg(['page'=>'avanik-sla-trend-health-action','acknowledged'=>'1'], admin_url('options-general.php')));
         exit;
     }
