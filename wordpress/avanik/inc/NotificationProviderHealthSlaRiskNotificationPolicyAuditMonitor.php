@@ -7,6 +7,8 @@ final class NotificationProviderHealthSlaRiskNotificationPolicyAuditMonitor {
     private const CRON = 'avanik_provider_sla_risk_policy_audit_integrity_check';
 
     public static function register(): void {
+        require_once __DIR__ . '/NotificationProviderHealthSlaRiskPolicyAuditIntegrityNotification.php';
+        NotificationProviderHealthSlaRiskPolicyAuditIntegrityNotification::register();
         add_action(self::CRON, [self::class, 'check']);
         add_action('admin_notices', [self::class, 'notice']);
         if (!wp_next_scheduled(self::CRON)) {
