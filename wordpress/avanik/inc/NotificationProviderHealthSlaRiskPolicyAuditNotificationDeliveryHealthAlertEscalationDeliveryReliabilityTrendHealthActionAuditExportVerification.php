@@ -7,6 +7,7 @@ final class NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHeal
 
     public static function register(): void {
         add_options_page('SLA Trend Health Audit Export Verification', 'SLA Trend Health Audit Export Verification', self::CAPABILITY, 'avanik-sla-trend-health-audit-export-verification', [self::class, 'render']);
+        NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryReliabilityTrendHealthActionAuditExportVerificationReport::register();
     }
 
     public static function verify(string $csv): array {
