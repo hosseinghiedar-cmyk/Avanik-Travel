@@ -8,6 +8,7 @@ final class NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHeal
 
     public static function register(): void {
         add_options_page('SLA Schedule Incident Escalation', 'SLA Schedule Incident Escalation', self::CAPABILITY, 'avanik-sla-schedule-incident-escalation', [self::class, 'render']);
+        NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryReliabilityTrendHealthActionAuditExportVerificationReportScheduleHealthIncidentEscalationNotification::register();
     }
 
     public static function state(): array {
@@ -27,6 +28,7 @@ final class NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHeal
     public static function render(): void {
         if (!current_user_can(self::CAPABILITY)) return;
         $s = self::state();
+        NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryReliabilityTrendHealthActionAuditExportVerificationReportScheduleHealthIncidentEscalationNotification::notify_if_needed();
         echo '<div class="wrap"><h1>SLA Schedule Incident Escalation</h1><p>Escalation is derived from the existing Phase 108 scheduler health incident state.</p><table class="widefat striped"><tbody>';
         foreach (['Status'=>strtoupper($s['status']),'Level'=>strtoupper($s['level']),'Transition'=>strtoupper($s['transition']),'Incident age (sec)'=>$s['age'],'Next run'=>$s['next_run'] ? wp_date('Y-m-d H:i:s',$s['next_run']) : '—','Last refresh'=>$s['last_refresh'] ? wp_date('Y-m-d H:i:s',$s['last_refresh']) : '—'] as $k=>$v) echo '<tr><th>'.esc_html($k).'</th><td>'.esc_html((string)$v).'</td></tr>';
         echo '</tbody></table></div>';
