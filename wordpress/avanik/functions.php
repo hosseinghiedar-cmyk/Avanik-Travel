@@ -118,6 +118,7 @@ require_once __DIR__ . '/inc/NotificationProviderHealthSlaRiskPolicyAuditNotific
 require_once __DIR__ . '/inc/NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryMetrics.php';
 require_once __DIR__ . '/inc/NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealth.php';
 require_once __DIR__ . '/inc/NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlert.php';
+require_once __DIR__ . '/inc/NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertLog.php';
 require_once __DIR__ . '/inc/NotificationProviderHealthDashboard.php';
 require_once __DIR__ . '/inc/Marketplace.php';
 require_once __DIR__ . '/inc/MarketplaceSchema.php';
@@ -216,6 +217,7 @@ require_once __DIR__ . '/inc/ModerationFilters.php';
 \Avanik\NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryMetrics::register();
 \Avanik\NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealth::register();
 \Avanik\NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlert::register();
+\Avanik\NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertLog::register();
 \Avanik\NotificationProviderHealthDashboard::register();
 \Avanik\MarketplaceLifecycle::register();
 \Avanik\CommissionLedger::install();
