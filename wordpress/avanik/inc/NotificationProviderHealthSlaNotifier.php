@@ -9,7 +9,7 @@ final class NotificationProviderHealthSlaNotifier {
   add_filter('cron_schedules',[self::class,'cron']);
   add_action(self::CRON,[self::class,'check']);
   add_filter('avanik_notification_recipients',[self::class,'recipients'],5,2);
-  add_action('admin_init',[self::class,'schedule']);
+  add_action('init',[self::class,'schedule']);
  }
  public static function cron(array $s): array { if(!isset($s['avanik_five_minutes']))$s['avanik_five_minutes']=['interval'=>300,'display'=>'Avanik every five minutes']; return $s; }
  public static function schedule(): void { if(!wp_next_scheduled(self::CRON))wp_schedule_event(time()+300,'avanik_five_minutes',self::CRON); }
