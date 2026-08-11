@@ -8,6 +8,7 @@ final class NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHeal
 
     public static function register(): void {
         add_options_page('SLA Escalation Notification', 'SLA Escalation Notification', self::CAPABILITY, 'avanik-sla-escalation-notification', [self::class, 'render']);
+        NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryReliabilityTrendHealthActionAuditExportVerificationReportScheduleHealthIncidentEscalationNotificationDeliveryHealth::register();
     }
 
     public static function notify_if_needed(): void {
@@ -20,10 +21,12 @@ final class NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHeal
             return;
         }
         $admin = get_option('admin_email');
+        $sent = false;
         if (is_email($admin)) {
-            wp_mail($admin, 'Avanik SLA Scheduler '.$level, 'SLA verification scheduler escalation level changed to '.strtoupper($level).'.');
+            $sent = (bool) wp_mail($admin, 'Avanik SLA Scheduler '.$level, 'SLA verification scheduler escalation level changed to '.strtoupper($level).'.');
         }
-        update_option(self::OPTION, ['level'=>$level,'notified_at'=>time()], false);
+        NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryReliabilityTrendHealthActionAuditExportVerificationReportScheduleHealthIncidentEscalationNotificationDeliveryHealth::record($sent, $level);
+        update_option(self::OPTION, ['level'=>$level,'notified_at'=>time(),'last_result'=>$sent ? 'sent' : 'failed'], false);
     }
 
     public static function render(): void {
@@ -33,6 +36,7 @@ final class NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHeal
         echo '<div class="wrap"><h1>SLA Escalation Notification</h1><p>Notifications are sent only when the escalation level changes and use the WordPress administrator email.</p><table class="widefat striped"><tbody>';
         echo '<tr><th>Current level</th><td>'.esc_html(strtoupper((string)($state['level'] ?? 'none'))).'</td></tr>';
         echo '<tr><th>Last notification</th><td>'.(!empty($state['notified_at']) ? esc_html(wp_date('Y-m-d H:i:s',(int)$state['notified_at'])) : '—').'</td></tr>';
+        echo '<tr><th>Last result</th><td>'.esc_html(strtoupper((string)($state['last_result'] ?? 'none'))).'</td></tr>';
         echo '</tbody></table></div>';
     }
 }
