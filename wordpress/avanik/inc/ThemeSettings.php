@@ -16,8 +16,8 @@ final class ThemeSettings {
       'primary'=>'#072B5A','gold'=>'#F2B134','white'=>'#FFFFFF','text'=>'#14243A',
       'hero_title'=>'پرواز به استانبول','hero_subtitle'=>'با بهترین قیمت و خدمات ویژه',
       'phone'=>'021-12345678','support'=>'پشتیبانی ۲۴ ساعته',
-      'logo_url'=>get_template_directory_uri().'/assets/images/avanik-logo-reference.png',
-      'logo_white_url'=>get_template_directory_uri().'/assets/images/avanik-logo-reference-white.png',
+      'logo_url'=>get_template_directory_uri().'/assets/images/avanik-logo.svg',
+      'logo_white_url'=>get_template_directory_uri().'/assets/images/avanik-logo.svg',
       'hero_image'=>'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1800&q=82',
       'hero_image_2'=>'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=1800&q=82',
       'hero_image_3'=>'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1800&q=82',
@@ -31,13 +31,11 @@ final class ThemeSettings {
     return $key===''?$options:($options[$key]??null);
   }
   public static function admin_menu(): void {
-    add_menu_page('آوانیک','آوانیک','manage_options','avanik-theme-settings',[self::class,'render'],'dashicons-airplane',3);
+    add_menu_page('تنظیمات قالب آوانیک','آوانیک','manage_options','avanik-theme-settings',[self::class,'render'],'dashicons-airplane',3);
     add_submenu_page('avanik-theme-settings','تنظیمات قالب آوانیک','تنظیمات قالب','manage_options','avanik-theme-settings',[self::class,'render']);
     add_submenu_page('avanik-theme-settings','راهنمای قالب آوانیک','راهنمای قالب','manage_options','avanik-theme-guide',[self::class,'guide']);
   }
-  public static function register_settings(): void {
-    register_setting('avanik_theme_options_group',self::OPTION,['type'=>'array','sanitize_callback'=>[self::class,'sanitize'],'default'=>self::defaults()]);
-  }
+  public static function register_settings(): void { register_setting('avanik_theme_options_group',self::OPTION,['type'=>'array','sanitize_callback'=>[self::class,'sanitize'],'default'=>self::defaults()]); }
   public static function admin_assets(string $hook): void {
     if(strpos($hook,'avanik-theme-settings')===false && strpos($hook,'avanik-theme-guide')===false)return;
     wp_enqueue_media();wp_enqueue_script('jquery');
