@@ -1,6 +1,9 @@
 <?php
 defined('ABSPATH') || exit;
 require_once __DIR__ . '/inc/Navigation.php';
+require_once __DIR__ . '/inc/Jalali.php';
+require_once __DIR__ . '/inc/AdminMenuOrganizer.php';
+\Avanik\AdminMenuOrganizer::register();
 require_once __DIR__ . '/inc/Theme.php';
 require_once __DIR__ . '/inc/ThemeSetup.php';
 \Avanik\Theme::boot();
