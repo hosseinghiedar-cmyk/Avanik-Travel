@@ -1,7 +1,8 @@
 <?php
 defined('ABSPATH') || exit;
 $settings=class_exists('\\Avanik\\ThemeSettings') ? \Avanik\ThemeSettings::get() : [];
-$logo=!empty($settings['logo_url'])?$settings['logo_url']:get_template_directory_uri().'/assets/images/avanik-logo-reference.png';
+$logo=!empty($settings['logo_url'])?$settings['logo_url']:get_template_directory_uri().'/assets/images/avanik-logo.svg';
+if(str_contains((string)$logo,'avanik-logo-reference')) $logo=get_template_directory_uri().'/assets/images/avanik-logo.svg';
 $socials=[
  'instagram'=>['label'=>'اینستاگرام','icon'=>'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.4" cy="6.6" r="1"/></svg>'],
  'telegram'=>['label'=>'تلگرام','icon'=>'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4 3.8 10.7c-.8.3-.8 1.4 0 1.7l4.4 1.5 1.7 5.3c.2.7 1.1.9 1.6.4l2.5-2.5 4.8 3.5c.6.4 1.4.1 1.6-.6L23 5.4c.2-.9-.8-1.7-2-1.4Z"/><path d="m8.5 13.9 3.2-2.2 3.8-3"/></svg>'],
