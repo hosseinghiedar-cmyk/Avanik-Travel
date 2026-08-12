@@ -6,7 +6,9 @@ defined('ABSPATH') || exit;
   <div class="av-header__main">
     <div class="av-container av-header__inner">
       <a class="av-header__brand" href="<?php echo esc_url(home_url('/')); ?>" aria-label="<?php echo esc_attr(get_bloginfo('name')); ?>">
-        <?php if (function_exists('the_custom_logo') && has_custom_logo()) { the_custom_logo(); } else { echo '<span class="av-header__logo-text">'.esc_html(get_bloginfo('name')).'</span>'; } ?>
+        <?php if (function_exists('the_custom_logo') && has_custom_logo()) : the_custom_logo(); else : ?>
+          <img class="av-bundled-logo" src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/avanik-logo.svg'); ?>" alt="آوانیک تراول">
+        <?php endif; ?>
       </a>
       <nav class="av-navbar" aria-label="منوی اصلی">
         <?php wp_nav_menu(['theme_location'=>'primary','container'=>false,'menu_class'=>'av-navbar__menu','fallback_cb'=>false,'depth'=>2]); ?>
