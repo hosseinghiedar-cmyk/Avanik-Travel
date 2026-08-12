@@ -33,19 +33,20 @@ jobs:
           p=Path('dist/Avanik-Travel-v0.4.0-Hosting-Release.zip')
           with zipfile.ZipFile(p) as z:
               names=z.namelist()
-              required={'avanik/style.css','avanik/functions.php','avanik/front-page.php','avanik/inc/ThemeSetup.php','avanik/inc/ThemeSettings.php','avanik/assets/js/avanik-demo.js','avanik/assets/images/avanik-logo.svg','avanik/assets/images/avanik-hero.svg'}
+              required={'avanik/style.css','avanik/functions.php','avanik/front-page.php','avanik/inc/Theme.php','avanik/inc/ThemeSetup.php','avanik/inc/ThemeInstaller.php','avanik/inc/ThemeSettings.php','avanik/inc/ProviderAdmin.php','avanik/inc/NotificationDashboard.php','avanik/inc/NotificationProviderSettings.php','avanik/assets/js/avanik-demo.js','avanik/assets/images/avanik-logo.svg','avanik/assets/images/avanik-hero.svg'}
               missing=sorted(required-set(names))
               if missing: raise SystemExit('Missing package files: '+', '.join(missing))
               bad=[n for n in names if max((len(x) for x in Path(n).parts), default=0)>120]
               if bad: raise SystemExit('Long filename component remains: '+', '.join(bad))
               if any('NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryReliabilityTrend' in n for n in names): raise SystemExit('Known overlong notification filename remains')
               php_files=[n for n in names if n.endswith('.php')]
+              functions=z.read('avanik/functions.php').decode('utf-8')
+              if '::install();' in functions: raise SystemExit('Database installer is still executed during every request')
               theme_settings=z.read('avanik/inc/ThemeSettings.php').decode('utf-8')
-              payment_settings=z.read('avanik/inc/PaymentSettings.php').decode('utf-8')
-              provider_admin=z.read('avanik/inc/ProviderAdmin.php').decode('utf-8')
-              if 'add_options_page' in theme_settings or "add_submenu_page('options-general.php'" in theme_settings: raise SystemExit('Theme settings still registered under WordPress Settings')
+              notification_settings=z.read('avanik/inc/NotificationProviderSettings.php').decode('utf-8')
+              notification_dashboard=z.read('avanik/inc/NotificationDashboard.php').decode('utf-8')
+              if 'options-general.php' in notification_settings or 'options-general.php' in notification_dashboard: raise SystemExit('Notification management still registered under WordPress Settings')
               if "'تنظیمات قالب'" not in theme_settings or "'avanik-theme-settings'" not in theme_settings: raise SystemExit('Persian Avanik settings menu is missing')
-              if "'Payment Settings'" in payment_settings or "'Avanik Providers'" in provider_admin: raise SystemExit('English Avanik admin label remains')
               print('Package verification: PASS; PHP files:', len(php_files))
           PY
           rm -rf package-check
@@ -73,5 +74,5 @@ jobs:
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" dist/Avanik-Travel-v0.4.0-Hosting-Release.zip dist/Avanik-Travel-v0.4.0-Hosting-Release.sha256 --clobber
           else
-            gh release create "$TAG" dist/Avanik-Travel-v0.4.0-Hosting-Release.zip dist/Avanik-Travel-v0.4.0-Hosting-Release.sha256 --title "$TITLE" --notes "Complete cPanel/WordPress hosting package for Avanik Travel. Includes the ready-made page installer, functional demo navigation/search/checkout flow, bundled logo and artwork, Persian theme settings panel, and cPanel-safe filename handling. Live supplier APIs and production payment credentials remain deployment integrations." --target "$GITHUB_SHA"
+            gh release create "$TAG" dist/Avanik-Travel-v0.4.0-Hosting-Release.zip dist/Avanik-Travel-v0.4.0-Hosting-Release.sha256 --title "$TITLE" --notes "Complete cPanel/WordPress hosting package for Avanik Travel. Includes the ready-made page installer, functional demo navigation/search/checkout flow, bundled logo and artwork, Persian theme settings panel, Persian provider/notification administration, and cPanel-safe filename handling. Live supplier APIs and production payment credentials remain deployment integrations." --target "$GITHUB_SHA"
           fi
