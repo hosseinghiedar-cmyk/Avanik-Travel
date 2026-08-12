@@ -1,5 +1,6 @@
 from __future__ import annotations
 import base64, hashlib, json, os, shutil, urllib.request, zipfile
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 REPO=os.environ.get('GITHUB_REPOSITORY','hosseinghiedar-cmyk/Avanik-Travel'); REF=os.environ.get('GITHUB_SHA',''); API='https://api.github.com'
 ROOT=Path(__file__).resolve().parents[1]; BUILD=ROOT/'.hosting-build'/'avanik'; OUT=ROOT/'dist'/'Avanik-Travel-v0.4.0-Hosting-Release.zip'; MAX_COMPONENT=120
@@ -7,6 +8,10 @@ ROOT=Path(__file__).resolve().parents[1]; BUILD=ROOT/'.hosting-build'/'avanik'; 
 def api_get(path):
     req=urllib.request.Request(API+path,headers={'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','Authorization':f"Bearer {os.environ.get('GITHUB_TOKEN','')}",'User-Agent':'avanik-cpanel-release-builder'})
     with urllib.request.urlopen(req,timeout=60) as r:return json.loads(r.read().decode())
+
+def download(entry):
+    blob=api_get(f"/repos/{REPO}/git/blobs/{entry['sha']}")
+    return entry,base64.b64decode(blob['content'].replace('\n',''))
 
 def main():
     if not REF: raise SystemExit('GITHUB_SHA is required')
@@ -17,12 +22,17 @@ def main():
     if tree.get('truncated'): raise SystemExit('Git tree response was truncated')
     selected=[e for e in tree['tree'] if e.get('type')=='blob' and e.get('path','').startswith('wordpress/avanik/')]
     mapping={}
+    prepared=[]
     for e in selected:
         rel=e['path'][len('wordpress/avanik/'):]; original=Path(rel).name
         if len(original)>MAX_COMPONENT:
             new=f"avanik_{hashlib.sha1(rel.encode()).hexdigest()[:12]}{Path(original).suffix.lower()}"; mapping[original]=new; rel=str(Path(rel).with_name(new))
-        target=BUILD/rel; target.parent.mkdir(parents=True,exist_ok=True)
-        blob=api_get(f"/repos/{REPO}/git/blobs/{e['sha']}"); target.write_bytes(base64.b64decode(blob['content'].replace('\n','')))
+        prepared.append((e,rel))
+    with ThreadPoolExecutor(max_workers=16) as pool:
+        futures=[pool.submit(download,e) for e,_ in prepared]
+        for future in as_completed(futures):
+            e,data=future.result(); rel=next(r for x,r in prepared if x is e)
+            target=BUILD/rel; target.parent.mkdir(parents=True,exist_ok=True); target.write_bytes(data)
     for rel in ['INSTALL-HOSTING-v0.4.0.md','RELEASE-MANIFEST-v0.4.0.json']:
         p=BUILD/rel
         if p.exists(): p.unlink()
