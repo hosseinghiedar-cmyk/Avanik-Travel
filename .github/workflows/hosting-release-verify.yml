@@ -10,26 +10,36 @@ on:
 jobs:
   php-lint-and-package:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v4
-        with:
-          sparse-checkout: |
-            wordpress/avanik
-            .github/workflows/hosting-release-verify.yml
-          sparse-checkout-cone-mode: false
-      - name: Remove legacy audit-only source files from workspace
+      - name: Download repository archive without Git checkout
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -e
-          find wordpress/avanik/inc -maxdepth 1 -type f -name 'NotificationProviderHealthSlaRiskPolicyAudit*' -delete
+          curl -L --fail -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/zipball/${GITHUB_SHA}" -o source.zip
+          rm -rf source
+          mkdir source
+          unzip -q source.zip -d source
+          SOURCE_ROOT="$(find source -mindepth 1 -maxdepth 1 -type d | head -n1)"
+          test -n "$SOURCE_ROOT"
+          mkdir -p workspace
+          cp -a "$SOURCE_ROOT/wordpress/avanik" workspace/avanik
+      - name: Remove legacy audit-only source files
+        run: |
+          set -e
+          find workspace/avanik/inc -maxdepth 1 -type f -name 'NotificationProviderHealthSlaRiskPolicyAudit*' -delete
       - name: PHP syntax check
         run: |
           set -e
-          find wordpress/avanik -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+          find workspace/avanik -type f -name '*.php' -print0 | xargs -0 -n1 php -l
       - name: Verify theme metadata and phase files
         run: |
           set -e
-          grep -q '^Version: 0.4.0' wordpress/avanik/style.css
-          test -f wordpress/avanik/inc/PhaseLoader.php
+          grep -q '^Version: 0.4.0' workspace/avanik/style.css
+          test -f workspace/avanik/inc/PhaseLoader.php
           for f in \
             Phase203ProjectStateInventory.php \
             Phase204ProductionSupplierIntegrationReadiness.php \
@@ -56,12 +66,12 @@ jobs:
             Phase225PostDeploymentSmokeTest.php \
             Phase226ProductionMonitoringVerification.php \
             Phase227FinalProjectClosure.php; do
-            test -f "wordpress/avanik/inc/$f"
+            test -f "workspace/avanik/inc/$f"
           done
       - name: Build hosting-safe functions.php
         run: |
           set -e
-          cat > wordpress/avanik/functions.php <<'PHP'
+          cat > workspace/avanik/functions.php <<'PHP'
 <?php
 defined('ABSPATH') || exit;
 
@@ -176,14 +186,13 @@ foreach ($avanik_core as $file) {
 \Avanik\PhaseLoader::boot();
 \Avanik\Theme::boot();
 PHP
-      - name: PHP syntax check packaged bootstrap
-        run: php -l wordpress/avanik/functions.php
+          php -l workspace/avanik/functions.php
       - name: Build WordPress theme ZIP
         run: |
           set -e
           rm -rf package
           mkdir -p package
-          cp -a wordpress/avanik package/avanik
+          cp -a workspace/avanik package/avanik
           cd package
           zip -qr ../Avanik-Travel-v0.4.0-Hosting-Release.zip avanik
           cd ..
