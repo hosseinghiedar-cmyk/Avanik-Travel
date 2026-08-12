@@ -39,8 +39,20 @@ jobs:
               bad=[n for n in names if max((len(x) for x in Path(n).parts), default=0)>120]
               if bad: raise SystemExit('Long filename component remains: '+', '.join(bad))
               if any('NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryReliabilityTrend' in n for n in names): raise SystemExit('Known overlong notification filename remains')
-          print('Package verification: PASS')
+              php_files=[n for n in names if n.endswith('.php')]
+              theme_settings=z.read('avanik/inc/ThemeSettings.php').decode('utf-8')
+              payment_settings=z.read('avanik/inc/PaymentSettings.php').decode('utf-8')
+              provider_admin=z.read('avanik/inc/ProviderAdmin.php').decode('utf-8')
+              if 'options-general.php' in theme_settings or 'add_options_page' in theme_settings: raise SystemExit('Theme settings still registered under WordPress Settings')
+              if "'تنظیمات قالب'" not in theme_settings or "'avanik-theme-settings'" not in theme_settings: raise SystemExit('Persian Avanik settings menu is missing')
+              if "'Payment Settings'" in payment_settings or "'Avanik Providers'" in provider_admin: raise SystemExit('English Avanik admin label remains')
+              print('Package verification: PASS; PHP files:', len(php_files))
           PY
+          rm -rf package-check
+          mkdir package-check
+          unzip -q dist/Avanik-Travel-v0.4.0-Hosting-Release.zip -d package-check
+          find package-check/avanik -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+          echo 'Packaged PHP syntax: PASS'
       - name: Generate checksum
         run: sha256sum dist/Avanik-Travel-v0.4.0-Hosting-Release.zip > dist/Avanik-Travel-v0.4.0-Hosting-Release.sha256
       - name: Upload workflow artifact
