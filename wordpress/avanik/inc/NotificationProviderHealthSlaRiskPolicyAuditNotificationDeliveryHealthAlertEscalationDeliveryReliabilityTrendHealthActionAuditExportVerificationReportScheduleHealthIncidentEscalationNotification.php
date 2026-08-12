@@ -8,6 +8,7 @@ final class NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHeal
 
     public static function register(): void {
         add_options_page('SLA Escalation Notification', 'SLA Escalation Notification', self::CAPABILITY, 'avanik-sla-escalation-notification', [self::class, 'render']);
+        require_once __DIR__ . '/sla_escalation_notification_delivery_health.php';
         NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryReliabilityTrendHealthActionAuditExportVerificationReportScheduleHealthIncidentEscalationNotificationDeliveryHealth::register();
     }
 
