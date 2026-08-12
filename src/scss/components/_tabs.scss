@@ -1,6 +1,0 @@
-@use "../abstracts" as *;
-
-.av-tabs{display:flex;align-items:center;gap:8px;padding:6px;border-radius:$radius-lg;background:$gray-100;overflow-x:auto}
-.av-tab{flex:0 0 auto;border:0;border-radius:$radius-md;padding:11px 20px;background:transparent;color:$gray-600;cursor:pointer;font-weight:600;transition:.2s ease}
-.av-tab:hover{color:$primary}
-.av-tab.is-active,.av-tab[aria-selected="true"]{background:$white;color:$primary;box-shadow:$shadow-sm}

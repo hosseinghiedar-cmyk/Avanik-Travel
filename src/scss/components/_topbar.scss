@@ -1,7 +1,0 @@
-@use "../abstracts" as *;
-.av-topbar{min-height:36px;border-bottom:1px solid $gray-200;background:$white;color:$gray-600;font-size:$caption}
-.av-topbar__inner{display:flex;align-items:center;justify-content:space-between;min-height:36px;gap:20px}
-.av-topbar__left,.av-topbar__right{display:flex;align-items:center;gap:18px}
-.av-topbar__link{display:inline-flex;align-items:center;gap:6px;color:$gray-600}
-.av-topbar__link:hover{color:$primary}
-@media (max-width:$mobile){.av-topbar__left{display:none}.av-topbar__inner{justify-content:center}}

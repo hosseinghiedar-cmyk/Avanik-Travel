@@ -1,5 +1,0 @@
-@use "../abstracts" as *;
-
-@media (min-width:$tablet){.only-mobile{display:none!important}}
-@media (max-width:($tablet - 1px)){.only-desktop{display:none!important}}
-@media (max-width:$mobile){.hide-mobile{display:none!important}.text-mobile-center{text-align:center}}
