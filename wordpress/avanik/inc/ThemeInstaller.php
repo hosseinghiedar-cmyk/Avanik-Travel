@@ -13,8 +13,6 @@ final class ThemeInstaller {
     if (self::$running) return;
     self::$running = true;
 
-    // WordPress may load a theme from the front-end as well as wp-admin.
-    // Database migrations belong to the theme-switch event, not every request.
     if (is_admin()) {
       $upgrade = ABSPATH . 'wp-admin/includes/upgrade.php';
       if (file_exists($upgrade)) require_once $upgrade;
@@ -40,10 +38,6 @@ final class ThemeInstaller {
       } catch (\Throwable $e) {
         error_log('[Avanik] Installer task failed: ' . $class . '::' . $method . ' — ' . $e->getMessage());
       }
-    }
-
-    if (class_exists(ThemeSetup::class)) {
-      ThemeSetup::install_demo();
     }
 
     update_option('avanik_theme_install_version', '0.4.0-safe', false);
