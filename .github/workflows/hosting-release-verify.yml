@@ -1,0 +1,50 @@
+name: Avanik Hosting Release Verify
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'wordpress/avanik/**'
+      - '.github/workflows/hosting-release-verify.yml'
+
+jobs:
+  php-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: PHP syntax check
+        run: |
+          set -e
+          find wordpress/avanik -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Verify theme metadata
+        run: |
+          grep -q '^Version: 0.4.0' wordpress/avanik/style.css
+          test -f wordpress/avanik/inc/PhaseLoader.php
+          for f in \
+            Phase203ProjectStateInventory.php \
+            Phase204ProductionSupplierIntegrationReadiness.php \
+            Phase205SupplierConnectivityProbe.php \
+            Phase206SupplierApiContractReadiness.php \
+            Phase207SupplierSandboxProviderMapping.php \
+            Phase208SupplierSandboxContractValidation.php \
+            Phase209PaymentVerificationReadiness.php \
+            Phase210PaymentGatewayVerificationProbe.php \
+            Phase211TicketVoucherIssuanceReadiness.php \
+            Phase212SecurityHardeningReadiness.php \
+            Phase213EndToEndTestReadiness.php \
+            Phase214E2ETestExecution.php \
+            Phase215LoadStressTestReadiness.php \
+            Phase216ControlledLoadStressTest.php \
+            Phase217MonitoringAlertingReadiness.php \
+            Phase218BackupRestoreReadiness.php \
+            Phase219RollbackRecoveryReadiness.php \
+            Phase220StagingDeploymentReadiness.php \
+            Phase221ReleaseCandidate.php \
+            Phase222FinalProductionReadiness.php \
+            Phase223ProductionReleaseAuthorization.php \
+            Phase224ProductionDeploymentGate.php \
+            Phase225PostDeploymentSmokeTest.php \
+            Phase226ProductionMonitoringVerification.php \
+            Phase227FinalProjectClosure.php; do
+            test -f "wordpress/avanik/inc/$f"
+          done
