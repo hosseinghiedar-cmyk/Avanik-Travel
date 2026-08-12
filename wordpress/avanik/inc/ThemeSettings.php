@@ -37,21 +37,13 @@ final class ThemeSettings {
   }
 
   public static function admin_menu(): void {
-    add_menu_page(
-      'آوانیک پرواز آسیا',
-      'آوانیک',
-      'manage_options',
-      self::MENU,
-      [self::class, 'render'],
-      'dashicons-airplane',
-      3
-    );
+    add_menu_page('آوانیک پرواز آسیا', 'آوانیک', 'manage_options', self::MENU, [self::class, 'render'], 'dashicons-airplane', 3);
     add_submenu_page(self::MENU, 'تنظیمات قالب آوانیک', 'تنظیمات قالب', 'manage_options', self::MENU, [self::class, 'render']);
     add_submenu_page(self::MENU, 'راهنمای قالب آوانیک', 'راهنمای قالب', 'manage_options', 'avanik-theme-guide', [self::class, 'guide']);
   }
 
   public static function remove_legacy_settings_menu(): void {
-    // نسخه‌های قبلی ممکن است تنظیمات آوانیک را زیر «تنظیمات» ثبت کرده باشند.
+    // نسخه‌های قبلی ممکن است تنظیمات آوانیک را در منوی تنظیمات عمومی ثبت کرده باشند.
     // فقط زیرمنوهای آوانیک حذف می‌شوند و منوی اصلی تنظیمات وردپرس دست‌نخورده می‌ماند.
     foreach (self::OLD_SLUGS as $slug) {
       remove_submenu_page('options-general.php', $slug);
@@ -116,16 +108,10 @@ final class ThemeSettings {
       <div class="av-admin-hero"><div><h1>تنظیمات قالب آوانیک</h1><p>تمام تنظیمات ظاهری و رفتاری پوسته از همین بخش مدیریت می‌شود.</p></div><img src="<?php echo esc_url($logo); ?>" alt="لوگوی آوانیک پرواز آسیا"></div>
       <form method="post" action="options.php">
         <?php settings_fields('avanik_theme_options_group'); ?>
-        <div class="av-admin-card"><h2>رنگ‌بندی آوانیک</h2><table class="form-table">
-          <?php self::field('primary','رنگ سرمه‌ای اصلی','color'); self::field('gold','رنگ طلایی آوانیک','color'); self::field('white','رنگ سفید','color'); ?>
-        </table></div>
-        <div class="av-admin-card"><h2>صفحه اصلی</h2><table class="form-table">
-          <?php self::field('hero_title','عنوان اصلی بخش Hero'); self::field('hero_subtitle','زیرعنوان بخش Hero'); self::field('phone','شماره تماس'); self::field('support','متن پشتیبانی'); ?>
-        </table></div>
-        <div class="av-admin-card"><h2>رفتار و انیمیشن</h2><table class="form-table">
-          <?php self::toggle('sticky_header','هدر چسبان','هدر هنگام اسکرول بالای صفحه باقی بماند.'); self::toggle('animations','انیمیشن‌های سبک و نرم','انیمیشن ورود کارت‌ها و Hover فعال باشد.'); self::toggle('show_tours','نمایش تورهای ویژه','کارت‌های تور در صفحه اصلی نمایش داده شوند.'); self::toggle('show_why','نمایش بخش چرا آوانیک','بخش مزیت‌های آوانیک در صفحه اصلی نمایش داده شود.'); ?>
-        </table></div>
-        <div class="av-admin-note">تنظیمات این صفحه مربوط به خود پوسته آوانیک است و در منوی عمومی «تنظیمات» وردپرس قرار نمی‌گیرد.</div>
+        <div class="av-admin-card"><h2>رنگ‌بندی آوانیک</h2><table class="form-table"><?php self::field('primary','رنگ سرمه‌ای اصلی','color'); self::field('gold','رنگ طلایی آوانیک','color'); self::field('white','رنگ سفید','color'); ?></table></div>
+        <div class="av-admin-card"><h2>صفحه اصلی</h2><table class="form-table"><?php self::field('hero_title','عنوان اصلی بخش Hero'); self::field('hero_subtitle','زیرعنوان بخش Hero'); self::field('phone','شماره تماس'); self::field('support','متن پشتیبانی'); ?></table></div>
+        <div class="av-admin-card"><h2>رفتار و انیمیشن</h2><table class="form-table"><?php self::toggle('sticky_header','هدر چسبان','هدر هنگام اسکرول بالای صفحه باقی بماند.'); self::toggle('animations','انیمیشن‌های سبک و نرم','انیمیشن ورود کارت‌ها و Hover فعال باشد.'); self::toggle('show_tours','نمایش تورهای ویژه','کارت‌های تور در صفحه اصلی نمایش داده شوند.'); self::toggle('show_why','نمایش بخش چرا آوانیک','بخش مزیت‌های آوانیک در صفحه اصلی نمایش داده شود.'); ?></table></div>
+        <div class="av-admin-note">تنظیمات این صفحه مربوط به خود پوسته آوانیک است و در منوی عمومی تنظیمات وردپرس قرار نمی‌گیرد.</div>
         <?php submit_button('ذخیره تنظیمات آوانیک','primary','submit',true,['class'=>'av-admin-submit']); ?>
       </form>
     </div>
