@@ -1,0 +1,45 @@
+name: Avanik UI Refactor Check
+on:
+  push:
+    branches:
+      - ui/refactor-eligasht-modern-v0.4.3
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  php-and-package-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: PHP syntax check
+        run: |
+          set -euo pipefail
+          find wordpress/avanik -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Validate new UI assets
+        run: |
+          test -f wordpress/avanik/assets/css/avanik-refactor.css
+          test -f wordpress/avanik/assets/js/avanik-refactor.js
+          test -f wordpress/avanik/inc/FrontAssets.php
+          grep -q "--av-hero-1" wordpress/avanik/inc/FrontAssets.php
+          grep -q "data-av-passenger-open" wordpress/avanik/assets/js/avanik-refactor.js
+          grep -q "data-jalali-date" wordpress/avanik/assets/js/avanik-refactor.js
+          grep -q "ارائه‌دهندگان" wordpress/avanik/inc/ProviderAdmin.php
+          grep -q "اعلان‌های آوانیک" wordpress/avanik/inc/NotificationDashboard.php
+      - name: Build cPanel package
+        run: python3 scripts/build-cpanel-hosting-release.py
+      - name: Validate ZIP
+        run: |
+          python3 - <<'PY'
+          import zipfile
+          from pathlib import Path
+          p=Path('dist/Avanik-Travel-v0.4.0-Hosting-Release.zip')
+          with zipfile.ZipFile(p) as z:
+              names=z.namelist()
+              required={'avanik/style.css','avanik/functions.php','avanik/front-page.php','avanik/inc/ThemeSettings.php','avanik/inc/FrontAssets.php','avanik/assets/css/avanik-refactor.css','avanik/assets/js/avanik-refactor.js','avanik/assets/images/avanik-logo.svg'}
+              missing=required-set(names)
+              assert not missing, sorted(missing)
+              bad=[n for n in names if max((len(x) for x in Path(n).parts),default=0)>120]
+              assert not bad, bad[:10]
+          print('ZIP validation: PASS')
+          PY
