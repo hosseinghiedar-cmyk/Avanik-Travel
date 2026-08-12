@@ -52,6 +52,7 @@ jobs:
       - name: Publish GitHub release asset
         env:
           GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
           TAG='v0.4.0-hosting-complete'
