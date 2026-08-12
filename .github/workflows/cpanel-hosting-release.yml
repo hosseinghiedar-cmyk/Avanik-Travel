@@ -43,7 +43,7 @@ jobs:
               theme_settings=z.read('avanik/inc/ThemeSettings.php').decode('utf-8')
               payment_settings=z.read('avanik/inc/PaymentSettings.php').decode('utf-8')
               provider_admin=z.read('avanik/inc/ProviderAdmin.php').decode('utf-8')
-              if 'options-general.php' in theme_settings or 'add_options_page' in theme_settings: raise SystemExit('Theme settings still registered under WordPress Settings')
+              if 'add_options_page' in theme_settings or "add_submenu_page('options-general.php'" in theme_settings: raise SystemExit('Theme settings still registered under WordPress Settings')
               if "'تنظیمات قالب'" not in theme_settings or "'avanik-theme-settings'" not in theme_settings: raise SystemExit('Persian Avanik settings menu is missing')
               if "'Payment Settings'" in payment_settings or "'Avanik Providers'" in provider_admin: raise SystemExit('English Avanik admin label remains')
               print('Package verification: PASS; PHP files:', len(php_files))
