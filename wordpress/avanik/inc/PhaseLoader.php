@@ -3,7 +3,7 @@ namespace Avanik;
 defined('ABSPATH') || exit;
 
 final class PhaseLoader {
-    private const PHASES = [
+    private const PHASES = array(
         203 => 'Phase203ProjectStateInventory.php',
         204 => 'Phase204ProductionSupplierIntegrationReadiness.php',
         205 => 'Phase205SupplierConnectivityProbe.php',
@@ -28,10 +28,10 @@ final class PhaseLoader {
         224 => 'Phase224ProductionDeploymentGate.php',
         225 => 'Phase225PostDeploymentSmokeTest.php',
         226 => 'Phase226ProductionMonitoringVerification.php',
-        227 => 'Phase227FinalProjectClosure.php',
-    ];
+        227 => 'Phase227FinalProjectClosure.php'
+    );
 
-    public static function boot(): void {
+    public static function boot() {
         foreach (self::PHASES as $file) {
             $path = __DIR__ . '/' . $file;
             if (is_readable($path)) {
@@ -41,26 +41,39 @@ final class PhaseLoader {
         foreach (self::PHASES as $number => $_file) {
             $class = __NAMESPACE__ . '\\Phase' . $number . self::classSuffix($number);
             if (class_exists($class) && method_exists($class, 'register')) {
-                $class::register();
+                call_user_func(array($class, 'register'));
             }
         }
     }
 
-    private static function classSuffix(int $number): string {
-        return match ($number) {
-            203 => 'ProjectStateInventory', 204 => 'ProductionSupplierIntegrationReadiness',
-            205 => 'SupplierConnectivityProbe', 206 => 'SupplierApiContractReadiness',
-            207 => 'SupplierSandboxProviderMapping', 208 => 'SupplierSandboxContractValidation',
-            209 => 'PaymentVerificationReadiness', 210 => 'PaymentGatewayVerificationProbe',
-            211 => 'TicketVoucherIssuanceReadiness', 212 => 'SecurityHardeningReadiness',
-            213 => 'EndToEndTestReadiness', 214 => 'E2ETestExecution',
-            215 => 'LoadStressTestReadiness', 216 => 'ControlledLoadStressTest',
-            217 => 'MonitoringAlertingReadiness', 218 => 'BackupRestoreReadiness',
-            219 => 'RollbackRecoveryReadiness', 220 => 'StagingDeploymentReadiness',
-            221 => 'ReleaseCandidate', 222 => 'FinalProductionReadiness',
-            223 => 'ProductionReleaseAuthorization', 224 => 'ProductionDeploymentGate',
-            225 => 'PostDeploymentSmokeTest', 226 => 'ProductionMonitoringVerification',
-            227 => 'FinalProjectClosure', default => '',
-        };
+    private static function classSuffix($number) {
+        switch ((int) $number) {
+            case 203: return 'ProjectStateInventory';
+            case 204: return 'ProductionSupplierIntegrationReadiness';
+            case 205: return 'SupplierConnectivityProbe';
+            case 206: return 'SupplierApiContractReadiness';
+            case 207: return 'SupplierSandboxProviderMapping';
+            case 208: return 'SupplierSandboxContractValidation';
+            case 209: return 'PaymentVerificationReadiness';
+            case 210: return 'PaymentGatewayVerificationProbe';
+            case 211: return 'TicketVoucherIssuanceReadiness';
+            case 212: return 'SecurityHardeningReadiness';
+            case 213: return 'EndToEndTestReadiness';
+            case 214: return 'E2ETestExecution';
+            case 215: return 'LoadStressTestReadiness';
+            case 216: return 'ControlledLoadStressTest';
+            case 217: return 'MonitoringAlertingReadiness';
+            case 218: return 'BackupRestoreReadiness';
+            case 219: return 'RollbackRecoveryReadiness';
+            case 220: return 'StagingDeploymentReadiness';
+            case 221: return 'ReleaseCandidate';
+            case 222: return 'FinalProductionReadiness';
+            case 223: return 'ProductionReleaseAuthorization';
+            case 224: return 'ProductionDeploymentGate';
+            case 225: return 'PostDeploymentSmokeTest';
+            case 226: return 'ProductionMonitoringVerification';
+            case 227: return 'FinalProjectClosure';
+            default: return '';
+        }
     }
 }
