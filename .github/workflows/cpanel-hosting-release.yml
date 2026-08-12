@@ -1,0 +1,43 @@
+name: cPanel Hosting Release
+
+on:
+  push:
+    branches:
+      - release/v0.4.0-cpanel-fixed
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-hosting-zip:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build cPanel-safe hosting package
+        run: python3 scripts/build-cpanel-hosting-release.py
+
+      - name: Verify package filenames
+        run: |
+          python3 - <<'PY'
+          import zipfile
+          from pathlib import Path
+          p=Path('dist/Avanik-Travel-v0.4.0-Hosting-Release.zip')
+          with zipfile.ZipFile(p) as z:
+              bad=[n for n in z.namelist() if max((len(x) for x in Path(n).parts), default=0) > 120]
+              if bad:
+                  print('\n'.join(bad))
+                  raise SystemExit('Long filename component remains in hosting package')
+              if not any(n == 'avanik/style.css' for n in z.namelist()):
+                  raise SystemExit('Theme root/style.css missing')
+          print('Package filename validation: PASS')
+          PY
+
+      - name: Upload hosting ZIP artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Avanik-Travel-v0.4.0-Hosting-Release
+          path: dist/Avanik-Travel-v0.4.0-Hosting-Release.zip
+          if-no-files-found: error
