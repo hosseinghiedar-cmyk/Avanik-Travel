@@ -8,7 +8,7 @@ on:
       - '.github/workflows/hosting-release-verify.yml'
 
 jobs:
-  php-lint:
+  php-lint-and-package:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -16,8 +16,9 @@ jobs:
         run: |
           set -e
           find wordpress/avanik -type f -name '*.php' -print0 | xargs -0 -n1 php -l
-      - name: Verify theme metadata
+      - name: Verify theme metadata and phase files
         run: |
+          set -e
           grep -q '^Version: 0.4.0' wordpress/avanik/style.css
           test -f wordpress/avanik/inc/PhaseLoader.php
           for f in \
@@ -48,3 +49,20 @@ jobs:
             Phase227FinalProjectClosure.php; do
             test -f "wordpress/avanik/inc/$f"
           done
+      - name: Build WordPress theme ZIP
+        run: |
+          set -e
+          rm -rf package
+          mkdir -p package
+          cp -a wordpress/avanik package/avanik
+          cd package
+          zip -qr ../Avanik-Travel-v0.4.0-Hosting-Release.zip avanik
+          cd ..
+          sha256sum Avanik-Travel-v0.4.0-Hosting-Release.zip | tee Avanik-Travel-v0.4.0-Hosting-Release.sha256
+      - name: Upload hosting release artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Avanik-Travel-v0.4.0-Hosting-Release
+          path: |
+            Avanik-Travel-v0.4.0-Hosting-Release.zip
+            Avanik-Travel-v0.4.0-Hosting-Release.sha256
