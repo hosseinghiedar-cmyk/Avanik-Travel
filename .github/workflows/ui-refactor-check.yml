@@ -9,37 +9,36 @@ permissions:
 jobs:
   php-and-package-check:
     runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: PHP syntax check
+      - name: Download release builder without checkout
         run: |
           set -euo pipefail
-          find wordpress/avanik -type f -name '*.php' -print0 | xargs -0 -n1 php -l
-      - name: Validate new UI assets
-        run: |
-          test -f wordpress/avanik/assets/css/avanik-refactor.css
-          test -f wordpress/avanik/assets/js/avanik-refactor.js
-          test -f wordpress/avanik/inc/FrontAssets.php
-          grep -q -- "--av-hero-1" wordpress/avanik/inc/FrontAssets.php
-          grep -q "data-av-passenger-open" wordpress/avanik/assets/js/avanik-refactor.js
-          grep -q "data-jalali-date" wordpress/avanik/assets/js/avanik-refactor.js
-          grep -q "ارائه‌دهندگان" wordpress/avanik/inc/ProviderAdmin.php
-          grep -q "اعلان‌های آوانیک" wordpress/avanik/inc/NotificationDashboard.php
+          mkdir -p scripts
+          curl -L --fail -H "Authorization: Bearer ${GITHUB_TOKEN}" -H "Accept: application/vnd.github.raw+json" -H "X-GitHub-Api-Version: 2022-11-28" "https://api.github.com/repos/${GITHUB_REPOSITORY}/contents/scripts/build-cpanel-hosting-release.py?ref=${GITHUB_SHA}" -o scripts/build-cpanel-hosting-release.py
       - name: Build cPanel package
         run: python3 scripts/build-cpanel-hosting-release.py
-      - name: Validate ZIP
+      - name: Validate new UI assets and PHP files from packaged theme
         run: |
+          set -euo pipefail
           python3 - <<'PY'
           import zipfile
           from pathlib import Path
+          import subprocess, tempfile
           p=Path('dist/Avanik-Travel-v0.4.0-Hosting-Release.zip')
+          required={'avanik/style.css','avanik/functions.php','avanik/front-page.php','avanik/inc/ThemeSettings.php','avanik/inc/FrontAssets.php','avanik/assets/css/avanik-refactor.css','avanik/assets/js/avanik-refactor.js','avanik/assets/images/avanik-logo.svg'}
           with zipfile.ZipFile(p) as z:
-              names=z.namelist()
-              required={'avanik/style.css','avanik/functions.php','avanik/front-page.php','avanik/inc/ThemeSettings.php','avanik/inc/FrontAssets.php','avanik/assets/css/avanik-refactor.css','avanik/assets/js/avanik-refactor.js','avanik/assets/images/avanik-logo.svg'}
-              missing=required-set(names)
+              names=z.namelist(); missing=required-set(names)
               assert not missing, sorted(missing)
               bad=[n for n in names if max((len(x) for x in Path(n).parts),default=0)>120]
               assert not bad, bad[:10]
-          print('ZIP validation: PASS')
+              assert not any('NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryReliabilityTrend' in n for n in names)
+              with tempfile.TemporaryDirectory() as td:
+                  z.extractall(td)
+                  php_files=list((Path(td)/'avanik').rglob('*.php'))
+                  for f in php_files:
+                      r=subprocess.run(['php','-l',str(f)],capture_output=True,text=True)
+                      assert r.returncode==0, (f,r.stdout,r.stderr)
+          print('ZIP + PHP validation: PASS')
           PY
