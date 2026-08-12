@@ -1,0 +1,16 @@
+{
+  "name": "Avanik Travel",
+  "version": "0.4.0",
+  "package_type": "wordpress_theme",
+  "source_directory": "wordpress/avanik",
+  "installation_target": "wp-content/themes/avanik",
+  "phase_range": "203-227",
+  "phase_loader": "inc/PhaseLoader.php",
+  "production_deployment": false,
+  "production_authorization": false,
+  "external_supplier_calls": false,
+  "external_payment_calls": false,
+  "ticket_issuance": false,
+  "verification_workflow": ".github/workflows/hosting-release-verify.yml",
+  "release_note": "Hosting-ready package boundary; runtime deployment and production evidence remain operator-controlled."
+}
