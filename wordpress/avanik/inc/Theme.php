@@ -1,6 +1,8 @@
 <?php
 namespace Avanik;
 defined('ABSPATH') || exit;
+require_once __DIR__ . '/PhaseLoader.php';
+
 final class Theme {
   public static function boot(): void {
     add_action('after_setup_theme', [Navigation::class, 'custom_logo']);
