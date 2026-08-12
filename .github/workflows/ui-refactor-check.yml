@@ -21,7 +21,7 @@ jobs:
           test -f wordpress/avanik/assets/css/avanik-refactor.css
           test -f wordpress/avanik/assets/js/avanik-refactor.js
           test -f wordpress/avanik/inc/FrontAssets.php
-          grep -q "--av-hero-1" wordpress/avanik/inc/FrontAssets.php
+          grep -q -- "--av-hero-1" wordpress/avanik/inc/FrontAssets.php
           grep -q "data-av-passenger-open" wordpress/avanik/assets/js/avanik-refactor.js
           grep -q "data-jalali-date" wordpress/avanik/assets/js/avanik-refactor.js
           grep -q "ارائه‌دهندگان" wordpress/avanik/inc/ProviderAdmin.php
