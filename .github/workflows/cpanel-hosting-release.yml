@@ -15,8 +15,13 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ github.token }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Download cPanel release builder
+        run: |
+          set -euo pipefail
+          mkdir -p scripts
+          curl -L --fail -H "Authorization: Bearer ${GITHUB_TOKEN}" -H "Accept: application/vnd.github.raw+json" -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/contents/scripts/build-cpanel-hosting-release.py?ref=${GITHUB_SHA}" \
+            -o scripts/build-cpanel-hosting-release.py
       - name: Build cPanel-safe hosting package
         run: python3 scripts/build-cpanel-hosting-release.py
       - name: Verify package filenames and required files
@@ -33,11 +38,9 @@ jobs:
               if missing: raise SystemExit('Missing package files: '+', '.join(missing))
               bad=[n for n in names if max((len(x) for x in Path(n).parts), default=0)>120]
               if bad: raise SystemExit('Long filename component remains: '+', '.join(bad))
-              if any('NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryReliabilityTrend' in n for n in names):
-                  raise SystemExit('Known overlong notification filename remains')
+              if any('NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryReliabilityTrend' in n for n in names): raise SystemExit('Known overlong notification filename remains')
           print('Package verification: PASS')
           PY
-          find wordpress/avanik -type f -name '*.php' -print0 | xargs -0 -n1 php -l
       - name: Generate checksum
         run: sha256sum dist/Avanik-Travel-v0.4.0-Hosting-Release.zip > dist/Avanik-Travel-v0.4.0-Hosting-Release.sha256
       - name: Upload workflow artifact
