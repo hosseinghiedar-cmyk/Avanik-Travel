@@ -1,24 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="520" height="150" viewBox="0 0 520 150" role="img" aria-labelledby="title desc">
-  <title id="title">آوانیک پرواز آسیا - Avanik Parvaz Asia</title>
-  <desc id="desc">لوگوی آوانیک پرواز آسیا با نشان پرواز سرمه‌ای و طلایی</desc>
-  <defs>
-    <linearGradient id="gold" x1="0" y1="1" x2="1" y2="0">
-      <stop offset="0" stop-color="#D99716"/>
-      <stop offset="1" stop-color="#F2B134"/>
-    </linearGradient>
-  </defs>
-  <g transform="translate(318 10)">
-    <path d="M36 91 C68 62 94 34 128 13 C143 4 157 2 171 4 C155 23 139 42 118 57 C94 74 67 87 36 91Z" fill="url(#gold)"/>
-    <path d="M27 103 C66 84 111 61 163 34 C181 25 197 22 210 24 C192 43 169 61 144 73 C103 93 64 102 27 103Z" fill="#072B5A"/>
-    <path d="M43 107 C80 108 115 102 151 89 C137 111 116 127 91 133 C73 137 57 129 43 107Z" fill="#072B5A"/>
-    <path d="M56 76 C74 56 92 43 113 32 C103 49 92 65 76 77 C68 83 61 82 56 76Z" fill="#FFFFFF"/>
-    <path d="M7 104 C28 89 46 70 58 50 C62 44 66 42 72 44 C64 62 54 78 42 91 C30 103 18 108 7 104Z" fill="#072B5A"/>
-    <path d="M84 15 C105 2 127 -3 148 0 C132 9 116 20 101 33 C93 28 88 22 84 15Z" fill="#F2B134"/>
-  </g>
-  <g fill="#072B5A" font-family="Tahoma, Arial, sans-serif" text-anchor="end">
-    <text x="304" y="70" font-size="40" font-weight="700" direction="rtl">آوانیک پرواز آسیا</text>
-    <text x="304" y="106" font-size="17" font-weight="700" letter-spacing="2">AVANIK PARVAZ ASIA</text>
-  </g>
-  <path d="M42 122 H302" stroke="#F2B134" stroke-width="4" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="170" viewBox="0 0 560 170" role="img" aria-labelledby="title desc">
+<title id="title">آوانیک پرواز آسیا</title><desc id="desc">نشان بال و مسیر پرواز آوانیک پرواز آسیا</desc>
+<defs><linearGradient id="g" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#D79616"/><stop offset=".55" stop-color="#F2B134"/><stop offset="1" stop-color="#FFD36B"/></linearGradient></defs>
+<g transform="translate(395 10)">
+<path d="M8 118C38 91 69 59 96 25c11-14 27-21 47-22-13 22-28 43-49 61-25 22-53 40-86 54Z" fill="url(#g)"/>
+<path d="M12 135c35-20 74-45 116-72 20-13 39-18 57-15-20 26-45 48-74 64-34 19-67 26-99 23Z" fill="#072B5A"/>
+<path d="M36 143c31 5 64 1 96-12-14 24-34 37-58 39-15 1-28-8-38-27Z" fill="#072B5A"/>
+<path d="M47 93c18-25 39-44 62-59-8 21-20 40-36 54-10 9-19 11-26 5Z" fill="#FFFFFF"/>
+<path d="M0 130c18-19 32-41 43-66 4-9 11-13 18-9-9 27-23 49-40 66-8 8-15 11-21 9Z" fill="#072B5A"/>
+</g>
+<g fill="#072B5A" font-family="Tahoma, Vazirmatn, Arial, sans-serif" text-anchor="end">
+<text x="380" y="70" font-size="39" font-weight="800" direction="rtl">آوانیک پرواز آسیا</text>
+<text x="380" y="105" font-size="16" font-weight="700" letter-spacing="2">AVANIK PARVAZ ASIA</text>
+</g>
+<path d="M52 132H378" stroke="#F2B134" stroke-width="4" stroke-linecap="round"/>
 </svg>
