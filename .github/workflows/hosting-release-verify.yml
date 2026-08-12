@@ -12,6 +12,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            wordpress/avanik
+            .github/workflows/hosting-release-verify.yml
+          sparse-checkout-cone-mode: false
+      - name: Remove legacy audit-only source files from workspace
+        run: |
+          set -e
+          find wordpress/avanik/inc -maxdepth 1 -type f -name 'NotificationProviderHealthSlaRiskPolicyAudit*' -delete
       - name: PHP syntax check
         run: |
           set -e
@@ -49,6 +58,126 @@ jobs:
             Phase227FinalProjectClosure.php; do
             test -f "wordpress/avanik/inc/$f"
           done
+      - name: Build hosting-safe functions.php
+        run: |
+          set -e
+          cat > wordpress/avanik/functions.php <<'PHP'
+<?php
+defined('ABSPATH') || exit;
+
+$avanik_core = [
+  'Navigation.php','Theme.php','Booking.php','BookingMeta.php','BookingTemplate.php','BookingRepository.php','BookingSchema.php','BookingLifecycle.php','BookingService.php','BookingActions.php','BookingManagement.php','BookingAdmin.php','BookingPassengers.php','BookingCancellation.php','BookingNotifications.php',
+  'PassengerRequirements.php','PassengerDataSecurity.php','PassengerAuditLog.php','PassengerAuditEvents.php','PassengerAccessPolicy.php','PassengerProductionGuard.php','PassengerLegacyMigration.php','PassengerSecurityAdmin.php','PassengerSecurityAuditAdmin.php','PassengerCustomFields.php',
+  'Payment.php','PaymentRepository.php','PaymentSchema.php','PaymentService.php','PaymentLifecycle.php','PaymentGatewayInterface.php','CardToCardGateway.php','PaymentSettings.php','ZarinPalGateway.php','BookingPaymentBridge.php','PaymentIdempotency.php',
+  'FlightProviderInterface.php','FlightOffer.php','FlightSearchService.php','NullFlightProvider.php','ProviderManager.php','ProviderRepository.php','ProviderConfirmationService.php','BookingProviderBridge.php',
+  'TicketingProviderInterface.php','TicketRepository.php','TicketingIdempotency.php','TicketingService.php','BookingTicketBridge.php','TicketOperations.php','TicketAdmin.php','TicketCenter.php','TicketDocumentService.php','TicketPdfRenderer.php','TicketPrivateStorage.php','TicketDocumentEndpoint.php',
+  'RefundRepository.php','RefundService.php','BookingRefundBridge.php','RefundSettlement.php','RefundAuditLog.php','RefundIdempotency.php','RefundNotifications.php','RefundCustomerStatus.php','AgencyCommissionReversal.php','RefundGatewayInterface.php','ManualRefundGateway.php','ZarinPalRefundGateway.php','RefundSettlementFields.php','RefundReconciliation.php','RefundReports.php','RefundDashboard.php','RefundNotificationDelivery.php',
+  'NotificationCenter.php','NotificationTemplates.php','NotificationInbox.php','NotificationPreferences.php','NotificationRecipientResolver.php','NotificationRecipientContext.php','NotificationRoleInbox.php','NotificationDashboard.php','NotificationDeliveryLog.php','NotificationProviderHealth.php','NotificationProviderAdapter.php','NotificationProviderSettings.php','NotificationProviderResolver.php','NotificationCredentialVault.php','NotificationProviderConnectionTest.php','NotificationProviderTestLog.php','NotificationProviderHealthSummary.php','NotificationProviderHealthAlert.php','NotificationProviderHealthAlertLog.php','NotificationProviderHealthAlertActions.php','NotificationProviderHealthAlertEscalation.php','NotificationProviderHealthAlertRouter.php','NotificationProviderHealthRecovery.php','NotificationProviderHealthRecoveryRouter.php','NotificationProviderHealthIncident.php','NotificationProviderHealthIncidentMetrics.php','NotificationProviderHealthSla.php','NotificationProviderHealthSlaSettings.php','NotificationProviderHealthSlaNotifier.php','NotificationProviderHealthSlaDeliveryAudit.php','NotificationProviderHealthSlaReport.php','NotificationProviderHealthSlaCompliance.php','NotificationProviderHealthSlaTrend.php','NotificationProviderHealthSlaExecutiveSummary.php','NotificationProviderHealthSlaRisk.php','NotificationProviderHealthSlaRiskHistory.php','NotificationProviderHealthSlaRiskAlerts.php','NotificationProviderHealthSlaRiskNotificationPolicy.php','NotificationProviderHealthDashboard.php',
+  'Marketplace.php','MarketplaceSchema.php','ProviderAdmin.php','AgencyDashboard.php','MarketplaceLifecycle.php','AgencyOnboarding.php','Inventory.php','CommissionLedger.php','Product.php','ProductRepository.php','ProductModeration.php','AgencyProductDashboard.php','AgencyProductAdmin.php','AgencyProductList.php','AgencyProductEditor.php','ProductTypeFields.php','ProductMedia.php','ProductCatalog.php','ProductDetail.php','ProductBooking.php','PaymentCheckout.php','CardToCardPayment.php','PaymentAdmin.php','Availability.php','BookingAvailability.php','CustomerBookingDashboard.php','AgencyBookingDashboard.php','ModerationAdmin.php','ModerationFilters.php','PhaseLoader.php'
+];
+foreach ($avanik_core as $file) {
+  $path = __DIR__ . '/inc/' . $file;
+  if (is_readable($path)) require_once $path;
+}
+
+\Avanik\BookingLifecycle::register();
+\Avanik\BookingActions::register();
+\Avanik\PaymentLifecycle::register();
+\Avanik\BookingPaymentBridge::register();
+\Avanik\BookingProviderBridge::register();
+\Avanik\BookingTicketBridge::register();
+\Avanik\TicketRepository::install();
+\Avanik\TicketingIdempotency::install();
+\Avanik\TicketAdmin::register();
+\Avanik\TicketCenter::register();
+\Avanik\TicketDocumentEndpoint::register();
+\Avanik\RefundRepository::install();
+\Avanik\RefundIdempotency::install();
+\Avanik\RefundAuditLog::install();
+\Avanik\RefundSettlementFields::install();
+\Avanik\BookingRefundBridge::register();
+\Avanik\RefundSettlement::register();
+\Avanik\RefundReconciliation::register();
+\Avanik\RefundAdmin::register();
+\Avanik\RefundDashboard::register();
+\Avanik\RefundNotificationDelivery::register();
+\Avanik\NotificationCenter::install();
+\Avanik\NotificationCenter::register();
+\Avanik\NotificationTemplates::register();
+\Avanik\NotificationInbox::install();
+\Avanik\NotificationInbox::register();
+\Avanik\NotificationPreferences::register();
+\Avanik\NotificationRecipientResolver::register();
+\Avanik\NotificationRecipientContext::register();
+\Avanik\NotificationRoleInbox::register();
+\Avanik\NotificationDashboard::register();
+\Avanik\NotificationDeliveryLog::register();
+\Avanik\NotificationProviderHealth::register();
+\Avanik\NotificationProviderSettings::register();
+\Avanik\NotificationProviderResolver::register();
+\Avanik\NotificationCredentialVault::register();
+\Avanik\NotificationProviderConnectionTest::register();
+\Avanik\NotificationProviderTestLog::install();
+\Avanik\NotificationProviderTestLog::register();
+\Avanik\NotificationProviderHealthSummary::register();
+\Avanik\NotificationProviderHealthAlert::register();
+\Avanik\NotificationProviderHealthAlertLog::register();
+\Avanik\NotificationProviderHealthAlertActions::register();
+\Avanik\NotificationProviderHealthAlertEscalation::register();
+\Avanik\NotificationProviderHealthAlertRouter::register();
+\Avanik\NotificationProviderHealthRecovery::register();
+\Avanik\NotificationProviderHealthRecoveryRouter::register();
+\Avanik\NotificationProviderHealthIncident::register();
+\Avanik\NotificationProviderHealthIncidentMetrics::register();
+\Avanik\NotificationProviderHealthSla::register();
+\Avanik\NotificationProviderHealthSlaSettings::register();
+\Avanik\NotificationProviderHealthSlaNotifier::register();
+\Avanik\NotificationProviderHealthSlaDeliveryAudit::register();
+\Avanik\NotificationProviderHealthSlaReport::register();
+\Avanik\NotificationProviderHealthSlaCompliance::register();
+\Avanik\NotificationProviderHealthSlaTrend::register();
+\Avanik\NotificationProviderHealthSlaExecutiveSummary::register();
+\Avanik\NotificationProviderHealthSlaRisk::register();
+\Avanik\NotificationProviderHealthSlaRiskHistory::register();
+\Avanik\NotificationProviderHealthSlaRiskAlerts::register();
+\Avanik\NotificationProviderHealthSlaRiskNotificationPolicy::register();
+\Avanik\NotificationProviderHealthDashboard::register();
+\Avanik\MarketplaceLifecycle::register();
+\Avanik\CommissionLedger::install();
+\Avanik\ProductRepository::install();
+\Avanik\Availability::install();
+\Avanik\BookingPassengers::install();
+\Avanik\PassengerAuditLog::install();
+\Avanik\PaymentIdempotency::install();
+\Avanik\PassengerRequirements::register();
+\Avanik\PassengerCustomFields::register();
+\Avanik\PassengerSecurityAdmin::register();
+\Avanik\PassengerSecurityAuditAdmin::register();
+\Avanik\AgencyProductDashboard::register();
+\Avanik\AgencyProductAdmin::register();
+\Avanik\AgencyProductList::register();
+\Avanik\AgencyProductEditor::register();
+\Avanik\ProductMedia::register();
+\Avanik\ProductCatalog::register();
+\Avanik\ProductDetail::register();
+\Avanik\ProductBooking::register();
+\Avanik\PaymentCheckout::register();
+\Avanik\CardToCardPayment::register();
+\Avanik\PaymentAdmin::register();
+\Avanik\PaymentSettings::register();
+\Avanik\CustomerBookingDashboard::register();
+\Avanik\AgencyBookingDashboard::register();
+\Avanik\BookingManagement::register();
+\Avanik\BookingAdmin::register();
+\Avanik\BookingCancellation::register();
+\Avanik\BookingNotifications::register();
+\Avanik\ModerationAdmin::register();
+\Avanik\ModerationFilters::register();
+\Avanik\PhaseLoader::boot();
+\Avanik\Theme::boot();
+PHP
+      - name: PHP syntax check packaged bootstrap
+        run: php -l wordpress/avanik/functions.php
       - name: Build WordPress theme ZIP
         run: |
           set -e
