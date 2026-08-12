@@ -14,35 +14,42 @@ jobs:
     permissions:
       contents: read
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Download release builder from this commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p scripts
+          curl -L --fail -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github.raw+json" -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/contents/scripts/build-cpanel-hosting-release.py?ref=${GITHUB_SHA}" \
+            -o scripts/build-cpanel-hosting-release.py
       - name: Build cPanel-safe package
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: python3 scripts/build-cpanel-hosting-release.py
-      - name: PHP syntax check all source files
+      - name: PHP syntax check packaged theme
         run: |
           set -euo pipefail
-          find wordpress/avanik -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+          find .hosting-build/avanik -type f -name '*.php' -print0 | xargs -0 -n1 php -l
       - name: Verify complete demo installer wiring
         run: |
           set -euo pipefail
-          grep -q "ThemeSetup.php" wordpress/avanik/functions.php
-          grep -q "ThemeSetup::register" wordpress/avanik/functions.php
-          grep -q "data-av-home-search" wordpress/avanik/front-page.php
-          grep -q "data-av-search-tab" wordpress/avanik/front-page.php
-          grep -q "destination-istanbul.svg" wordpress/avanik/front-page.php
-          grep -q "data-av-pay" wordpress/avanik/page-payment.php
-          grep -q "data-av-go" wordpress/avanik/page-hotel-details.php
-          test -s wordpress/avanik/assets/js/avanik-demo.js
-          test -s wordpress/avanik/assets/images/avanik-logo.svg
-          test -s wordpress/avanik/assets/images/avanik-hero.svg
-          if grep -R -n "HOTEL IMAGE\|HOTEL MAIN IMAGE\|ROOM IMAGE\|POOL IMAGE\|LOBBY IMAGE" wordpress/avanik --include='*.php'; then
-            echo 'Placeholder image text remains in PHP templates'
+          grep -q "ThemeSetup.php" .hosting-build/avanik/functions.php
+          grep -q "ThemeSetup::register" .hosting-build/avanik/functions.php
+          grep -q "data-av-home-search" .hosting-build/avanik/front-page.php
+          grep -q "data-av-search-tab" .hosting-build/avanik/front-page.php
+          grep -q "destination-istanbul.svg" .hosting-build/avanik/front-page.php
+          grep -q "data-av-pay" .hosting-build/avanik/page-payment.php
+          grep -q "data-av-go" .hosting-build/avanik/page-hotel-details.php
+          test -s .hosting-build/avanik/assets/js/avanik-demo.js
+          test -s .hosting-build/avanik/assets/images/avanik-logo.svg
+          test -s .hosting-build/avanik/assets/images/avanik-hero.svg
+          if grep -R -n "HOTEL IMAGE\|HOTEL MAIN IMAGE\|ROOM IMAGE\|POOL IMAGE\|LOBBY IMAGE" .hosting-build/avanik --include='*.php'; then
+            echo 'Placeholder image text remains in packaged PHP templates'
             exit 1
           fi
-          if grep -R -n 'href="#"' wordpress/avanik --include='*.php'; then
-            echo 'Dead # navigation link remains in PHP templates'
+          if grep -R -n 'href="#"' .hosting-build/avanik --include='*.php'; then
+            echo 'Dead # navigation link remains in packaged PHP templates'
             exit 1
           fi
       - name: Verify ZIP structure and cPanel filename compatibility
@@ -54,14 +61,15 @@ jobs:
           p=Path('dist/Avanik-Travel-v0.4.0-Hosting-Release.zip')
           with zipfile.ZipFile(p) as z:
               names=z.namelist()
-              assert 'avanik/style.css' in names
-              assert 'avanik/functions.php' in names
-              assert 'avanik/front-page.php' in names
-              assert 'avanik/assets/js/avanik-demo.js' in names
-              assert 'avanik/assets/images/avanik-logo.svg' in names
-              assert 'avanik/assets/images/avanik-hero.svg' in names
+              required={
+                'avanik/style.css','avanik/functions.php','avanik/front-page.php',
+                'avanik/inc/ThemeSetup.php','avanik/assets/js/avanik-demo.js',
+                'avanik/assets/images/avanik-logo.svg','avanik/assets/images/avanik-hero.svg'
+              }
+              missing=sorted(required-set(names))
+              if missing: raise SystemExit('Missing package files: '+', '.join(missing))
               bad=[n for n in names if max((len(x) for x in Path(n).parts), default=0)>120]
-              assert not bad, '\n'.join(bad)
+              if bad: raise SystemExit('Long filename component remains: '+', '.join(bad))
               assert all(not n.startswith('avanik/INSTALL-') for n in names)
               assert all(not n.startswith('avanik/RELEASE-MANIFEST') for n in names)
           print('ZIP structure + filename compatibility: PASS')
@@ -70,5 +78,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Avanik-Travel-v0.4.0-Hosting-Release
-          path: |
-            dist/Avanik-Travel-v0.4.0-Hosting-Release.zip
+          path: dist/Avanik-Travel-v0.4.0-Hosting-Release.zip
