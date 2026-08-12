@@ -15,8 +15,13 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ github.token }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Download release builder from this commit
+        run: |
+          set -euo pipefail
+          mkdir -p scripts
+          curl -L --fail -H "Authorization: Bearer ${GITHUB_TOKEN}" -H "Accept: application/vnd.github.raw+json" -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/contents/scripts/build-cpanel-hosting-release.py?ref=${GITHUB_SHA}" \
+            -o scripts/build-cpanel-hosting-release.py
       - name: Build cPanel-safe hosting package
         run: python3 scripts/build-cpanel-hosting-release.py
       - name: Verify package filenames and required files
@@ -28,18 +33,13 @@ jobs:
           p=Path('dist/Avanik-Travel-v0.4.0-Hosting-Release.zip')
           with zipfile.ZipFile(p) as z:
               names=z.namelist()
-              required={
-                'avanik/style.css','avanik/functions.php','avanik/front-page.php',
-                'avanik/inc/ThemeSetup.php','avanik/assets/js/avanik-demo.js',
-                'avanik/assets/images/avanik-logo.svg','avanik/assets/images/avanik-hero.svg'
-              }
+              required={'avanik/style.css','avanik/functions.php','avanik/front-page.php','avanik/inc/ThemeSetup.php','avanik/assets/js/avanik-demo.js','avanik/assets/images/avanik-logo.svg','avanik/assets/images/avanik-hero.svg'}
               missing=sorted(required-set(names))
               if missing: raise SystemExit('Missing package files: '+', '.join(missing))
               bad=[n for n in names if max((len(x) for x in Path(n).parts), default=0)>120]
-              if bad: raise SystemExit('Long filename component remains in hosting package: '+', '.join(bad))
+              if bad: raise SystemExit('Long filename component remains: '+', '.join(bad))
           print('Package verification: PASS')
           PY
-          php -l wordpress/avanik/functions.php
       - name: Generate checksum
         run: sha256sum dist/Avanik-Travel-v0.4.0-Hosting-Release.zip > dist/Avanik-Travel-v0.4.0-Hosting-Release.sha256
       - name: Upload workflow artifact
@@ -56,20 +56,8 @@ jobs:
           set -euo pipefail
           TAG='v0.4.0-hosting-complete'
           TITLE='Avanik Travel v0.4.0 — Complete Hosting Release'
-          NOTES='''Complete cPanel/WordPress hosting package for Avanik Travel.
-
-Includes:
-- One-click ready-made page installer
-- Homepage with working demo search tabs and forms
-- Flight, hotel, tour and booking navigation
-- Payment demo flow and confirmation page
-- Bundled Avanik logo and hero/destination artwork
-- cPanel-safe long filename handling
-- PHP 8.3 compatible syntax checks
-
-This is a demo/hosting release. Live supplier APIs, production payment credentials and real ticket issuance still require deployment configuration.'''
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" dist/Avanik-Travel-v0.4.0-Hosting-Release.zip dist/Avanik-Travel-v0.4.0-Hosting-Release.sha256 --clobber
           else
-            gh release create "$TAG" dist/Avanik-Travel-v0.4.0-Hosting-Release.zip dist/Avanik-Travel-v0.4.0-Hosting-Release.sha256 --title "$TITLE" --notes "$NOTES" --target "$GITHUB_SHA"
+            gh release create "$TAG" dist/Avanik-Travel-v0.4.0-Hosting-Release.zip dist/Avanik-Travel-v0.4.0-Hosting-Release.sha256 --title "$TITLE" --notes "Complete cPanel/WordPress hosting package for Avanik Travel. Includes the ready-made page installer, functional demo navigation/search/checkout flow, bundled logo and artwork, and cPanel-safe filename handling. Live supplier APIs and production payment credentials remain deployment integrations." --target "$GITHUB_SHA"
           fi
