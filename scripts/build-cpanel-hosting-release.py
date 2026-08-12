@@ -68,33 +68,36 @@ def main():
     BUILD.mkdir(parents=True);OUT.parent.mkdir(parents=True,exist_ok=True)
     if OUT.exists():OUT.unlink()
     archive=download_source_archive()
-    extract_root=ROOT/'.hosting-source'
-    if extract_root.exists():shutil.rmtree(extract_root)
-    extract_root.mkdir()
-    with tarfile.open(archive,'r:gz') as tar:tar.extractall(extract_root,filter='data')
-    theme_roots=list(extract_root.glob('*/wordpress/avanik'))
-    if not theme_roots:raise SystemExit('WordPress theme not found in source archive')
-    source=theme_roots[0]
-    mapping={};count=0
-    for src in source.rglob('*'):
-        if not src.is_file():continue
-        rel=src.relative_to(source);name=rel.name
-        if len(name)>MAX_COMPONENT:
-            new=f"avanik_{hashlib.sha1(str(rel).encode()).hexdigest()[:12]}{src.suffix.lower()}"
-            mapping[name]=new;rel=rel.with_name(new);count+=1
-        target=BUILD/rel;target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(src,target)
+    mapping={};count=0;source_count=0
+    with tarfile.open(archive,'r:gz') as tar:
+        for member in tar:
+            if not member.isfile():continue
+            marker='/wordpress/avanik/'
+            if marker not in member.name:continue
+            rel=member.name.split(marker,1)[1]
+            if rel in {'INSTALL-HOSTING-v0.4.0.md','RELEASE-MANIFEST-v0.4.0.json'}:continue
+            rel_path=Path(rel);name=rel_path.name
+            if len(name)>MAX_COMPONENT:
+                new=f"avanik_{hashlib.sha1(rel.encode()).hexdigest()[:12]}{rel_path.suffix.lower()}"
+                mapping[name]=new;rel_path=rel_path.with_name(new);count+=1
+            target=BUILD/rel_path;target.parent.mkdir(parents=True,exist_ok=True)
+            source=tar.extractfile(member)
+            if source is None:continue
+            target.write_bytes(source.read());source_count+=1
     for p in BUILD.rglob('*'):
         if not p.is_file():continue
         try:text=p.read_text(encoding='utf-8')
         except UnicodeDecodeError:continue
         for old,new in mapping.items():text=text.replace(old,new)
         p.write_text(text,encoding='utf-8')
-    remove_duplicate_symbols();verify_theme()
+    removed=remove_duplicate_symbols();verify_theme()
     with zipfile.ZipFile(OUT,'w',zipfile.ZIP_DEFLATED) as z:
         for p in BUILD.rglob('*'):
             if p.is_file():z.write(p,(Path('avanik')/p.relative_to(BUILD)).as_posix())
-    archive.unlink(missing_ok=True);shutil.rmtree(extract_root,ignore_errors=True)
+    archive.unlink(missing_ok=True)
     print(f'Created: {OUT}')
+    print(f'Source files copied: {source_count}')
     print(f'Long filename components shortened: {count}')
+    print(f'Duplicate symbols removed: {len(removed)}')
 
 if __name__=='__main__':main()
