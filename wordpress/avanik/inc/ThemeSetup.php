@@ -3,7 +3,7 @@ namespace Avanik;
 defined('ABSPATH') || exit;
 
 final class ThemeSetup {
-  private const VERSION = '0.4.0';
+  private const VERSION = '0.4.0-demo2';
   private const OPTION = 'avanik_demo_setup_version';
 
   public static function register(): void {
@@ -11,19 +11,22 @@ final class ThemeSetup {
   }
 
   public static function install_demo(): void {
-    if (get_option(self::OPTION) === self::VERSION) {
-      self::ensure_menu();
-      self::ensure_front_page();
-      return;
-    }
-
     $pages = [
       ['home', 'صفحه اصلی', ''],
       ['flights', 'پروازها', '', 'page-flight-search.php'],
+      ['flight-details', 'جزئیات پرواز', '', 'page-flight-details.php'],
       ['hotels', 'هتل‌ها', '', 'page-hotel-search.php'],
-      ['booking', 'تکمیل رزرو', '', 'page-booking.php'],
-      ['login', 'ورود / ثبت نام', '', 'page-login.php'],
+      ['hotel-details', 'جزئیات هتل', '', 'page-hotel-details.php'],
+      ['hotel-booking', 'رزرو هتل', '', 'page-hotel-booking.php'],
+      ['hotel-booking-review', 'بررسی رزرو هتل', '', 'page-hotel-booking-review.php'],
       ['tours', 'تورهای مسافرتی', '<p>در آوانیک می‌توانید تورهای داخلی و خارجی را جستجو و رزرو کنید.</p><div class="av-page-cards"><article><h2>تورهای داخلی</h2><p>مشهد، کیش، شیراز، اصفهان و سایر مقاصد.</p></article><article><h2>تورهای خارجی</h2><p>استانبول، دبی، آنتالیا، تفلیس و مقاصد منتخب.</p></article></div>'],
+      ['tour-details', 'جزئیات تور', '', 'page-tour-details.php'],
+      ['booking', 'تکمیل رزرو', '', 'page-booking.php'],
+      ['booking-confirmation', 'تأیید رزرو', '', 'page-booking-confirmation.php'],
+      ['payment', 'پرداخت', '', 'page-payment.php'],
+      ['dashboard', 'داشبورد من', '', 'page-dashboard.php'],
+      ['login', 'ورود', '', 'page-login.php'],
+      ['register', 'ثبت نام', '', 'page-register.php'],
       ['visa', 'خدمات ویزا', '<p>خدمات مشاوره و پیگیری ویزا برای مقاصد منتخب آوانیک.</p>'],
       ['about', 'درباره آوانیک', '<p>آوانیک یک پلتفرم خدمات سفر برای رزرو پرواز، هتل و تور است.</p>'],
       ['contact', 'تماس با ما', '<p>برای پشتیبانی رزرو و خدمات سفر با تیم آوانیک در ارتباط باشید.</p>'],
@@ -80,7 +83,8 @@ final class ThemeSetup {
       ['خدمات ویزا', 'visa'],
       ['درباره ما', 'about'],
       ['تماس با ما', 'contact'],
-      ['ورود / ثبت نام', 'login'],
+      ['داشبورد', 'dashboard'],
+      ['ورود', 'login'],
     ];
 
     $existing_items = wp_get_nav_menu_items($menu_id) ?: [];
