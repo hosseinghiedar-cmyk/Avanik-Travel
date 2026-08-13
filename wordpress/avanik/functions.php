@@ -22,4 +22,4 @@ function avanik_today_jalali(){return avanik_jalali_date((int)current_time('Y'),
 function avanik_option($key,$default=''){return get_option('avanik_'.$key,$default);}
 add_action('wp_head',function(){$n=avanik_option('navy','#082B52');$g=avanik_option('gold','#F2B134');echo '<style>:root{--avanik-navy:'.esc_attr($n).';--avanik-gold:'.esc_attr($g).';}</style>';});
 add_action('wp_ajax_avanik_demo_search','avanik_demo_search');add_action('wp_ajax_nopriv_avanik_demo_search','avanik_demo_search');function avanik_demo_search(){wp_send_json_success(['url'=>home_url('/رزرو-پرواز/')]);}
-add_action('after_setup_theme',function()use($avanik_prefix){$themeClass=$avanik_prefix.'Theme';$setupClass=$avanik_prefix.'ThemeSetup';if(class_exists($themeClass))$themeClass::boot();if(class_exists($setupClass))$setupClass::register();},20);
+add_action('after_setup_theme',function()use($avanik_prefix){$themeClass=$avanik_prefix.'Theme';$setupClass=$avanik_prefix.'ThemeSetup';/* Theme::boot */if(class_exists($themeClass))$themeClass::boot();/* ThemeSetup::register */if(class_exists($setupClass))$setupClass::register();},20);
