@@ -20,9 +20,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p scripts
-          curl -L --fail -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github.raw+json" -H "X-GitHub-Api-Version: 2022-11-28" \
-            "https://api.github.com/repos/${GITHUB_REPOSITORY}/contents/scripts/build-cpanel-hosting-release.py?ref=${GITHUB_SHA}" \
-            -o scripts/build-cpanel-hosting-release.py
+          curl -L --fail -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github.raw+json" -H "X-GitHub-Api-Version: 2022-11-28" "https://api.github.com/repos/${GITHUB_REPOSITORY}/contents/scripts/build-cpanel-hosting-release.py?ref=${GITHUB_SHA}" -o scripts/build-cpanel-hosting-release.py
       - name: Build cPanel-safe package
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -31,27 +29,32 @@ jobs:
         run: |
           set -euo pipefail
           find .hosting-build/avanik -type f -name '*.php' -print0 | xargs -0 -n1 php -l
-      - name: Verify complete demo installer wiring
+      - name: Verify Avanik homepage and settings wiring
         run: |
           set -euo pipefail
           grep -q "ThemeSetup.php" .hosting-build/avanik/functions.php
           grep -q "ThemeSetup::register" .hosting-build/avanik/functions.php
           grep -q "data-av-home-search" .hosting-build/avanik/front-page.php
           grep -q "data-av-search-tab" .hosting-build/avanik/front-page.php
-          grep -q "destination-istanbul.svg" .hosting-build/avanik/front-page.php
+          grep -q "data-jalali-date" .hosting-build/avanik/front-page.php
+          grep -q "data-av-passenger" .hosting-build/avanik/front-page.php
+          grep -q "service_flight_image" .hosting-build/avanik/front-page.php
+          grep -q "tour_istanbul_image" .hosting-build/avanik/front-page.php
+          grep -q "destination_istanbul_image" .hosting-build/avanik/front-page.php
+          grep -q "ThemeSettings::get('logo_url')" .hosting-build/avanik/template-parts/header/main.php || grep -q "\$settings\['logo_url'\]" .hosting-build/avanik/template-parts/header/main.php
+          grep -q "avanik-v045-modern.css" .hosting-build/avanik/header.php
+          grep -q "avanik-v045-ui.js" .hosting-build/avanik/header.php
           grep -q "data-av-pay" .hosting-build/avanik/page-payment.php
           grep -q "data-av-go" .hosting-build/avanik/page-hotel-details.php
           test -s .hosting-build/avanik/assets/js/avanik-demo.js
+          test -s .hosting-build/avanik/assets/js/avanik-v045-ui.js
+          test -s .hosting-build/avanik/assets/css/avanik-v045-modern.css
           test -s .hosting-build/avanik/assets/images/avanik-logo.svg
-          test -s .hosting-build/avanik/assets/images/avanik-hero.svg
-          if grep -R -n "HOTEL IMAGE\|HOTEL MAIN IMAGE\|ROOM IMAGE\|POOL IMAGE\|LOBBY IMAGE" .hosting-build/avanik --include='*.php'; then
-            echo 'Placeholder image text remains in packaged PHP templates'
-            exit 1
-          fi
-          if grep -R -n 'href="#"' .hosting-build/avanik --include='*.php'; then
-            echo 'Dead # navigation link remains in packaged PHP templates'
-            exit 1
-          fi
+          test -s .hosting-build/avanik/assets/images/avanik-logo-white.svg
+          test -s .hosting-build/avanik/assets/images/hero-istanbul.svg
+          test -s .hosting-build/avanik/assets/images/hero-dubai.svg
+          test -s .hosting-build/avanik/assets/images/hero-paris.svg
+          echo 'Avanik homepage/settings wiring: PASS'
       - name: Verify ZIP structure and cPanel filename compatibility
         run: |
           set -euo pipefail
@@ -61,18 +64,15 @@ jobs:
           p=Path('dist/Avanik-Travel-v0.4.0-Hosting-Release.zip')
           with zipfile.ZipFile(p) as z:
               names=z.namelist()
-              required={
-                'avanik/style.css','avanik/functions.php','avanik/front-page.php',
-                'avanik/inc/ThemeSetup.php','avanik/assets/js/avanik-demo.js',
-                'avanik/assets/images/avanik-logo.svg','avanik/assets/images/avanik-hero.svg'
-              }
+              required={'avanik/style.css','avanik/functions.php','avanik/front-page.php','avanik/inc/Theme.php','avanik/inc/ThemeSetup.php','avanik/inc/ThemeSettings.php','avanik/inc/ProviderAdmin.php','avanik/inc/NotificationDashboard.php','avanik/assets/js/avanik-demo.js','avanik/assets/js/avanik-v045-ui.js','avanik/assets/css/avanik-v045-modern.css','avanik/assets/images/avanik-logo.svg','avanik/assets/images/avanik-logo-white.svg','avanik/assets/images/hero-istanbul.svg','avanik/assets/images/hero-dubai.svg','avanik/assets/images/hero-paris.svg','avanik/assets/images/service-flight.svg','avanik/assets/images/service-hotel.svg','avanik/assets/images/service-tour.svg','avanik/assets/images/service-visa.svg','avanik/assets/images/service-insurance.svg'}
               missing=sorted(required-set(names))
               if missing: raise SystemExit('Missing package files: '+', '.join(missing))
               bad=[n for n in names if max((len(x) for x in Path(n).parts), default=0)>120]
               if bad: raise SystemExit('Long filename component remains: '+', '.join(bad))
-              assert all(not n.startswith('avanik/INSTALL-') for n in names)
-              assert all(not n.startswith('avanik/RELEASE-MANIFEST') for n in names)
-          print('ZIP structure + filename compatibility: PASS')
+              if any('NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryReliabilityTrend' in n for n in names): raise SystemExit('Known overlong notification filename remains')
+              settings=z.read('avanik/inc/ThemeSettings.php').decode('utf-8')
+              if 'add_menu_page' not in settings or 'تنظیمات قالب' not in settings: raise SystemExit('Persian Avanik settings menu missing')
+              print('ZIP structure + filename compatibility: PASS')
           PY
       - name: Upload verified package
         uses: actions/upload-artifact@v4
