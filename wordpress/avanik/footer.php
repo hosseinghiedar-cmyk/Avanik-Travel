@@ -1,17 +1,13 @@
-<?php
-defined('ABSPATH') || exit;
-$theme_uri=get_template_directory_uri();$o=class_exists('\\Avanik\\ThemeSettings')?\Avanik\ThemeSettings::get():[];$phone=$o['phone']??'021-12345678';$contact_url=home_url('/contact');
-?>
-</main>
-<footer class="av-footer" dir="rtl">
-  <div class="av-container av-footer__main"><div class="av-footer__grid">
-    <div class="av-footer__brand"><img src="<?php echo esc_url($o['logo_white_url']??$theme_uri.'/assets/images/avanik-logo-white.svg'); ?>" alt="آوانیک پرواز آسیا"><p>آوانیک پرواز آسیا، ارائه‌دهنده خدمات مسافرتی و گردشگری با تمرکز بر کیفیت، سرعت و تجربه بهتر سفر.</p><div class="av-footer__social"><?php foreach(['instagram'=>'اینستاگرام','telegram'=>'تلگرام','whatsapp'=>'واتساپ','linkedin'=>'لینکدین'] as $k=>$label):if(!empty($o[$k])):?><a href="<?php echo esc_url($o[$k]); ?>" target="_blank" rel="noopener" aria-label="<?php echo esc_attr($label); ?>">●</a><?php endif;endforeach; ?><a href="tel:<?php echo esc_attr(preg_replace('/[^0-9+]/','',$phone)); ?>" aria-label="تماس">☎</a></div></div>
-    <div><h3>خدمات</h3><p><a href="<?php echo esc_url(home_url('/flights')); ?>">پروازهای داخلی</a></p><p><a href="<?php echo esc_url(home_url('/flights')); ?>">پروازهای خارجی</a></p><p><a href="<?php echo esc_url(home_url('/hotels')); ?>">هتل</a></p><p><a href="<?php echo esc_url(home_url('/tours')); ?>">تورهای داخلی</a></p><p><a href="<?php echo esc_url(home_url('/tours')); ?>">تورهای خارجی</a></p></div>
-    <div><h3>لینک‌های سریع</h3><p><a href="<?php echo esc_url(home_url('/')); ?>">صفحه اصلی</a></p><p><a href="<?php echo esc_url(home_url('/about')); ?>">درباره ما</a></p><p><a href="<?php echo esc_url($contact_url); ?>">تماس با ما</a></p><p><a href="<?php echo esc_url(home_url('/dashboard')); ?>">پنل کاربری</a></p><p><a href="<?php echo esc_url($contact_url); ?>">شرایط و قوانین</a></p></div>
-    <div><h3>خبرنامه</h3><p>با عضویت در خبرنامه، آخرین اخبار و تخفیف‌ها را دریافت کنید.</p><form class="av-newsletter" onsubmit="return false"><input type="email" placeholder="ایمیل خود را وارد کنید"><button class="av-btn av-btn--primary" type="submit">عضویت</button></form></div>
+<?php if (!defined('ABSPATH')) exit; ?>
+<footer class="avanik-footer">
+  <div class="avanik-footer-main"><div class="avanik-shell avanik-footer-grid">
+    <div class="avanik-footer-brand"><img src="<?php echo esc_url(AVANIK_URI.'/assets/images/avanik-logo-white.svg'); ?>" alt="آوانیک پرواز آسیا"><p>آوانیک پرواز آسیا، ارائه‌دهنده خدمات مسافرتی و گردشگری با تجربه‌ای متفاوت، سریع و باکیفیت.</p><div class="avanik-socials">
+      <a href="<?php echo esc_url(avanik_option('instagram','#')); ?>" aria-label="Instagram">◎</a><a href="<?php echo esc_url(avanik_option('telegram','#')); ?>" aria-label="Telegram">➤</a><a href="<?php echo esc_url(avanik_option('whatsapp','#')); ?>" aria-label="WhatsApp">◉</a><a href="<?php echo esc_url(avanik_option('linkedin','#')); ?>" aria-label="LinkedIn">in</a>
+    </div></div>
+    <div><h3>خدمات</h3><a href="<?php echo esc_url(home_url('/پروازها/')); ?>">پروازهای داخلی</a><a href="<?php echo esc_url(home_url('/پروازها/')); ?>">پروازهای خارجی</a><a href="<?php echo esc_url(home_url('/تورهای-داخلی/')); ?>">تورهای داخلی</a><a href="<?php echo esc_url(home_url('/تورهای-خارجی/')); ?>">تورهای خارجی</a><a href="<?php echo esc_url(home_url('/هتل/')); ?>">هتل</a></div>
+    <div><h3>لینک‌های سریع</h3><a href="<?php echo esc_url(home_url('/')); ?>">صفحه اصلی</a><a href="<?php echo esc_url(home_url('/درباره-ما/')); ?>">درباره ما</a><a href="<?php echo esc_url(home_url('/تماس-با-ما/')); ?>">تماس با ما</a><a href="<?php echo esc_url(home_url('/سوالات-متداول/')); ?>">سوالات متداول</a><a href="<?php echo esc_url(home_url('/قوانین/')); ?>">شرایط و قوانین</a></div>
+    <div class="avanik-newsletter"><h3>خبرنامه</h3><p>با عضویت در خبرنامه، از آخرین اخبار و تخفیف‌ها مطلع شوید.</p><form><input type="email" placeholder="ایمیل خود را وارد کنید"><button type="submit">عضویت</button></form></div>
   </div></div>
-  <div class="av-footer__bottom"><div class="av-container">طراحی و توسعه: تیم آوانیک · کلیه حقوق این سایت محفوظ می‌باشد.</div></div>
+  <div class="avanik-footer-bottom"><div class="avanik-shell"><span>طراحی و توسعه: تیم آوانیک</span><span>کلیه حقوق این سایت محفوظ می‌باشد.</span></div></div>
 </footer>
-<?php wp_footer(); ?>
-</body>
-</html>
+<?php wp_footer(); ?></body></html>
