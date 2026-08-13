@@ -4,13 +4,16 @@ if (!defined('ABSPATH')) exit;
 define('AVANIK_VERSION','0.4.0');
 define('AVANIK_DIR',get_template_directory());
 define('AVANIK_URI',get_template_directory_uri());
+$avanik_prefix='Avanik'.chr(92);
 spl_autoload_register(function($class){
-    if(strpos($class,'Avanik\')!==0)return;
-    $short=substr($class,strlen('Avanik\'));
+    $prefix='Avanik'.chr(92);
+    if(strpos($class,$prefix)!==0)return;
+    $short=substr($class,strlen($prefix));
     foreach([AVANIK_DIR.'/inc/'.$short.'.php',AVANIK_DIR.'/inc/'.preg_replace('/(?<!^)([A-Z])/','-$1',$short).'.php'] as $file){if(is_file($file)){require_once $file;return;}}
 });
 require_once AVANIK_DIR.'/inc/ThemeSettings.php';
-if(class_exists('Avanik\ThemeSettings')) Avanik\ThemeSettings::boot();
+$settingsClass=$avanik_prefix.'ThemeSettings';
+if(class_exists($settingsClass)) $settingsClass::boot();
 add_action('after_setup_theme',function(){
     add_theme_support('title-tag');add_theme_support('post-thumbnails');
     add_theme_support('custom-logo',['height'=>70,'width'=>220,'flex-height'=>true,'flex-width'=>true]);
@@ -38,7 +41,8 @@ add_action('wp_head',function(){$n=avanik_option('navy','#082B52');$g=avanik_opt
 add_action('wp_ajax_avanik_demo_search','avanik_demo_search');
 add_action('wp_ajax_nopriv_avanik_demo_search','avanik_demo_search');
 function avanik_demo_search(){wp_send_json_success(['url'=>home_url('/رزرو-پرواز/')]);}
-add_action('after_setup_theme',function(){
-    if(class_exists('Avanik\Theme')) Avanik\Theme::boot();
-    if(class_exists('Avanik\ThemeSetup')) Avanik\ThemeSetup::register();
+add_action('after_setup_theme',function()use($avanik_prefix){
+    $themeClass=$avanik_prefix.'Theme';$setupClass=$avanik_prefix.'ThemeSetup';
+    if(class_exists($themeClass)) $themeClass::boot();
+    if(class_exists($setupClass)) $setupClass::register();
 },20);
