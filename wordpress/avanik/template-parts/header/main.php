@@ -2,7 +2,6 @@
 defined('ABSPATH') || exit;
 $settings=class_exists('\\Avanik\\ThemeSettings') ? \Avanik\ThemeSettings::get() : [];
 $logo=!empty($settings['logo_url'])?$settings['logo_url']:get_template_directory_uri().'/assets/images/avanik-logo.svg';
-if(str_contains((string)$logo,'avanik-logo-reference')) $logo=get_template_directory_uri().'/assets/images/avanik-logo.svg';
 $socials=[
  'instagram'=>['label'=>'اینستاگرام','icon'=>'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.4" cy="6.6" r="1"/></svg>'],
  'telegram'=>['label'=>'تلگرام','icon'=>'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4 3.8 10.7c-.8.3-.8 1.4 0 1.7l4.4 1.5 1.7 5.3c.2.7 1.1.9 1.6.4l2.5-2.5 4.8 3.5c.6.4 1.4.1 1.6-.6L23 5.4c.2-.9-.8-1.7-2-1.4Z"/><path d="m8.5 13.9 3.2-2.2 3.8-3"/></svg>'],
@@ -17,8 +16,8 @@ $socials=[
     <a class="av-header__brand" href="<?php echo esc_url(home_url('/')); ?>" aria-label="آوانیک پرواز آسیا"><img class="av-bundled-logo" src="<?php echo esc_url($logo); ?>" alt="آوانیک پرواز آسیا"></a>
     <nav class="av-navbar" aria-label="منوی اصلی"><?php wp_nav_menu(['theme_location'=>'primary','container'=>false,'menu_class'=>'av-navbar__menu','fallback_cb'=>false,'depth'=>2]); ?></nav>
     <div class="av-header__actions">
-      <?php if(!empty($settings['header_socials'])): ?><div class="av-header__socials" aria-label="شبکه‌های اجتماعی"><?php foreach($socials as $key=>$social): if(empty($settings[$key])) continue; ?><a href="<?php echo esc_url($settings[$key]); ?>" target="_blank" rel="noopener" aria-label="<?php echo esc_attr($social['label']); ?>"><?php echo $social['icon']; ?></a><?php endforeach; ?></div><?php endif; ?>
-      <a class="av-login-icon" href="<?php echo esc_url(home_url('/login')); ?>" aria-label="ورود / حساب کاربری" title="ورود / حساب کاربری"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c.8-4.1 3.5-6 8-6s7.2 1.9 8 6"/></svg></a>
+      <?php if(!empty($settings['header_socials'])): ?><div class="av-header__socials" aria-label="شبکه‌های اجتماعی"><?php foreach($socials as $key=>$social): if(empty($settings[$key])) continue; ?><a href="<?php echo esc_url($settings[$key]); ?>" target="_blank" rel="noopener noreferrer" aria-label="<?php echo esc_attr($social['label']); ?>" title="<?php echo esc_attr($social['label']); ?>"><?php echo $social['icon']; ?></a><?php endforeach; ?></div><?php endif; ?>
+      <a class="av-login-icon" href="<?php echo esc_url(wp_login_url()); ?>" aria-label="ورود به حساب کاربری" title="ورود به حساب کاربری"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c.8-4.1 3.5-6 8-6s7.2 1.9 8 6"/></svg></a>
       <button class="av-btn av-btn--primary av-header__mobile-toggle" type="button" data-av-mobile-open aria-expanded="false" aria-controls="av-mobile-menu">منو</button>
     </div>
   </div></div>
