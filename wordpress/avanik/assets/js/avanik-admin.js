@@ -1,0 +1,1 @@
+jQuery(function($){$(document).on('click','.avanik-media',function(){const target=$(this).data('target');const frame=wp.media({title:'انتخاب تصویر',button:{text:'استفاده از تصویر'},multiple:false});frame.on('select',function(){const u=frame.state().get('selection').first().toJSON().url;$('input[name="'+target+'"]').val(u)});frame.open()})});
