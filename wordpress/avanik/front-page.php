@@ -1,13 +1,17 @@
 <?php
 defined('ABSPATH') || exit;
 get_header();
-$home_url=home_url('/');$flight_url=home_url('/flights');$hotel_url=home_url('/hotels');$tour_url=home_url('/tours');$visa_url=home_url('/visa');$contact_url=home_url('/contact');$theme_uri=get_template_directory_uri();$o=\Avanik\ThemeSettings::get();
+$home_url=home_url('/');$flight_url=home_url('/flights');$hotel_url=home_url('/hotels');$tour_url=home_url('/tours');$visa_url=home_url('/visa');$contact_url=home_url('/contact');$o=\Avanik\ThemeSettings::get();
 $services=[
  ['service_flight_image','خرید بلیط هواپیما','پروازهای داخلی و خارجی با امکان مقایسه و رزرو.',$flight_url],
  ['service_hotel_image','رزرو هتل','هتل‌های داخلی و خارجی با انتخاب بر اساس قیمت و امتیاز.',$hotel_url],
  ['service_tour_image','تورهای مسافرتی','تورهای داخلی و خارجی برای مقاصد محبوب و ویژه.',$tour_url],
  ['service_visa_image','ویزای مسافرتی','اخذ ویزا با مشاوره و پیگیری مراحل درخواست.',$visa_url],
  ['service_insurance_image','بیمه مسافرتی','پوشش مناسب برای سفرهای داخلی و خارجی.',$contact_url],
+];
+$flight_dests=[
+ ['hero-istanbul.svg','تهران'],['destination-kish.svg','مشهد'],['destination-istanbul.svg','شیراز'],['hero-paris.svg','اصفهان'],
+ ['destination-dubai.svg','کیش'],['hero-dubai.svg','تبریز'],['destination-istanbul.svg','استانبول'],['destination-dubai.svg','دبی'],
 ];
 ?>
 <div class="av-home av-reference-home" dir="rtl">
@@ -48,13 +52,20 @@ $services=[
         <label class="av-field" data-av-hotel-only><span class="av-field__label">اتاق</span><span class="av-field__value"><select name="rooms"><option value="1">۱ اتاق، ۲ بزرگسال</option><option value="2">۲ اتاق، ۴ بزرگسال</option></select></span></label>
         <label class="av-field av-field--wide" data-av-tour-only><span class="av-field__label">مقصد تور</span><span class="av-field__value"><select name="tour_destination"><option>استانبول</option><option>دبی</option><option>پاریس</option><option>آنتالیا</option></select></span></label>
         <label class="av-field av-field--wide" data-av-tour-only><span class="av-field__label">تعداد مسافر</span><span class="av-field__value"><select name="tour_passengers"><option>۲ نفر</option><option>۳ نفر</option><option>۴ نفر</option></select></span></label>
-        <button class="av-btn av-btn--primary av-search-submit" id="av-search-submit" data-av-search-submit type="submit">جستجوی پرواز 🔎</button>
+        <button class="av-btn av-btn--primary av-search-submit" id="av-search-submit" data-av-search-submit type="submit">جستجو 🔎</button>
       </form>
       <div class="av-search-note">تاریخ‌ها شمسی هستند؛ هنگام ارسال فرم به تاریخ میلادی تبدیل می‌شوند. ساختار برای اتصال به API واقعی آماده است.</div>
     </div>
   </section>
 
-  <section class="av-trust-strip" aria-label="مزیت‌های رزرو آنلاین"><div class="av-container av-trust-strip__grid"><div class="av-trust-pill av-reveal"><b>✓</b><div><strong>رزرو سریع</strong><span>فرآیند ساده و کوتاه</span></div></div><div class="av-trust-pill av-reveal"><b>◇</b><div><strong>انتخاب متنوع</strong><span>پرواز، هتل و تور</span></div></div><div class="av-trust-pill av-reveal"><b>◉</b><div><strong>پرداخت امن</strong><span>آماده اتصال به درگاه</span></div></div><div class="av-trust-pill av-reveal"><b>24</b><div><strong>پشتیبانی</strong><span><?php echo esc_html($o['support']); ?></span></div></div></div></section>
+  <section class="av-reference-flight-dests av-container" aria-labelledby="av-flight-dests-title">
+    <div class="av-reference-heading"><h2 id="av-flight-dests-title">بلیط هواپیما</h2><strong>رزرو بلیط هواپیما داخلی و خارجی</strong></div>
+    <div class="av-flight-dest-grid">
+      <?php foreach($flight_dests as $i=>$d): ?><a class="av-flight-dest av-reveal" href="<?php echo esc_url($flight_url); ?>?destination=<?php echo rawurlencode($d[1]); ?>"><img src="<?php echo esc_url($theme_uri.'/assets/images/'.$d[0]); ?>" alt="بلیط هواپیما <?php echo esc_attr($d[1]); ?>" loading="lazy"><span>بلیط هواپیما <?php echo esc_html($d[1]); ?></span></a><?php endforeach; ?>
+    </div>
+  </section>
+
+  <section class="av-trust-strip" aria-label="مزیت‌های رزرو آنلاین"><div class="av-container av-trust-strip__grid"><div class="av-trust-pill av-reveal"><b>✓</b><div><strong>موجودی کامل</strong><span>انتخاب‌های متنوع برای سفر</span></div></div><div class="av-trust-pill av-reveal"><b>▣</b><div><strong>تجربه دلچسب خرید</strong><span>فرآیند ساده و سریع رزرو</span></div></div><div class="av-trust-pill av-reveal"><b>▰</b><div><strong>مشاور در مدیریت هزینه</strong><span>پیشنهادهای متناسب با بودجه</span></div></div><div class="av-trust-pill av-reveal"><b>◉</b><div><strong>پشتیبانی سفر</strong><span><?php echo esc_html($o['support']); ?></span></div></div></div></section>
 
   <section class="av-services av-container"><div class="av-section-heading"><div><span>خدمات ما</span><h2>همه خدمات سفر، یکجا</h2></div><a href="<?php echo esc_url($contact_url); ?>">مشاوره سفر ←</a></div><div class="av-service-grid"><?php foreach($services as $s): ?><a class="av-service-card av-service-card--link av-reveal" href="<?php echo esc_url($s[3]); ?>"><div class="av-service-card__image"><img src="<?php echo esc_url($o[$s[0]]); ?>" alt="<?php echo esc_attr($s[1]); ?>" loading="lazy"></div><h2 class="av-service-card__title"><?php echo esc_html($s[1]); ?></h2><p class="av-service-card__text"><?php echo esc_html($s[2]); ?></p><span class="av-service-card__link">مشاهده بیشتر ←</span></a><?php endforeach; ?></div></section>
 
