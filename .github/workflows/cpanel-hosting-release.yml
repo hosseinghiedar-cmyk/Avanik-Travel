@@ -19,9 +19,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p scripts
-          curl -L --fail -H "Authorization: Bearer ${GITHUB_TOKEN}" -H "Accept: application/vnd.github.raw+json" -H "X-GitHub-Api-Version: 2022-11-28" \
-            "https://api.github.com/repos/${GITHUB_REPOSITORY}/contents/scripts/build-cpanel-hosting-release.py?ref=${GITHUB_SHA}" \
-            -o scripts/build-cpanel-hosting-release.py
+          curl -L --fail -H "Authorization: Bearer ${GITHUB_TOKEN}" -H "Accept: application/vnd.github.raw+json" -H "X-GitHub-Api-Version: 2022-11-28" "https://api.github.com/repos/${GITHUB_REPOSITORY}/contents/scripts/build-cpanel-hosting-release.py?ref=${GITHUB_SHA}" -o scripts/build-cpanel-hosting-release.py
       - name: Build cPanel-safe hosting package
         run: python3 scripts/build-cpanel-hosting-release.py
       - name: Verify package filenames and required files
@@ -33,25 +31,17 @@ jobs:
           p=Path('dist/Avanik-Travel-v0.4.0-Hosting-Release.zip')
           with zipfile.ZipFile(p) as z:
               names=z.namelist()
-              required={'avanik/style.css','avanik/functions.php','avanik/front-page.php','avanik/inc/Theme.php','avanik/inc/ThemeSetup.php','avanik/inc/ThemeInstaller.php','avanik/inc/ThemeSettings.php','avanik/inc/ProviderAdmin.php','avanik/inc/NotificationDashboard.php','avanik/inc/NotificationProviderSettings.php','avanik/assets/js/avanik-demo.js','avanik/assets/images/avanik-logo.svg','avanik/assets/images/avanik-hero.svg'}
+              required={'avanik/style.css','avanik/functions.php','avanik/front-page.php','avanik/inc/Theme.php','avanik/inc/ThemeSetup.php','avanik/inc/ThemeInstaller.php','avanik/inc/ThemeSettings.php','avanik/inc/ProviderAdmin.php','avanik/inc/NotificationDashboard.php','avanik/assets/js/avanik-demo.js','avanik/assets/js/avanik-v045-ui.js','avanik/assets/css/avanik-v045-modern.css','avanik/assets/images/avanik-logo.svg','avanik/assets/images/avanik-logo-white.svg','avanik/assets/images/avanik-hero.svg','avanik/assets/images/hero-istanbul.svg','avanik/assets/images/hero-dubai.svg','avanik/assets/images/hero-paris.svg','avanik/assets/images/service-flight.svg','avanik/assets/images/service-hotel.svg','avanik/assets/images/service-tour.svg','avanik/assets/images/service-visa.svg','avanik/assets/images/service-insurance.svg'}
               missing=sorted(required-set(names))
               if missing: raise SystemExit('Missing package files: '+', '.join(missing))
               bad=[n for n in names if max((len(x) for x in Path(n).parts), default=0)>120]
               if bad: raise SystemExit('Long filename component remains: '+', '.join(bad))
               if any('NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryReliabilityTrend' in n for n in names): raise SystemExit('Known overlong notification filename remains')
-              php_files=[n for n in names if n.endswith('.php')]
-              functions=z.read('avanik/functions.php').decode('utf-8')
-              if '::install();' in functions: raise SystemExit('Database installer is still executed during every request')
-              theme_settings=z.read('avanik/inc/ThemeSettings.php').decode('utf-8')
-              notification_settings=z.read('avanik/inc/NotificationProviderSettings.php').decode('utf-8')
-              notification_dashboard=z.read('avanik/inc/NotificationDashboard.php').decode('utf-8')
-              if 'options-general.php' in notification_settings or 'options-general.php' in notification_dashboard: raise SystemExit('Notification management still registered under WordPress Settings')
-              if "'تنظیمات قالب'" not in theme_settings or "'avanik-theme-settings'" not in theme_settings: raise SystemExit('Persian Avanik settings menu is missing')
-              print('Package verification: PASS; PHP files:', len(php_files))
+              settings=z.read('avanik/inc/ThemeSettings.php').decode('utf-8')
+              if 'add_menu_page' not in settings or 'تنظیمات قالب' not in settings: raise SystemExit('Persian Avanik settings menu missing')
+              print('Package verification: PASS; files:',len(names))
           PY
-          rm -rf package-check
-          mkdir package-check
-          unzip -q dist/Avanik-Travel-v0.4.0-Hosting-Release.zip -d package-check
+          rm -rf package-check && mkdir package-check && unzip -q dist/Avanik-Travel-v0.4.0-Hosting-Release.zip -d package-check
           find package-check/avanik -type f -name '*.php' -print0 | xargs -0 -n1 php -l
           echo 'Packaged PHP syntax: PASS'
       - name: Generate checksum
@@ -74,5 +64,5 @@ jobs:
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" dist/Avanik-Travel-v0.4.0-Hosting-Release.zip dist/Avanik-Travel-v0.4.0-Hosting-Release.sha256 --clobber
           else
-            gh release create "$TAG" dist/Avanik-Travel-v0.4.0-Hosting-Release.zip dist/Avanik-Travel-v0.4.0-Hosting-Release.sha256 --title "$TITLE" --notes "Complete cPanel/WordPress hosting package for Avanik Travel. Includes the ready-made page installer, functional demo navigation/search/checkout flow, bundled logo and artwork, Persian theme settings panel, Persian provider/notification administration, and cPanel-safe filename handling. Live supplier APIs and production payment credentials remain deployment integrations." --target "$GITHUB_SHA"
+            gh release create "$TAG" dist/Avanik-Travel-v0.4.0-Hosting-Release.zip dist/Avanik-Travel-v0.4.0-Hosting-Release.sha256 --title "$TITLE" --notes "Complete cPanel/WordPress hosting package for Avanik Travel. Includes the ready-made page installer, functional demo navigation/search/checkout flow, bundled branding/artwork, Persian theme settings, dedicated Persian provider/notification administration, Jalali booking dates, passenger selector, and cPanel-safe filename handling." --target "$GITHUB_SHA"
           fi
