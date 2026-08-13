@@ -1,19 +1,9 @@
-<?php
-defined('ABSPATH') || exit;
-?>
-
-<form class="av-booking-form" method="post">
-  <div class="av-booking-form__field">
-    <label for="av-booking-origin">مبدأ</label>
-    <input id="av-booking-origin" name="origin" type="text" autocomplete="off">
-  </div>
-  <div class="av-booking-form__field">
-    <label for="av-booking-destination">مقصد</label>
-    <input id="av-booking-destination" name="destination" type="text" autocomplete="off">
-  </div>
-  <div class="av-booking-form__field">
-    <label for="av-booking-date">تاریخ سفر</label>
-    <input id="av-booking-date" name="travel_date" type="date">
-  </div>
-  <button class="av-btn av-btn--primary" type="submit">ادامه رزرو</button>
+<?php defined('ABSPATH')||exit; ?>
+<form class="av-booking-form" method="post" dir="rtl">
+<div class="av-booking-form__field"><label for="av-booking-origin">مبدأ</label><input id="av-booking-origin" name="origin" type="text" placeholder="شهر یا فرودگاه مبدأ" autocomplete="off"></div>
+<div class="av-booking-form__field"><label for="av-booking-destination">مقصد</label><input id="av-booking-destination" name="destination" type="text" placeholder="شهر یا فرودگاه مقصد" autocomplete="off"></div>
+<div class="av-booking-form__field"><label for="av-booking-date">تاریخ رفت</label><input id="av-booking-date" class="jalali-date" name="travel_date_display" type="text" value="<?php echo esc_attr(function_exists('avanik_today_jalali')?avanik_today_jalali():'1404/05/22'); ?>" readonly><input name="travel_date" type="hidden"></div>
+<div class="av-booking-form__field"><label for="av-booking-return">تاریخ برگشت</label><input id="av-booking-return" class="jalali-date" name="return_date_display" type="text" value="<?php echo esc_attr(function_exists('avanik_today_jalali')?avanik_today_jalali():'1404/05/22'); ?>" readonly><input name="return_date" type="hidden"></div>
+<div class="av-booking-form__field av-booking-passengers"><label>تعداد مسافر</label><div class="avanik-passenger-field"><button type="button" class="avanik-passenger-trigger"><span class="avanik-passenger-total">۱ بزرگسال</span><b>⌄</b></button><div class="avanik-passenger-popover"><div><span><strong>بزرگسال</strong><small>۱۲ سال به بالا</small></span><div><button type="button" data-pass="adult" data-step="-1">−</button><b id="adult-count">۱</b><button type="button" data-pass="adult" data-step="1">+</button></div></div><div><span><strong>کودک</strong><small>۲ تا ۱۱ سال</small></span><div><button type="button" data-pass="child" data-step="-1">−</button><b id="child-count">۰</b><button type="button" data-pass="child" data-step="1">+</button></div></div></div></div></div>
+<button class="av-btn av-btn--primary" type="submit">ادامه رزرو ←</button>
 </form>
