@@ -1,219 +1,70 @@
 <?php
-defined('ABSPATH') || exit;
-require_once __DIR__ . '/inc/Navigation.php';
-require_once __DIR__ . '/inc/Jalali.php';
-require_once __DIR__ . '/inc/AdminMenuOrganizer.php';
-\Avanik\AdminMenuOrganizer::register();
-require_once __DIR__ . '/inc/Theme.php';
-require_once __DIR__ . '/inc/ThemeSetup.php';
-require_once __DIR__ . '/inc/ThemeInstaller.php';
-\Avanik\Theme::boot();
-\Avanik\ThemeSetup::register();
-\Avanik\ThemeInstaller::register();
-require_once __DIR__ . '/inc/Booking.php';
-require_once __DIR__ . '/inc/BookingMeta.php';
-require_once __DIR__ . '/inc/BookingTemplate.php';
-require_once __DIR__ . '/inc/BookingRepository.php';
-require_once __DIR__ . '/inc/BookingSchema.php';
-require_once __DIR__ . '/inc/BookingLifecycle.php';
-require_once __DIR__ . '/inc/BookingService.php';
-require_once __DIR__ . '/inc/BookingActions.php';
-require_once __DIR__ . '/inc/BookingManagement.php';
-require_once __DIR__ . '/inc/BookingAdmin.php';
-require_once __DIR__ . '/inc/BookingPassengers.php';
-require_once __DIR__ . '/inc/BookingCancellation.php';
-require_once __DIR__ . '/inc/BookingNotifications.php';
-require_once __DIR__ . '/inc/PassengerRequirements.php';
-require_once __DIR__ . '/inc/PassengerDataSecurity.php';
-require_once __DIR__ . '/inc/PassengerAuditLog.php';
-require_once __DIR__ . '/inc/PassengerAuditEvents.php';
-require_once __DIR__ . '/inc/PassengerAccessPolicy.php';
-require_once __DIR__ . '/inc/PassengerProductionGuard.php';
-require_once __DIR__ . '/inc/PassengerLegacyMigration.php';
-require_once __DIR__ . '/inc/PassengerSecurityAdmin.php';
-require_once __DIR__ . '/inc/PassengerSecurityAuditAdmin.php';
-require_once __DIR__ . '/inc/PassengerCustomFields.php';
-require_once __DIR__ . '/inc/Payment.php';
-require_once __DIR__ . '/inc/PaymentRepository.php';
-require_once __DIR__ . '/inc/PaymentSchema.php';
-require_once __DIR__ . '/inc/PaymentService.php';
-require_once __DIR__ . '/inc/PaymentLifecycle.php';
-require_once __DIR__ . '/inc/PaymentGatewayInterface.php';
-require_once __DIR__ . '/inc/CardToCardGateway.php';
-require_once __DIR__ . '/inc/PaymentSettings.php';
-require_once __DIR__ . '/inc/ZarinPalGateway.php';
-require_once __DIR__ . '/inc/BookingPaymentBridge.php';
-require_once __DIR__ . '/inc/PaymentIdempotency.php';
-require_once __DIR__ . '/inc/FlightProviderInterface.php';
-require_once __DIR__ . '/inc/FlightOffer.php';
-require_once __DIR__ . '/inc/FlightSearchService.php';
-require_once __DIR__ . '/inc/NullFlightProvider.php';
-require_once __DIR__ . '/inc/ProviderManager.php';
-require_once __DIR__ . '/inc/ProviderRepository.php';
-require_once __DIR__ . '/inc/ProviderConfirmationService.php';
-require_once __DIR__ . '/inc/BookingProviderBridge.php';
-require_once __DIR__ . '/inc/TicketingProviderInterface.php';
-require_once __DIR__ . '/inc/TicketRepository.php';
-require_once __DIR__ . '/inc/TicketingIdempotency.php';
-require_once __DIR__ . '/inc/TicketingService.php';
-require_once __DIR__ . '/inc/BookingTicketBridge.php';
-require_once __DIR__ . '/inc/TicketOperations.php';
-require_once __DIR__ . '/inc/TicketAdmin.php';
-require_once __DIR__ . '/inc/TicketCenter.php';
-require_once __DIR__ . '/inc/TicketDocumentService.php';
-require_once __DIR__ . '/inc/TicketPdfRenderer.php';
-require_once __DIR__ . '/inc/TicketPrivateStorage.php';
-require_once __DIR__ . '/inc/TicketDocumentEndpoint.php';
-require_once __DIR__ . '/inc/RefundRepository.php';
-require_once __DIR__ . '/inc/RefundService.php';
-require_once __DIR__ . '/inc/BookingRefundBridge.php';
-require_once __DIR__ . '/inc/RefundSettlement.php';
-require_once __DIR__ . '/inc/RefundAuditLog.php';
-require_once __DIR__ . '/inc/RefundIdempotency.php';
-require_once __DIR__ . '/inc/RefundNotifications.php';
-require_once __DIR__ . '/inc/RefundCustomerStatus.php';
-require_once __DIR__ . '/inc/AgencyCommissionReversal.php';
-require_once __DIR__ . '/inc/RefundGatewayInterface.php';
-require_once __DIR__ . '/inc/ManualRefundGateway.php';
-require_once __DIR__ . '/inc/ZarinPalRefundGateway.php';
-require_once __DIR__ . '/inc/RefundSettlementFields.php';
-require_once __DIR__ . '/inc/RefundReconciliation.php';
-require_once __DIR__ . '/inc/RefundReports.php';
-require_once __DIR__ . '/inc/RefundAdmin.php';
-require_once __DIR__ . '/inc/RefundDashboard.php';
-require_once __DIR__ . '/inc/RefundNotificationDelivery.php';
-require_once __DIR__ . '/inc/NotificationCenter.php';
-require_once __DIR__ . '/inc/NotificationTemplates.php';
-require_once __DIR__ . '/inc/NotificationInbox.php';
-require_once __DIR__ . '/inc/NotificationPreferences.php';
-require_once __DIR__ . '/inc/NotificationRecipientResolver.php';
-require_once __DIR__ . '/inc/NotificationRecipientContext.php';
-require_once __DIR__ . '/inc/NotificationRoleInbox.php';
-require_once __DIR__ . '/inc/NotificationDashboard.php';
-require_once __DIR__ . '/inc/NotificationDeliveryLog.php';
-require_once __DIR__ . '/inc/NotificationProviderHealth.php';
-require_once __DIR__ . '/inc/NotificationProviderAdapter.php';
-require_once __DIR__ . '/inc/NotificationProviderSettings.php';
-require_once __DIR__ . '/inc/NotificationProviderResolver.php';
-require_once __DIR__ . '/inc/NotificationCredentialVault.php';
-require_once __DIR__ . '/inc/NotificationProviderConnectionTest.php';
-require_once __DIR__ . '/inc/NotificationProviderTestLog.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthSummary.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthAlert.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthAlertLog.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthAlertActions.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthAlertEscalation.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthAlertRouter.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthRecovery.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthRecoveryRouter.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthIncident.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthIncidentMetrics.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthSla.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthSlaSettings.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthSlaNotifier.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthSlaDeliveryAudit.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthSlaReport.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthSlaCompliance.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthSlaTrend.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthSlaExecutiveSummary.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthSlaRisk.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthSlaRiskHistory.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthSlaRiskAlerts.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthSlaRiskNotificationPolicy.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthSlaRiskNotificationPolicyAudit.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthSlaRiskNotificationPolicyAuditMonitor.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthSlaRiskPolicyAuditDashboard.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryAudit.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryMetrics.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealth.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlert.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertLog.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertSummary.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalation.php';
-require_once __DIR__ . '/inc/NotificationProviderHealthDashboard.php';
-require_once __DIR__ . '/inc/Marketplace.php';
-require_once __DIR__ . '/inc/MarketplaceSchema.php';
-require_once __DIR__ . '/inc/ProviderAdmin.php';
-require_once __DIR__ . '/inc/AgencyDashboard.php';
-require_once __DIR__ . '/inc/MarketplaceLifecycle.php';
-require_once __DIR__ . '/inc/AgencyOnboarding.php';
-require_once __DIR__ . '/inc/Inventory.php';
-require_once __DIR__ . '/inc/CommissionLedger.php';
-require_once __DIR__ . '/inc/Product.php';
-require_once __DIR__ . '/inc/ProductRepository.php';
-require_once __DIR__ . '/inc/ProductModeration.php';
-require_once __DIR__ . '/inc/AgencyProductDashboard.php';
-require_once __DIR__ . '/inc/AgencyProductAdmin.php';
-require_once __DIR__ . '/inc/AgencyProductList.php';
-require_once __DIR__ . '/inc/AgencyProductEditor.php';
-require_once __DIR__ . '/inc/ProductTypeFields.php';
-require_once __DIR__ . '/inc/ProductMedia.php';
-require_once __DIR__ . '/inc/ProductCatalog.php';
-require_once __DIR__ . '/inc/ProductDetail.php';
-require_once __DIR__ . '/inc/ProductBooking.php';
-require_once __DIR__ . '/inc/PaymentCheckout.php';
-require_once __DIR__ . '/inc/CardToCardPayment.php';
-require_once __DIR__ . '/inc/PaymentAdmin.php';
-require_once __DIR__ . '/inc/Availability.php';
-require_once __DIR__ . '/inc/BookingAvailability.php';
-require_once __DIR__ . '/inc/CustomerBookingDashboard.php';
-require_once __DIR__ . '/inc/AgencyBookingDashboard.php';
-require_once __DIR__ . '/inc/ModerationAdmin.php';
-require_once __DIR__ . '/inc/ModerationFilters.php';
-\Avanik\BookingLifecycle::register();
-\Avanik\BookingActions::register();
-\Avanik\PaymentLifecycle::register();
-\Avanik\BookingPaymentBridge::register();
-\Avanik\BookingProviderBridge::register();
-\Avanik\BookingTicketBridge::register();
-\Avanik\TicketAdmin::register();
-\Avanik\TicketCenter::register();
-\Avanik\TicketDocumentEndpoint::register();
-\Avanik\BookingRefundBridge::register();
-\Avanik\RefundSettlement::register();
-\Avanik\RefundReconciliation::register();
-\Avanik\RefundAdmin::register();
-\Avanik\RefundDashboard::register();
-\Avanik\RefundNotificationDelivery::register();
-\Avanik\NotificationCenter::register();
-\Avanik\NotificationTemplates::register();
-\Avanik\NotificationInbox::register();
-\Avanik\NotificationPreferences::register();
-\Avanik\NotificationRecipientResolver::register();
-\Avanik\NotificationRecipientContext::register();
-\Avanik\NotificationRoleInbox::register();
-\Avanik\NotificationDashboard::register();
-\Avanik\NotificationDeliveryLog::register();
-\Avanik\NotificationProviderHealth::register();
-\Avanik\NotificationProviderAdapterRegistry::register();
-\Avanik\NotificationProviderSettings::register();
-\Avanik\NotificationProviderResolver::register();
-\Avanik\NotificationCredentialVault::register();
-\Avanik\NotificationProviderConnectionTest::register();
-\Avanik\NotificationProviderTestLog::register();
-\Avanik\NotificationProviderHealthSummary::register();
-\Avanik\NotificationProviderHealthAlert::register();
-\Avanik\NotificationProviderHealthAlertLog::register();
-\Avanik\NotificationProviderHealthAlertActions::register();
-\Avanik\NotificationProviderHealthAlertEscalation::register();
-\Avanik\NotificationProviderHealthAlertRouter::register();
-\Avanik\NotificationProviderHealthRecovery::register();
-\Avanik\NotificationProviderHealthRecoveryRouter::register();
-\Avanik\NotificationProviderHealthIncident::register();
-\Avanik\NotificationProviderHealthIncidentMetrics::register();
-\Avanik\NotificationProviderHealthSla::register();
-\Avanik\NotificationProviderHealthSlaSettings::register();
-\Avanik\NotificationProviderHealthSlaNotifier::register();
-\Avanik\NotificationProviderHealthSlaDeliveryAudit::register();
-\Avanik\NotificationProviderHealthSlaReport::register();
-\Avanik\NotificationProviderHealthSlaCompliance::register();
-\Avanik\NotificationProviderHealthSlaTrend::register();
-\Avanik\NotificationProviderHealthSlaExecutiveSummary::register();
-\Avanik\NotificationProviderHealthSlaRisk::register();
-\Avanik\NotificationProviderHealthSlaRiskHistory::register();
-\Avanik\NotificationProviderHealthSlaRiskAlerts::register();
-\Avanik\NotificationProviderHealthSlaRiskNotificationPolicy::register();
-\Avanik\NotificationProviderHealthSlaRiskNotificationPolicyAuditMonitor::register();
-\Avanik\NotificationProviderHealthSlaRiskPolicyAuditDashboard::register();
-\Avanik\NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryAudit::register();
-\Avanik\NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryMetrics::register();
+/**
+ * Avanik Travel — v0.4.0 modern hosting bootstrap.
+ */
+if (!defined('ABSPATH')) exit;
+
+define('AVANIK_VERSION', '0.4.0');
+define('AVANIK_DIR', get_template_directory());
+define('AVANIK_URI', get_template_directory_uri());
+
+// Lightweight class autoloader. Existing application modules remain available
+// without requiring the entire inc directory in an unsafe order.
+spl_autoload_register(function ($class) {
+    if (strpos($class, 'Avanik\\') !== 0) return;
+    $short = substr($class, strlen('Avanik\\'));
+    $candidates = [
+        AVANIK_DIR . '/inc/' . $short . '.php',
+        AVANIK_DIR . '/inc/' . preg_replace('/(?<!^)([A-Z])/', '-$1', $short) . '.php',
+    ];
+    foreach ($candidates as $file) {
+        if (is_file($file)) { require_once $file; return; }
+    }
+});
+
+require_once AVANIK_DIR . '/inc/ThemeSettings.php';
+if (class_exists('Avanik\\ThemeSettings')) Avanik\\ThemeSettings::boot();
+
+add_action('after_setup_theme', function () {
+    add_theme_support('title-tag');
+    add_theme_support('post-thumbnails');
+    add_theme_support('custom-logo', ['height'=>70,'width'=>220,'flex-height'=>true,'flex-width'=>true]);
+    add_theme_support('html5', ['search-form','comment-form','comment-list','gallery','caption','style','script']);
+    register_nav_menus(['primary'=>'منوی اصلی آوانیک']);
+});
+
+add_action('wp_enqueue_scripts', function () {
+    wp_enqueue_style('avanik-font', 'https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap', [], null);
+    wp_enqueue_style('avanik-style', get_stylesheet_uri(), [], AVANIK_VERSION);
+    wp_enqueue_style('avanik-modern-v048', AVANIK_URI.'/assets/css/avanik-modern-v048.css', ['avanik-style'], AVANIK_VERSION);
+    wp_enqueue_script('avanik-modern-v048', AVANIK_URI.'/assets/js/avanik-modern-v048.js', [], AVANIK_VERSION, true);
+    wp_localize_script('avanik-modern-v048','AvanikData',['ajaxUrl'=>admin_url('admin-ajax.php'),'home'=>home_url('/')]);
+});
+
+// Persian/Jalali conversion for the public booking UI.
+function avanik_jalali_date($gy,$gm,$gd){
+    $g_d_m=[0,31,59,90,120,151,181,212,243,273,304,334];
+    $gy2=($gm>2)?($gy+1):$gy;
+    $days=355666+(365*$gy)+intdiv($gy2+3,4)-intdiv($gy2+99,100)+intdiv($gy2+399,400)+$gd+$g_d_m[$gm-1];
+    $jy=-1595+33*intdiv($days,12053); $days%=12053; $jy+=4*intdiv($days,1461); $days%=1461;
+    if($days>365){$jy+=intdiv($days-1,365);$days=($days-1)%365;}
+    $jm=($days<186)?1+intdiv($days,31):7+intdiv($days-186,30);
+    $jd=1+(($days<186)?($days%31):(($days-186)%30));
+    return sprintf('%04d/%02d/%02d',$jy,$jm,$jd);
+}
+function avanik_today_jalali(){ return avanik_jalali_date((int)current_time('Y'),(int)current_time('m'),(int)current_time('j')); }
+function avanik_option($key,$default=''){ return get_option('avanik_'.$key,$default); }
+
+add_action('wp_head', function(){
+    $navy=avanik_option('navy','#082B52'); $gold=avanik_option('gold','#F2B134');
+    echo '<style>:root{--avanik-navy:'.esc_attr($navy).';--avanik-gold:'.esc_attr($gold).';}</style>';
+});
+
+add_action('wp_ajax_avanik_demo_search', 'avanik_demo_search');
+add_action('wp_ajax_nopriv_avanik_demo_search', 'avanik_demo_search');
+function avanik_demo_search(){ wp_send_json_success(['url'=>home_url('/رزرو-پرواز/')]); }
+
+add_action('after_setup_theme', function(){
+    if (class_exists('Avanik\\Theme')) Avanik\\Theme::boot();
+    if (class_exists('Avanik\\ThemeSetup')) Avanik\\ThemeSetup::register();
+}, 20);
