@@ -10,7 +10,7 @@
 <header class="avanik-header avanik-header--hero" dir="rtl">
   <div class="avanik-shell avanik-nav">
     <a class="avanik-brand" href="<?php echo esc_url(home_url('/')); ?>" aria-label="آوانیک پرواز آسیا">
-      <img src="<?php echo esc_url(avanik_option('logo',AVANIK_URI.'/assets/images/avanik-logo.svg')); ?>" alt="آوانیک پرواز آسیا" decoding="async">
+      <img src="<?php echo esc_url(avanik_option('logo',AVANIK_URI.'/assets/images/avanik-logo-v041.svg')); ?>" alt="آوانیک پرواز آسیا" decoding="async">
     </a>
     <nav class="avanik-main-menu" aria-label="منوی اصلی">
       <?php if (has_nav_menu('primary')) { wp_nav_menu(['theme_location'=>'primary','container'=>false,'fallback_cb'=>false,'menu_class'=>'avanik-menu-list']); } else { ?>
