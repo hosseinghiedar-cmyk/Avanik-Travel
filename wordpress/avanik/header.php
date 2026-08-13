@@ -1,5 +1,6 @@
 <?php
 defined('ABSPATH') || exit;
+$avanik_hero=class_exists('\\Avanik\\ThemeSettings') ? (string)\Avanik\ThemeSettings::get('hero_image') : '';
 ?><!doctype html>
 <html <?php language_attributes(); ?>>
 <head>
@@ -13,6 +14,7 @@ defined('ABSPATH') || exit;
   wp_enqueue_style('avanik-v045-modern',get_template_directory_uri().'/assets/css/avanik-v045-modern.css',['avanik-refactor'],'0.4.7');
   wp_enqueue_style('avanik-reference',get_template_directory_uri().'/assets/css/avanik-reference.css',['avanik-v045-modern'],'0.4.7');
   wp_enqueue_style('avanik-v047-final',get_template_directory_uri().'/assets/css/avanik-v047-final.css',['avanik-reference'],'0.4.7');
+  if($avanik_hero!=='') wp_add_inline_style('avanik-v047-final',':root{--avanik-hero-image:url("'.esc_url($avanik_hero).'");}');
   wp_enqueue_script('avanik-refactor',get_template_directory_uri().'/assets/js/avanik-refactor.js',[],'0.4.7',true);
   wp_enqueue_script('avanik-v045-ui',get_template_directory_uri().'/assets/js/avanik-v045-ui.js',['avanik-refactor'],'0.4.7',true);
   wp_enqueue_script('avanik-demo',get_template_directory_uri().'/assets/js/avanik-demo.js',['avanik-v045-ui'],'0.4.7',true);
