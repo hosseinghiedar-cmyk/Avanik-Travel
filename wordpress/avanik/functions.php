@@ -8,8 +8,7 @@ define('AVANIK_VERSION', '0.4.0');
 define('AVANIK_DIR', get_template_directory());
 define('AVANIK_URI', get_template_directory_uri());
 
-// Lightweight class autoloader. Existing application modules remain available
-// without requiring the entire inc directory in an unsafe order.
+// ThemeSetup.php is bootstrapped through the lightweight Avanik class autoloader.
 spl_autoload_register(function ($class) {
     if (strpos($class, 'Avanik\\') !== 0) return;
     $short = substr($class, strlen('Avanik\\'));
