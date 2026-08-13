@@ -1,0 +1,37 @@
+name: Apply Avanik Modern v0.4.8
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - scripts/apply-modern-v048.py
+    branches:
+      - release/v0.4.0-hosting-complete
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Apply design package
+        run: python3 scripts/apply-modern-v048.py
+      - name: PHP syntax audit
+        run: |
+          set -e
+          find wordpress/avanik -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Commit generated theme files
+        run: |
+          git config user.name 'Avanik Release Bot'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add wordpress/avanik .github/workflows/apply-modern-v048.yml scripts/apply-modern-v048.py
+          if git diff --cached --quiet; then
+            echo 'No changes to commit.'
+          else
+            git commit -m 'Avanik v0.4.8 modern RTL design and Persian admin controls'
+            git push origin HEAD:release/v0.4.0-hosting-complete
+          fi
