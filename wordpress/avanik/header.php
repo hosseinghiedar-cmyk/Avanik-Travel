@@ -1,28 +1,28 @@
-<?php
-defined('ABSPATH') || exit;
-$avanik_hero=class_exists('\\Avanik\\ThemeSettings') ? (string)\Avanik\ThemeSettings::get('hero_image') : '';
-?><!doctype html>
-<html <?php language_attributes(); ?>>
-<head>
-  <meta charset="<?php bloginfo('charset'); ?>">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <?php
-  wp_enqueue_style('avanik-theme',get_stylesheet_uri(),[],'0.4.7');
-  wp_enqueue_style('avanik-frontend',get_template_directory_uri().'/assets/css/avanik-theme.css',['avanik-theme'],'0.4.7');
-  wp_enqueue_style('avanik-modern',get_template_directory_uri().'/assets/css/avanik-modern.css',['avanik-frontend'],'0.4.7');
-  wp_enqueue_style('avanik-refactor',get_template_directory_uri().'/assets/css/avanik-refactor.css',['avanik-modern'],'0.4.7');
-  wp_enqueue_style('avanik-v045-modern',get_template_directory_uri().'/assets/css/avanik-v045-modern.css',['avanik-refactor'],'0.4.7');
-  wp_enqueue_style('avanik-reference',get_template_directory_uri().'/assets/css/avanik-reference.css',['avanik-v045-modern'],'0.4.7');
-  wp_enqueue_style('avanik-v047-final',get_template_directory_uri().'/assets/css/avanik-v047-final.css',['avanik-reference'],'0.4.7');
-  if($avanik_hero!=='') wp_add_inline_style('avanik-v047-final',':root{--avanik-hero-image:url("'.esc_url($avanik_hero).'");}');
-  wp_enqueue_script('avanik-refactor',get_template_directory_uri().'/assets/js/avanik-refactor.js',[],'0.4.7',true);
-  wp_enqueue_script('avanik-v045-ui',get_template_directory_uri().'/assets/js/avanik-v045-ui.js',['avanik-refactor'],'0.4.7',true);
-  wp_enqueue_script('avanik-demo',get_template_directory_uri().'/assets/js/avanik-demo.js',['avanik-v045-ui'],'0.4.7',true);
-  wp_enqueue_script('avanik-modern',get_template_directory_uri().'/assets/js/avanik-modern.js',['avanik-demo'],'0.4.7',true);
-  wp_head();
-  ?>
-</head>
-<body <?php body_class('av-reference-body'); ?>>
+<?php if (!defined('ABSPATH')) exit; ?><!doctype html>
+<html <?php language_attributes(); ?> dir="rtl">
+<head><meta charset="<?php bloginfo('charset'); ?>"><meta name="viewport" content="width=device-width, initial-scale=1"></head>
+<body <?php body_class('avanik-site'); ?>>
 <?php wp_body_open(); ?>
-<?php get_template_part('template-parts/header/main'); ?>
-<main id="primary" class="av-site-main">
+<header class="avanik-header">
+  <div class="avanik-topbar"><div class="avanik-shell avanik-topbar-inner">
+    <div class="avanik-top-contact"><a href="tel:<?php echo esc_attr(avanik_option('phone','021-12345678')); ?>"><span class="avanik-icon">◔</span><?php echo esc_html(avanik_option('phone','021-12345678')); ?></a></div>
+    <a class="avanik-login-link" href="<?php echo esc_url(wp_login_url()); ?>"><span class="avanik-user-icon">♙</span>ورود / ثبت‌نام</a>
+  </div></div>
+  <div class="avanik-nav-wrap"><div class="avanik-shell avanik-nav">
+    <a class="avanik-brand" href="<?php echo esc_url(home_url('/')); ?>" aria-label="آوانیک پرواز آسیا"><img src="<?php echo esc_url(avanik_option('logo',AVANIK_URI.'/assets/images/avanik-logo.svg')); ?>" alt="آوانیک پرواز آسیا"></a>
+    <nav class="avanik-main-menu" aria-label="منوی اصلی">
+      <?php if (has_nav_menu('primary')) { wp_nav_menu(['theme_location'=>'primary','container'=>false,'fallback_cb'=>false,'menu_class'=>'avanik-menu-list']); } else { ?>
+      <ul class="avanik-menu-list">
+        <li class="current-menu-item"><a href="<?php echo esc_url(home_url('/')); ?>">صفحه اصلی</a></li>
+        <li><a href="<?php echo esc_url(home_url('/پروازها/')); ?>">پروازها</a></li>
+        <li><a href="<?php echo esc_url(home_url('/تورهای-خارجی/')); ?>">تورهای خارجی</a></li>
+        <li><a href="<?php echo esc_url(home_url('/هتل/')); ?>">هتل</a></li>
+        <li><a href="<?php echo esc_url(home_url('/ویزای-مسافرتی/')); ?>">ویزای مسافرتی</a></li>
+        <li><a href="<?php echo esc_url(home_url('/بلاگ/')); ?>">بلاگ</a></li>
+        <li><a href="<?php echo esc_url(home_url('/درباره-ما/')); ?>">درباره ما</a></li>
+        <li><a href="<?php echo esc_url(home_url('/تماس-با-ما/')); ?>">تماس با ما</a></li>
+      </ul><?php } ?>
+    </nav>
+    <button class="avanik-mobile-toggle" type="button" aria-label="باز کردن منو">☰</button>
+  </div></div>
+</header>
