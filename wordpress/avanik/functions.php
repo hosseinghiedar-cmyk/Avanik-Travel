@@ -1,4 +1,5 @@
 <?php
+/* Theme.php / ThemeSetup::register are loaded through the Avanik bootstrap below. */
 if (!defined('ABSPATH')) exit;
 define('AVANIK_VERSION','0.4.0');
 define('AVANIK_DIR',get_template_directory());
