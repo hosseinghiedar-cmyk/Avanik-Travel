@@ -5,8 +5,11 @@
 <?php wp_body_open(); ?>
 <header class="avanik-header">
   <div class="avanik-topbar"><div class="avanik-shell avanik-topbar-inner">
-    <div class="avanik-top-contact"><a href="tel:<?php echo esc_attr(avanik_option('phone','021-12345678')); ?>"><span class="avanik-icon">◔</span><?php echo esc_html(avanik_option('phone','021-12345678')); ?></a></div>
-    <a class="avanik-login-link" href="<?php echo esc_url(wp_login_url()); ?>"><span class="avanik-user-icon">♙</span>ورود / ثبت‌نام</a>
+    <div class="avanik-top-contact"><a href="tel:<?php echo esc_attr(avanik_option('phone','021-12345678')); ?>"><span class="avanik-icon">☎</span><?php echo esc_html(avanik_option('phone','021-12345678')); ?></a></div>
+    <div class="avanik-header-socials">
+      <?php foreach([['instagram','اینستاگرام','◎'],['telegram','تلگرام','➤'],['whatsapp','واتساپ','◔'],['linkedin','لینکدین','in'],['youtube','یوتیوب','▶']] as $s): $url=avanik_option($s[0],'#'); if($url): ?><a href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener" aria-label="<?php echo esc_attr($s[1]); ?>"><?php echo esc_html($s[2]); ?></a><?php endif; endforeach; ?>
+    </div>
+    <a class="avanik-login-link" href="<?php echo esc_url(wp_login_url()); ?>" aria-label="ورود / ثبت نام"><span class="avanik-user-icon">♙</span></a>
   </div></div>
   <div class="avanik-nav-wrap"><div class="avanik-shell avanik-nav">
     <a class="avanik-brand" href="<?php echo esc_url(home_url('/')); ?>" aria-label="آوانیک پرواز آسیا"><img src="<?php echo esc_url(avanik_option('logo',AVANIK_URI.'/assets/images/avanik-logo.svg')); ?>" alt="آوانیک پرواز آسیا"></a>
