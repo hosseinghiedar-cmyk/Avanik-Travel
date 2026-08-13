@@ -4,7 +4,7 @@ defined('ABSPATH') || exit;
 
 final class AdminMenuOrganizer {
   public static function register(): void {
-    add_action('admin_menu',[self::class,'organize'],999);
+    add_action('admin_menu',[self::class,'organize'],9999);
     add_filter('gettext',[self::class,'translate_admin_text'],20,3);
   }
 
@@ -12,6 +12,8 @@ final class AdminMenuOrganizer {
     if (!current_user_can('manage_options')) return;
     global $menu,$submenu;
 
+    // Avanik gets its own Persian top-level areas; provider/notification tools never live under Settings.
+    if (!isset($menu)) $menu=[];
     $provider_exists=false;$notification_exists=false;
     foreach((array)$menu as $item){
       if(($item[2]??'')==='avanik-providers')$provider_exists=true;
@@ -19,6 +21,17 @@ final class AdminMenuOrganizer {
     }
     if(!$provider_exists) add_menu_page('پروایدرهای آوانیک','پروایدرها','manage_options','avanik-providers',[ProviderAdmin::class,'render'],'dashicons-networking',26);
     if(!$notification_exists) add_menu_page('اعلان‌های آوانیک','اعلان‌ها','manage_options','avanik-notifications',[NotificationCenter::class,'page'],'dashicons-bell',27);
+
+    // Remove the old theme/provider/notification entries from Settings, including legacy slugs.
+    $legacy=['avanik-theme-settings','avanik_theme_settings','avanik-notifications','avanik-providers'];
+    foreach($legacy as $slug) remove_submenu_page('options-general.php',$slug);
+    foreach((array)($submenu['options-general.php']??[]) as $entry){
+      $slug=strtolower((string)($entry[2]??''));
+      $label=strtolower((string)($entry[0]??''));
+      if(strpos($slug,'avanik')!==false || strpos($label,'provider')!==false || strpos($label,'notification')!==false || strpos($label,'اعلان')!==false || strpos($label,'پروایدر')!==false){
+        remove_submenu_page('options-general.php',(string)($entry[2]??''));
+      }
+    }
 
     foreach($menu as &$item){
       if(($item[2]??'')==='avanik-providers')$item[0]='پروایدرها';
@@ -65,7 +78,7 @@ final class AdminMenuOrganizer {
     if(!is_admin()) return $translated;
     $map=[
       'Avanik Notifications'=>'مرکز اعلان‌های آوانیک','Avanik Notification Dashboard'=>'داشبورد اعلان‌های آوانیک','Notification Dashboard'=>'داشبورد اعلان‌ها','Notification Providers'=>'پروایدرهای اعلان','Notification Templates'=>'قالب‌های اعلان','Provider Credentials'=>'اعتبارنامه پروایدرها','Provider Test Log'=>'گزارش تست پروایدرها','Provider Health'=>'سلامت پروایدرها','Provider Health SLA'=>'تنظیمات SLA پروایدرها','Provider Health SLA Compliance'=>'رعایت SLA پروایدرها','Notification Delivery Analytics'=>'گزارش تحویل اعلان','Delivery Analytics'=>'گزارش تحویل','Avanik Notification Delivery Analytics'=>'گزارش تحویل اعلان‌های آوانیک',
-      'Channel'=>'کانال','Enabled'=>'فعال','Customer'=>'مشتری','Agency'=>'آژانس','Admin'=>'مدیر','Event'=>'رویداد','Role'=>'نقش','User'=>'کاربر','Status'=>'وضعیت','Attempts'=>'تلاش‌ها','Updated'=>'آخرین تغییر','Action'=>'عملیات','Apply'=>'اعمال فیلتر','Save'=>'ذخیره','Save Templates'=>'ذخیره قالب‌ها','Retry'=>'تلاش مجدد','Queue'=>'صف اعلان‌ها','Provider'=>'پروایدر','Providers'=>'پروایدرها','Credentials'=>'اعتبارنامه‌ها','Result'=>'نتیجه','Code'=>'کد','Duration'=>'مدت','Date'=>'تاریخ','Time'=>'زمان','Total'=>'کل','Sent'=>'ارسال‌شده','Failed/Dead'=>'ناموفق / نهایی','Success Rate'=>'نرخ موفقیت','By Channel'=>'بر اساس کانال','By Event'=>'بر اساس رویداد','Recent Delivery History'=>'تاریخچه اخیر تحویل','Alert History'=>'تاریخچه هشدارها','Message'=>'پیام','Severity'=>'شدت','Incident'=>'رخداد','Incidents'=>'رخدادها','SLA Checks'=>'بررسی‌های SLA','Breaches'=>'نقض‌ها','Compliance'=>'رعایت','Resolution'=>'رفع','Downtime'=>'قطعی','Period'=>'بازه زمانی','Days'=>'روزها','Filter'=>'فیلتر','English'=>'متن انگلیسی','Settings'=>'تنظیمات','Analytics'=>'تحلیل','Health'=>'سلامت','Dashboard'=>'داشبورد','Delivery'=>'تحویل','Test Log'=>'گزارش تست','Credentials'=>'اعتبارنامه','Policy'=>'سیاست','Metrics'=>'شاخص‌ها','Trend'=>'روند','Audit'=>'ممیزی','Payment Verification'=>'بررسی پرداخت','Payment Settings'=>'تنظیمات پرداخت','Bookings'=>'رزروها','OK'=>'موفق','FAILED'=>'ناموفق','No data'=>'داده‌ای وجود ندارد','No provider data available.'=>'اطلاعاتی برای پروایدرها وجود ندارد.','Save Templates'=>'ذخیره قالب‌ها','Provider Health SLA Compliance'=>'رعایت SLA پروایدرها'
+      'Channel'=>'کانال','Enabled'=>'فعال','Customer'=>'مشتری','Agency'=>'آژانس','Admin'=>'مدیر','Event'=>'رویداد','Role'=>'نقش','User'=>'کاربر','Status'=>'وضعیت','Attempts'=>'تلاش‌ها','Updated'=>'آخرین تغییر','Action'=>'عملیات','Apply'=>'اعمال فیلتر','Save'=>'ذخیره','Save Templates'=>'ذخیره قالب‌ها','Retry'=>'تلاش مجدد','Queue'=>'صف اعلان‌ها','Provider'=>'پروایدر','Providers'=>'پروایدرها','Credentials'=>'اعتبارنامه‌ها','Result'=>'نتیجه','Code'=>'کد','Duration'=>'مدت','Date'=>'تاریخ','Time'=>'زمان','Total'=>'کل','Sent'=>'ارسال‌شده','Failed/Dead'=>'ناموفق / نهایی','Success Rate'=>'نرخ موفقیت','By Channel'=>'بر اساس کانال','By Event'=>'بر اساس رویداد','Recent Delivery History'=>'تاریخچه اخیر تحویل','Alert History'=>'تاریخچه هشدارها','Message'=>'پیام','Severity'=>'شدت','Incident'=>'رخداد','Incidents'=>'رخدادها','SLA Checks'=>'بررسی‌های SLA','Breaches'=>'نقض‌ها','Compliance'=>'رعایت','Resolution'=>'رفع','Downtime'=>'قطعی','Period'=>'بازه زمانی','Days'=>'روزها','Filter'=>'فیلتر','English'=>'متن انگلیسی','Settings'=>'تنظیمات','Analytics'=>'تحلیل','Health'=>'سلامت','Dashboard'=>'داشبورد','Delivery'=>'تحویل','Test Log'=>'گزارش تست','Credentials'=>'اعتبارنامه','Policy'=>'سیاست','Metrics'=>'شاخص‌ها','Trend'=>'روند','Audit'=>'ممیزی','Payment Verification'=>'بررسی پرداخت','Payment Settings'=>'تنظیمات پرداخت','Bookings'=>'رزروها','OK'=>'موفق','FAILED'=>'ناموفق','No data'=>'داده‌ای وجود ندارد','No provider data available.'=>'اطلاعاتی برای پروایدرها وجود ندارد.'
     ];
     return $map[$text]??$translated;
   }
