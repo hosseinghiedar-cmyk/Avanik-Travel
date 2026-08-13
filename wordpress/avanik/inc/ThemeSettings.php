@@ -1,91 +1,48 @@
 <?php
 namespace Avanik;
-defined('ABSPATH') || exit;
-
+if (!defined('ABSPATH')) exit;
 final class ThemeSettings {
-  private const OPTION='avanik_theme_options';
-  public static function register(): void {
-    add_action('admin_menu',[self::class,'admin_menu']);
-    add_action('admin_init',[self::class,'register_settings']);
-    add_action('admin_enqueue_scripts',[self::class,'admin_assets']);
-    add_action('wp_head',[self::class,'frontend_css'],30);
-    add_filter('body_class',[self::class,'body_class']);
-  }
-  public static function defaults(): array {
-    $uri=get_template_directory_uri();
-    return [
-      'primary'=>'#072B5A','gold'=>'#F2B134','white'=>'#FFFFFF','text'=>'#14243A',
-      'hero_title'=>'پرواز به استانبول','hero_subtitle'=>'با بهترین قیمت و خدمات ویژه',
-      'phone'=>'021-12345678','support'=>'پشتیبانی ۲۴ ساعته',
-      'logo_url'=>$uri.'/assets/images/avanik-logo.svg','logo_white_url'=>$uri.'/assets/images/avanik-logo-white.svg',
-      'hero_image'=>$uri.'/assets/images/hero-istanbul.svg','hero_image_2'=>$uri.'/assets/images/hero-dubai.svg','hero_image_3'=>$uri.'/assets/images/hero-paris.svg','hero_interval'=>6,
-      'service_flight_image'=>$uri.'/assets/images/service-flight.svg','service_hotel_image'=>$uri.'/assets/images/service-hotel.svg','service_tour_image'=>$uri.'/assets/images/service-tour.svg','service_visa_image'=>$uri.'/assets/images/service-visa.svg','service_insurance_image'=>$uri.'/assets/images/service-insurance.svg',
-      'tour_istanbul_image'=>$uri.'/assets/images/destination-istanbul.svg','tour_dubai_image'=>$uri.'/assets/images/destination-dubai.svg','tour_paris_image'=>$uri.'/assets/images/hero-paris.svg','tour_antalya_image'=>$uri.'/assets/images/destination-kish.svg',
-      'destination_istanbul_image'=>$uri.'/assets/images/destination-istanbul.svg','destination_dubai_image'=>$uri.'/assets/images/destination-dubai.svg','destination_kish_image'=>$uri.'/assets/images/destination-kish.svg',
-      'sticky_header'=>1,'animations'=>1,'show_tours'=>1,'show_why'=>1,'show_airlines'=>1,
-      'instagram'=>'','telegram'=>'','whatsapp'=>'','linkedin'=>'','x'=>'','header_socials'=>1,
-    ];
-  }
-  public static function get(string $key='') {
-    $options=wp_parse_args((array)get_option(self::OPTION,[]),self::defaults());
-    return $key===''?$options:($options[$key]??null);
-  }
-  public static function admin_menu(): void {
-    add_menu_page('آوانیک','آوانیک','manage_options','avanik-theme-settings',[self::class,'render'],'dashicons-airplane',3);
-    add_submenu_page('avanik-theme-settings','تنظیمات قالب آوانیک','تنظیمات قالب','manage_options','avanik-theme-settings',[self::class,'render']);
-    add_submenu_page('avanik-theme-settings','راهنمای قالب آوانیک','راهنمای قالب','manage_options','avanik-theme-guide',[self::class,'guide']);
-  }
-  public static function register_settings(): void {
-    register_setting('avanik_theme_options_group',self::OPTION,['type'=>'array','sanitize_callback'=>[self::class,'sanitize'],'default'=>self::defaults()]);
-  }
-  public static function admin_assets(string $hook): void {
-    if(strpos($hook,'avanik-theme-settings')===false && strpos($hook,'avanik-theme-guide')===false)return;
-    wp_enqueue_media();wp_enqueue_script('jquery');
-    $script=<<<'JS'
-jQuery(function($){$('.av-media-button').on('click',function(e){e.preventDefault();var b=$(this),t=$(b.data('target'));var f=wp.media({title:'انتخاب تصویر آوانیک',button:{text:'استفاده از تصویر'},multiple:false});f.on('select',function(){var a=f.state().get('selection').first().toJSON();t.val(a.url).trigger('change');});f.open();});});
-JS;
-    wp_add_inline_script('jquery',$script);
-  }
-  public static function sanitize($input): array {
-    $d=self::defaults();$input=is_array($input)?$input:[];$out=$d;
-    foreach(['primary','gold','white','text'] as $key){$c=isset($input[$key])?sanitize_hex_color($input[$key]):null;if($c)$out[$key]=$c;}
-    foreach(['hero_title','hero_subtitle','phone','support'] as $key){if(isset($input[$key]))$out[$key]=sanitize_text_field($input[$key]);}
-    foreach(['logo_url','logo_white_url','hero_image','hero_image_2','hero_image_3','service_flight_image','service_hotel_image','service_tour_image','service_visa_image','service_insurance_image','tour_istanbul_image','tour_dubai_image','tour_paris_image','tour_antalya_image','destination_istanbul_image','destination_dubai_image','destination_kish_image','instagram','telegram','whatsapp','linkedin','x'] as $key){if(isset($input[$key]))$out[$key]=esc_url_raw($input[$key]);}
-    $out['hero_interval']=max(3,min(20,absint($input['hero_interval']??6)));
-    foreach(['sticky_header','animations','show_tours','show_why','show_airlines','header_socials'] as $key)$out[$key]=empty($input[$key])?0:1;
-    return $out;
-  }
-  private static function field(string $name,string $label,string $type='text',string $help=''): void {
-    $value=esc_attr((string)self::get($name));echo '<tr><th scope="row"><label for="avanik_'.$name.'">'.esc_html($label).'</label></th><td>';
-    if($type==='color')echo '<input id="avanik_'.$name.'" name="avanik_theme_options['.$name.']" type="color" value="'.$value.'" class="av-admin-color"><code class="av-admin-color-code">'.$value.'</code>';
-    elseif($type==='url')echo '<div class="av-media-row"><input id="avanik_'.$name.'" name="avanik_theme_options['.$name.']" type="url" value="'.$value.'" class="regular-text code"><button class="button av-media-button" data-target="#avanik_'.$name.'">انتخاب از رسانه</button></div>';
-    elseif($type==='number')echo '<input id="avanik_'.$name.'" name="avanik_theme_options['.$name.']" type="number" min="3" max="20" value="'.$value.'" class="small-text">';
-    else echo '<input id="avanik_'.$name.'" name="avanik_theme_options['.$name.']" type="text" value="'.$value.'" class="regular-text">';
-    if($help)echo '<p class="description">'.esc_html($help).'</p>';echo '</td></tr>';
-  }
-  private static function toggle(string $name,string $label,string $help=''): void {echo '<tr><th scope="row">'.esc_html($label).'</th><td><label class="av-admin-switch"><input type="checkbox" name="avanik_theme_options['.$name.']" value="1" '.checked((int)self::get($name),1,false).'><span></span></label>';if($help)echo '<p class="description">'.esc_html($help).'</p>';echo '</td></tr>';}
-  private static function image_grid(array $fields): void {echo '<div class="av-admin-media-grid">';foreach($fields as $name=>$label){echo '<div class="av-admin-media-card"><strong>'.esc_html($label).'</strong>';self::field($name,'','url');echo '</div>';}echo '</div>';}
-  public static function render(): void {
-    if(!current_user_can('manage_options'))return;$logo=self::get('logo_url');
-    ?>
-    <div class="wrap av-admin-wrap" dir="rtl"><style>
-      .av-admin-wrap{max-width:1180px}.av-admin-hero{background:linear-gradient(135deg,#061f42,#0b4b87);color:#fff;border-radius:22px;padding:24px 30px;margin:20px 0;display:flex;align-items:center;justify-content:space-between;gap:24px;box-shadow:0 18px 45px rgba(7,43,90,.16)}.av-admin-hero img{width:250px;height:82px;object-fit:contain;background:rgba(255,255,255,.08);border-radius:14px;padding:8px}.av-admin-hero h1{color:#fff;margin:0 0 6px;font-size:28px}.av-admin-hero p{margin:0;opacity:.85}.av-admin-card{background:#fff;border:1px solid #e4e9ef;border-radius:18px;padding:24px;margin:18px 0;box-shadow:0 8px 28px rgba(15,35,60,.06)}.av-admin-card h2{margin-top:0;color:#072B5A;border-bottom:2px solid #F2B134;padding-bottom:10px}.av-admin-card th{width:250px;text-align:right}.av-admin-card td,.av-admin-card th{padding:15px 10px}.av-admin-color{width:70px!important;height:42px!important;padding:3px!important}.av-admin-color-code{margin-right:10px}.av-media-row{display:flex;gap:8px;align-items:center}.av-admin-switch{display:inline-flex;align-items:center}.av-admin-switch input{display:none}.av-admin-switch span{width:52px;height:28px;background:#c9d1dc;border-radius:30px;display:inline-block;position:relative;cursor:pointer}.av-admin-switch span:after{content:"";width:22px;height:22px;background:#fff;border-radius:50%;position:absolute;top:3px;right:3px;transition:.2s;box-shadow:0 2px 5px #0002}.av-admin-switch input:checked+span{background:#F2B134}.av-admin-switch input:checked+span:after{right:27px}.av-admin-submit{background:#072B5A!important;border-color:#072B5A!important;padding:8px 28px!important}.av-admin-note{border-right:4px solid #F2B134;background:#fff9ed;padding:14px 18px;border-radius:10px;margin-top:18px}.av-admin-socials{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.av-admin-socials label{display:flex;flex-direction:column;gap:6px;font-weight:700}.av-admin-socials input{width:100%;padding:8px}.av-admin-list{line-height:2}.av-admin-media-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.av-admin-media-card{border:1px solid #e5e9ef;border-radius:14px;padding:14px;background:#fbfcfe}.av-admin-media-card>strong{display:block;margin-bottom:8px;color:#072B5A}.av-admin-media-card tr{display:block}.av-admin-media-card th{display:none}.av-admin-media-card td{display:block;padding:0}.av-admin-media-card .regular-text{max-width:100%}@media(max-width:800px){.av-admin-media-grid,.av-admin-socials{grid-template-columns:1fr}.av-admin-hero{flex-direction:column;align-items:flex-start}.av-admin-hero img{width:210px}}
-    </style>
-      <div class="av-admin-hero"><div><h1>مرکز مدیریت قالب آوانیک</h1><p>تمام تنظیمات ظاهری سایت، بدون ورود به تنظیمات عمومی وردپرس.</p></div><img src="<?php echo esc_url($logo); ?>" alt="آوانیک پرواز آسیا"></div>
-      <form method="post" action="options.php"><?php settings_fields('avanik_theme_options_group'); ?>
-        <div class="av-admin-card"><h2>هویت بصری</h2><table class="form-table"><?php self::field('primary','رنگ سرمه‌ای اصلی','color');self::field('gold','رنگ طلایی آوانیک','color');self::field('white','رنگ سفید','color');self::field('text','رنگ متن','color'); ?></table></div>
-        <div class="av-admin-card"><h2>لوگو و اسلایدر اصلی</h2><table class="form-table"><?php self::field('logo_url','لوگوی اصلی','url');self::field('logo_white_url','لوگوی سفید','url');self::field('hero_image','تصویر اسلاید اول','url');self::field('hero_image_2','تصویر اسلاید دوم','url');self::field('hero_image_3','تصویر اسلاید سوم','url');self::field('hero_interval','زمان تعویض اسلاید (ثانیه)','number'); ?></table></div>
-        <div class="av-admin-card"><h2>تصاویر خدمات صفحه اصلی</h2><?php self::image_grid(['service_flight_image'=>'خرید بلیط هواپیما','service_hotel_image'=>'رزرو هتل','service_tour_image'=>'تورهای مسافرتی','service_visa_image'=>'ویزای مسافرتی','service_insurance_image'=>'بیمه مسافرتی']); ?></div>
-        <div class="av-admin-card"><h2>تصاویر تورهای ویژه</h2><?php self::image_grid(['tour_istanbul_image'=>'تور استانبول','tour_dubai_image'=>'تور دبی','tour_paris_image'=>'تور پاریس','tour_antalya_image'=>'تور آنتالیا']); ?></div>
-        <div class="av-admin-card"><h2>تصاویر مقاصد محبوب</h2><?php self::image_grid(['destination_istanbul_image'=>'استانبول','destination_dubai_image'=>'دبی','destination_kish_image'=>'کیش']); ?></div>
-        <div class="av-admin-card"><h2>محتوای اصلی</h2><table class="form-table"><?php self::field('hero_title','عنوان اصلی Hero');self::field('hero_subtitle','زیرعنوان Hero');self::field('phone','شماره تماس');self::field('support','متن پشتیبانی'); ?></table></div>
-        <div class="av-admin-card"><h2>شبکه‌های اجتماعی Header</h2><?php self::toggle('header_socials','نمایش شبکه‌های اجتماعی در Header'); ?><div class="av-admin-socials"><?php foreach(['instagram'=>'اینستاگرام','telegram'=>'تلگرام','whatsapp'=>'واتساپ','linkedin'=>'لینکدین','x'=>'ایکس'] as $k=>$l){echo '<label>'.esc_html($l).'<input type="url" name="avanik_theme_options['.$k.']" value="'.esc_attr((string)self::get($k)).'" placeholder="https://..."></label>';} ?></div></div>
-        <div class="av-admin-card"><h2>نمایش و انیمیشن</h2><table class="form-table"><?php self::toggle('sticky_header','هدر چسبان');self::toggle('animations','انیمیشن‌های سبک');self::toggle('show_tours','نمایش تورهای ویژه');self::toggle('show_why','نمایش بخش چرا آوانیک');self::toggle('show_airlines','نمایش ایرلاین‌ها'); ?></table></div>
-        <div class="av-admin-note">مدیریت «ارائه‌دهندگان» و «اعلان‌ها» از تنظیمات قالب جدا شده و در منوهای مستقل آوانیک قرار دارد.</div><?php submit_button('ذخیره تغییرات آوانیک','primary','submit',true,['class'=>'av-admin-submit']); ?>
-      </form>
-    </div><?php
-  }
-  public static function guide(): void {if(!current_user_can('manage_options'))return;echo '<div class="wrap av-admin-wrap" dir="rtl"><h1>راهنمای قالب آوانیک</h1><div class="av-admin-card"><h2>راهنمای سریع</h2><ol class="av-admin-list"><li>از «آوانیک ← تنظیمات قالب» رنگ، لوگو، اسلایدر و تصاویر صفحه اصلی را مدیریت کنید.</li><li>تاریخ‌های رزرو در ظاهر سایت شمسی هستند و هنگام ارسال فرم به تاریخ میلادی تبدیل می‌شوند.</li><li>تعداد مسافر شامل بزرگسال، کودک و سن هر کودک است.</li><li>ارائه‌دهندگان و اعلان‌ها در منوهای مستقل آوانیک قرار دارند.</li></ol></div></div>';}
-  public static function body_class(array $classes): array {if((int)self::get('sticky_header')===1)$classes[]='av-sticky-header-enabled';if((int)self::get('animations')===1)$classes[]='av-animations-enabled';return $classes;}
-  public static function frontend_css(): void {if(is_admin())return;$o=self::get();printf('<style>:root{--av-primary:%1$s;--av-primary-dark:%1$s;--av-accent:%2$s;--av-white:%3$s;--av-text:%4$s;}</style>',esc_attr($o['primary']),esc_attr($o['gold']),esc_attr($o['white']),esc_attr($o['text']));}
+    public static function boot(): void {
+        add_action('admin_menu',[self::class,'menus'],9);
+        add_action('admin_init',[self::class,'register']);
+        add_action('admin_enqueue_scripts',[self::class,'assets']);
+    }
+    public static function register(): void {
+        $keys=['navy','gold','phone','instagram','telegram','whatsapp','linkedin','logo','hero'];
+        foreach($keys as $key) register_setting('avanik_theme_options','avanik_'.$key,['sanitize_callback'=>'sanitize_text_field']);
+    }
+    public static function assets($hook): void {
+        if(strpos($hook,'avanik')===false) return;
+        wp_enqueue_media();
+        wp_enqueue_style('avanik-admin',get_template_directory_uri().'/assets/css/avanik-admin.css',['dashicons'],'0.4.0');
+        wp_enqueue_script('avanik-admin',get_template_directory_uri().'/assets/js/avanik-admin.js',['jquery'],'0.4.0',true);
+    }
+    public static function menus(): void {
+        add_menu_page('آوانیک پرواز آسیا','آوانیک','manage_options','avanik-dashboard',[self::class,'dashboard'],'dashicons-airplane',3);
+        add_submenu_page('avanik-dashboard','تنظیمات قالب','تنظیمات قالب','manage_options','avanik-settings',[self::class,'settings']);
+        add_menu_page('ارائه‌دهندگان','ارائه‌دهندگان','manage_options','avanik-providers',[self::class,'providers'],'dashicons-networking',4);
+        add_menu_page('اعلان‌ها','اعلان‌ها','manage_options','avanik-notifications',[self::class,'notifications'],'dashicons-bell',5);
+    }
+    private static function shell($title,$content): void { echo '<div class="wrap avanik-admin-wrap" dir="rtl"><h1>'.esc_html($title).'</h1><div class="avanik-admin-card">'.$content.'</div></div>'; }
+    public static function dashboard(): void { self::shell('آوانیک پرواز آسیا','<p>پنل اختصاصی مدیریت قالب آوانیک. از منوی <b>تنظیمات قالب</b> ظاهر سایت را مدیریت کنید.</p>'); }
+    public static function settings(): void {
+        $fields=[
+            ['navy','رنگ سرمه‌ای','#082B52'],['gold','رنگ طلایی','#F2B134'],['phone','شماره تماس','021-12345678'],
+            ['instagram','لینک اینستاگرام','#'],['telegram','لینک تلگرام','#'],['whatsapp','لینک واتساپ','#'],['linkedin','لینک لینکدین','#'],
+            ['logo','آدرس لوگو',get_template_directory_uri().'/assets/images/avanik-logo.svg'],['hero','آدرس تصویر اسلایدر/هرو',get_template_directory_uri().'/assets/images/hero-istanbul.svg']
+        ];
+        $html='<form method="post" action="options.php">'; ob_start(); settings_fields('avanik_theme_options'); $html.=ob_get_clean();
+        foreach($fields as $f){
+            $v=get_option('avanik_'.$f[0],$f[2]); $type=in_array($f[0],['navy','gold'])?'color':'text';
+            $html.='<div class="avanik-field"><label>'.esc_html($f[1]).'</label><input class="avanik-setting-input" name="avanik_'.esc_attr($f[0]).'" value="'.esc_attr($v).'" type="'.$type.'">'.(in_array($f[0],['logo','hero'])?'<button type="button" class="button avanik-media" data-target="avanik_'.esc_attr($f[0]).'">انتخاب تصویر</button>':'').'</div>';
+        }
+        $html.='<p><button class="button button-primary button-hero" type="submit">ذخیره تنظیمات قالب</button></p></form>';
+        self::shell('تنظیمات قالب آوانیک',$html);
+    }
+    public static function providers(): void {
+        self::shell('ارائه‌دهندگان','<p>مدیریت ارائه‌دهندگان خدمات سفر در این صفحه مستقل از «تنظیمات قالب» انجام می‌شود.</p><table class="widefat striped"><thead><tr><th>ارائه‌دهنده</th><th>نوع سرویس</th><th>وضعیت</th></tr></thead><tbody><tr><td>پرواز</td><td>Flight</td><td><span class="avanik-status">آماده اتصال</span></td></tr><tr><td>هتل</td><td>Hotel</td><td><span class="avanik-status">آماده اتصال</span></td></tr><tr><td>تور</td><td>Tour</td><td><span class="avanik-status">آماده اتصال</span></td></tr></tbody></table>');
+    }
+    public static function notifications(): void {
+        self::shell('اعلان‌ها','<p>مدیریت اعلان‌ها، رخدادها و وضعیت سلامت سرویس‌ها در این بخش مستقل انجام می‌شود.</p><div class="notice notice-info inline"><p>فعلاً اعلان فعالی ثبت نشده است.</p></div>');
+    }
 }
