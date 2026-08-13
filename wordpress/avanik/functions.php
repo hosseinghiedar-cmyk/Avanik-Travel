@@ -1,5 +1,5 @@
 <?php
-/** Avanik Travel v0.4.0 modern hosting bootstrap. Theme.php and ThemeSetup.php are loaded by the Avanik autoloader. */
+/** Avanik Travel v0.4.0 modern hosting bootstrap. Theme.php and ThemeSetup.php are loaded by the Avanik autoloader. Theme::boot and ThemeSetup::register remain the application bootstrap entry points. */
 if (!defined('ABSPATH')) exit;
 define('AVANIK_VERSION','0.4.0');
 define('AVANIK_DIR',get_template_directory());
