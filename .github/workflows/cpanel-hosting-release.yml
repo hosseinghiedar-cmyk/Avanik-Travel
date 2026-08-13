@@ -3,7 +3,7 @@ name: cPanel Hosting Release
 on:
   push:
     branches:
-      - release/v0.4.0-hosting-complete
+      - release/v0.4.1-design-refinement
   workflow_dispatch:
 
 permissions:
@@ -31,7 +31,7 @@ jobs:
           p=Path('dist/Avanik-Travel-v0.4.0-Hosting-Release.zip')
           with zipfile.ZipFile(p) as z:
               names=z.namelist()
-              required={'avanik/style.css','avanik/functions.php','avanik/front-page.php','avanik/inc/Theme.php','avanik/inc/ThemeSetup.php','avanik/inc/ThemeInstaller.php','avanik/inc/ThemeSettings.php','avanik/inc/ProviderAdmin.php','avanik/inc/NotificationDashboard.php','avanik/assets/js/avanik-demo.js','avanik/assets/js/avanik-v045-ui.js','avanik/assets/css/avanik-v045-modern.css','avanik/assets/images/avanik-logo.svg','avanik/assets/images/avanik-logo-white.svg','avanik/assets/images/avanik-hero.svg','avanik/assets/images/hero-istanbul.svg','avanik/assets/images/hero-dubai.svg','avanik/assets/images/hero-paris.svg','avanik/assets/images/service-flight.svg','avanik/assets/images/service-hotel.svg','avanik/assets/images/service-tour.svg','avanik/assets/images/service-visa.svg','avanik/assets/images/service-insurance.svg'}
+              required={'avanik/style.css','avanik/functions.php','avanik/front-page.php','avanik/inc/Theme.php','avanik/inc/ThemeSetup.php','avanik/inc/ThemeInstaller.php','avanik/inc/ThemeSettings.php','avanik/inc/ProviderAdmin.php','avanik/inc/NotificationDashboard.php','avanik/assets/js/avanik-demo.js','avanik/assets/js/avanik-v045-ui.js','avanik/assets/js/avanik-reference-v041.js','avanik/assets/css/avanik-v045-modern.css','avanik/assets/css/avanik-reference-v041.css','avanik/assets/images/avanik-logo.svg','avanik/assets/images/avanik-logo-white.svg','avanik/assets/images/avanik-hero.svg','avanik/assets/images/hero-istanbul.svg','avanik/assets/images/hero-dubai.svg','avanik/assets/images/hero-paris.svg','avanik/assets/images/service-flight.svg','avanik/assets/images/service-hotel.svg','avanik/assets/images/service-tour.svg','avanik/assets/images/service-visa.svg','avanik/assets/images/service-insurance.svg'}
               missing=sorted(required-set(names))
               if missing: raise SystemExit('Missing package files: '+', '.join(missing))
               bad=[n for n in names if max((len(x) for x in Path(n).parts), default=0)>120]
@@ -39,6 +39,9 @@ jobs:
               if any('NotificationProviderHealthSlaRiskPolicyAuditNotificationDeliveryHealthAlertEscalationDeliveryReliabilityTrend' in n for n in names): raise SystemExit('Known overlong notification filename remains')
               settings=z.read('avanik/inc/ThemeSettings.php').decode('utf-8')
               if 'add_menu_page' not in settings or 'تنظیمات قالب' not in settings: raise SystemExit('Persian Avanik settings menu missing')
+              front=z.read('avanik/front-page.php').decode('utf-8')
+              for marker in ['avanik-hero','avanik-search-card','avanik-passenger-field','hero_eyebrow']:
+                  if marker not in front: raise SystemExit('Missing reference UI marker: '+marker)
               print('Package verification: PASS; files:',len(names))
           PY
           rm -rf package-check && mkdir package-check && unzip -q dist/Avanik-Travel-v0.4.0-Hosting-Release.zip -d package-check
@@ -64,5 +67,5 @@ jobs:
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" dist/Avanik-Travel-v0.4.0-Hosting-Release.zip dist/Avanik-Travel-v0.4.0-Hosting-Release.sha256 --clobber
           else
-            gh release create "$TAG" dist/Avanik-Travel-v0.4.0-Hosting-Release.zip dist/Avanik-Travel-v0.4.0-Hosting-Release.sha256 --title "$TITLE" --notes "Complete cPanel/WordPress hosting package for Avanik Travel. Includes the ready-made page installer, functional demo navigation/search/checkout flow, bundled branding/artwork, Persian theme settings, dedicated Persian provider/notification administration, Jalali booking dates, passenger selector, and cPanel-safe filename handling." --target "$GITHUB_SHA"
+            gh release create "$TAG" dist/Avanik-Travel-v0.4.0-Hosting-Release.zip dist/Avanik-Travel-v0.4.0-Hosting-Release.sha256 --title "$TITLE" --notes "Complete cPanel/WordPress hosting package for Avanik Travel. Includes the ready-made page installer, reference header/hero/search design, functional passenger selector, bundled branding/artwork, Persian theme settings, dedicated Persian provider/notification administration, Jalali booking dates, and cPanel-safe filename handling." --target "$GITHUB_SHA"
           fi
