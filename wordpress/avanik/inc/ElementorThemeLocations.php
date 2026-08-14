@@ -4,13 +4,17 @@ if (!defined('ABSPATH')) exit;
 
 /**
  * Elementor Pro Theme Builder integration.
- * If Elementor Pro is active, Header and Footer templates can replace the
- * legacy PHP header/footer. Without Pro, the normal theme files remain intact.
+ * Elementor Pro can own the global Header and Footer while the legacy
+ * templates remain a safe fallback when no Theme Builder template exists.
  */
 final class ElementorThemeLocations {
+    private static bool $header_rendered = false;
+    private static bool $footer_rendered = false;
+
     public static function boot(): void {
         add_action('elementor/theme/register_locations', [self::class, 'register_locations']);
-        add_action('wp_enqueue_scripts', [self::class, 'frontend_assets'], 30);
+        add_action('wp_body_open', [self::class, 'render_header_at_body_open'], 1);
+        add_action('wp_footer', [self::class, 'render_footer_at_wp_footer'], 1);
     }
 
     public static function register_locations($manager): void {
@@ -18,22 +22,21 @@ final class ElementorThemeLocations {
         $manager->register_all_core_location();
     }
 
-    public static function has_elementor_location(string $location): bool {
-        return function_exists('elementor_theme_do_location') && elementor_theme_do_location($location);
+    public static function render_header_at_body_open(): void {
+        if (!function_exists('elementor_theme_do_location')) return;
+        if (self::$header_rendered) return;
+        self::$header_rendered = (bool) elementor_theme_do_location('header');
+        if (self::$header_rendered) {
+            echo '<style id="avanik-elementor-header-override">.avanik-site > .avanik-header,.avanik-site > .avanik-login-modal{display:none!important}</style>';
+        }
     }
 
-    public static function render_header(): bool {
-        if (!function_exists('elementor_theme_do_location')) return false;
-        return (bool) elementor_theme_do_location('header');
-    }
-
-    public static function render_footer(): bool {
-        if (!function_exists('elementor_theme_do_location')) return false;
-        return (bool) elementor_theme_do_location('footer');
-    }
-
-    public static function frontend_assets(): void {
-        // Elementor handles its own template assets. This hook is intentionally
-        // kept as a stable extension point for Avanik-specific builder assets.
+    public static function render_footer_at_wp_footer(): void {
+        if (!function_exists('elementor_theme_do_location')) return;
+        if (self::$footer_rendered) return;
+        self::$footer_rendered = (bool) elementor_theme_do_location('footer');
+        if (self::$footer_rendered) {
+            echo '<style id="avanik-elementor-footer-override">.avanik-site > .avanik-footer{display:none!important}</style>';
+        }
     }
 }
