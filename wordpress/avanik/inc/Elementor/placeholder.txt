@@ -1,0 +1,1 @@
+Elementor integration directory placeholder. Kept intentionally short to avoid path issues.
