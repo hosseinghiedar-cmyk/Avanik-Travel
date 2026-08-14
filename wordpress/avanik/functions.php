@@ -5,7 +5,7 @@ define('AVANIK_VERSION','0.5.0');
 define('AVANIK_DIR',get_template_directory());
 define('AVANIK_URI',get_template_directory_uri());
 $avanik_prefix='Avanik'.chr(92);
-spl_autoload_register(function($class){$prefix='Avanik'.chr(92);if(strpos($class,$prefix)!==0)return;$short=substr($class,strlen($class));foreach([AVANIK_DIR.'/inc/'.$short.'.php',AVANIK_DIR.'/inc/'.preg_replace('/(?<!^)([A-Z])/','-$1',$short).'.php'] as $file){if(is_file($file)){require_once $file;return;}}});
+spl_autoload_register(function($class){$prefix='Avanik'.chr(92);if(strpos($class,$prefix)!==0)return;$short=substr($class,strlen($prefix));foreach([AVANIK_DIR.'/inc/'.$short.'.php',AVANIK_DIR.'/inc/'.preg_replace('/(?<!^)([A-Z])/','-$1',$short).'.php'] as $file){if(is_file($file)){require_once $file;return;}}});
 require_once AVANIK_DIR.'/inc/ThemeSettings.php';
 require_once AVANIK_DIR.'/inc/ElementorIntegration.php';
 $settingsClass=$avanik_prefix.'ThemeSettings';if(class_exists($settingsClass))$settingsClass::boot();
