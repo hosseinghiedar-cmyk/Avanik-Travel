@@ -47,8 +47,13 @@ get_header();
         </label>
         <label class="av-field av-field--date">
           <span class="av-field__label">تاریخ رفت</span>
-          <button class="av-field__control" type="button" data-av-date-open><span data-av-date-label>انتخاب تاریخ</span><span class="av-field__icon">▣</span></button>
-          <input type="hidden" name="departure" value="" data-av-date-value>
+          <button class="av-field__control" type="button" data-av-date-open="departure"><span data-av-date-label="departure">انتخاب تاریخ</span><span class="av-field__icon">▣</span></button>
+          <input type="hidden" name="departure" value="" data-av-date-value="departure">
+        </label>
+        <label class="av-field av-field--date av-return-date is-hidden" data-return-date>
+          <span class="av-field__label">تاریخ برگشت</span>
+          <button class="av-field__control" type="button" data-av-date-open="return"><span data-av-date-label="return">انتخاب تاریخ</span><span class="av-field__icon">▣</span></button>
+          <input type="hidden" name="return" value="" data-av-date-value="return">
         </label>
         <label class="av-field av-field--passengers">
           <span class="av-field__label">مسافران</span>
