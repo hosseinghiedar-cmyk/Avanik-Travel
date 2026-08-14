@@ -1,6 +1,6 @@
 <?php
-defined('ABSPATH') || exit;
 namespace Avanik\Elementor;
+defined('ABSPATH') || exit;
 use Elementor\Controls_Manager; use Elementor\Widget_Base;
 final class WidgetHeader extends Widget_Base {
  public function get_name(){return 'avanik_header';} public function get_title(){return 'آوانیک — Header';} public function get_icon(){return 'eicon-header';} public function get_categories(){return ['avanik'];}
