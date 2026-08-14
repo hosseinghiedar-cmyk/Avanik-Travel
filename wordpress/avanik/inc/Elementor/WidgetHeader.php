@@ -1,0 +1,9 @@
+<?php
+defined('ABSPATH') || exit;
+namespace Avanik\Elementor;
+use Elementor\Controls_Manager; use Elementor\Widget_Base;
+final class WidgetHeader extends Widget_Base {
+ public function get_name(){return 'avanik_header';} public function get_title(){return 'آوانیک — Header';} public function get_icon(){return 'eicon-header';} public function get_categories(){return ['avanik'];}
+ protected function register_controls(){ $this->start_controls_section('content',['label'=>'هدر']); $this->add_control('logo',['label'=>'لوگو','type'=>Controls_Manager::MEDIA]); $this->add_control('menu',['label'=>'منو','type'=>Controls_Manager::TEXT,'default'=>'پرواز|هتل|تور|مقصدها|خدمات']); $this->add_control('login',['label'=>'متن ورود','type'=>Controls_Manager::TEXT,'default'=>'ورود / ثبت‌نام']); $this->end_controls_section(); $this->start_controls_section('style',['label'=>'ظاهر']); $this->add_responsive_control('top',['label'=>'فاصله از بالا','type'=>Controls_Manager::SLIDER,'size_units'=>['px'],'range'=>['px'=>['min'=>0,'max'=>80]],'default'=>['size'=>15],'selectors'=>['{{WRAPPER}} .avanik-builder-header'=>'padding-top:{{SIZE}}px;']]); $this->end_controls_section(); }
+ protected function render(){ $s=$this->get_settings_for_display(); $items=array_filter(array_map('trim',explode('|',$s['menu']??''))); echo '<header class="avanik-builder-header" dir="rtl"><div class="avanik-header-inner">'; if(!empty($s['logo']['url'])) echo '<a class="avanik-logo" href="'.esc_url(home_url('/')).'"><img src="'.esc_url($s['logo']['url']).'" alt="آوانیک"></a>'; else echo '<a class="avanik-logo-text" href="'.esc_url(home_url('/')).'">آوانیک</a>'; echo '<nav>'; foreach($items as $item) echo '<a href="#">'.esc_html($item).'</a>'; echo '</nav><a class="avanik-login" href="#">'.esc_html($s['login']).'</a></div></header>'; }
+}
