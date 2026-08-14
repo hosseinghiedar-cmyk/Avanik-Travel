@@ -1,6 +1,6 @@
 <?php
-defined('ABSPATH') || exit;
 namespace Avanik\Elementor;
+defined('ABSPATH') || exit;
 use Elementor\Controls_Manager; use Elementor\Widget_Base;
 final class WidgetFooter extends Widget_Base {
  public function get_name(){return 'avanik_footer';} public function get_title(){return 'آوانیک — Footer';} public function get_icon(){return 'eicon-footer';} public function get_categories(){return ['avanik'];}
