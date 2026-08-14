@@ -35,11 +35,9 @@ jobs:
       - name: Validate WordPress theme files
         run: |
           set -euo pipefail
-          test -f workspace/avanik/style.css
-          test -f workspace/avanik/functions.php
-          test -f workspace/avanik/index.php
-          test -f workspace/avanik/header.php
-          test -f workspace/avanik/footer.php
+          for f in style.css functions.php index.php header.php footer.php page.php front-page.php singular.php; do
+            test -f "workspace/avanik/$f"
+          done
           find workspace/avanik -type f -name '*.php' -print0 | xargs -0 -n1 php -l
 
       - name: Build installable ZIP
@@ -49,14 +47,14 @@ jobs:
           mkdir -p package
           cp -a workspace/avanik package/avanik
           cd package
-          zip -qr ../avanik-v0.4.1.zip avanik
+          zip -qr ../avanik-v0.5.3.zip avanik
           cd ..
-          sha256sum avanik-v0.4.1.zip | tee avanik-v0.4.1.sha256
+          sha256sum avanik-v0.5.3.zip | tee avanik-v0.5.3.sha256
 
       - name: Upload installable WordPress theme
         uses: actions/upload-artifact@v4
         with:
-          name: avanik-v0.4.1-wordpress-theme
+          name: avanik-v0.5.3-wordpress-theme
           path: |
-            avanik-v0.4.1.zip
-            avanik-v0.4.1.sha256
+            avanik-v0.5.3.zip
+            avanik-v0.5.3.sha256
