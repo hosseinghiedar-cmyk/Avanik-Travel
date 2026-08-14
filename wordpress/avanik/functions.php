@@ -10,10 +10,12 @@ require_once AVANIK_DIR.'/inc/ThemeSettings.php';
 require_once AVANIK_DIR.'/inc/ElementorIntegration.php';
 require_once AVANIK_DIR.'/inc/ElementorWidgetFix.php';
 require_once AVANIK_DIR.'/inc/ElementorThemeLocations.php';
+require_once AVANIK_DIR.'/inc/ElementorEditorEnhancements.php';
 $settingsClass=$avanik_prefix.'ThemeSettings';if(class_exists($settingsClass))$settingsClass::boot();
 $elementorClass=$avanik_prefix.'ElementorIntegration';if(class_exists($elementorClass))$elementorClass::boot();
 $widgetFixClass=$avanik_prefix.'ElementorWidgetFix';if(class_exists($widgetFixClass))$widgetFixClass::boot();
 $locationsClass=$avanik_prefix.'ElementorThemeLocations';if(class_exists($locationsClass))$locationsClass::boot();
+$editorClass=$avanik_prefix.'ElementorEditorEnhancements';if(class_exists($editorClass))$editorClass::boot();
 add_action('after_setup_theme',function(){add_theme_support('title-tag');add_theme_support('post-thumbnails');add_theme_support('custom-logo',['height'=>70,'width'=>220,'flex-height'=>true,'flex-width'=>true]);add_theme_support('html5',['search-form','comment-form','comment-list','gallery','caption','style','script']);register_nav_menus(['primary'=>'منوی اصلی آوانیک']);});
 add_action('wp_enqueue_scripts',function(){
     wp_enqueue_style('avanik-font','https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap',[],null);
