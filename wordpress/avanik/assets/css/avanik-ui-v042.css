@@ -1,20 +1,44 @@
 /* Avanik v0.4.2 UI refinement — based on the last known working hosting release */
-.avanik-header--hero .avanik-nav{transform:translateY(14px)}
+/* 1) Header: move the main navigation + account icon 15px further down. */
+.avanik-header--hero .avanik-nav{transform:translateY(29px)}
 .avanik-header--hero .avanik-brand img{max-height:70px}
 .avanik-header--hero .avanik-menu-list a{padding-top:37px;padding-bottom:29px}
 .avanik-header--hero .avanik-menu-list .current-menu-item a:after{bottom:10px}
-.avanik-header--hero .avanik-header-user{margin-top:14px;cursor:pointer;border:0;background:transparent;padding:0;font:inherit}
+.avanik-header--hero .avanik-header-user{margin-top:29px;cursor:pointer;border:0;background:transparent;padding:0;font:inherit}
+
+/* Search box base */
 .avanik-search-card>.avanik-shell{padding-top:15px}
 .avanik-search-tabs{direction:rtl;justify-content:flex-start;gap:8px}
 .avanik-search-tabs button{min-width:132px}
-.avanik-search-form{direction:rtl;grid-template-columns:1.08fr 1.08fr .98fr .98fr .82fr 54px 132px;gap:11px}
+
+/* 2 + 3) Desktop order, RTL:
+   [مبدا] [swap] [مقصد] [رفت] [برگشت] [مسافر] [جستجو]
+   The swap button is physically between the two city fields. */
+.avanik-search-form{direction:rtl;display:grid;grid-template-columns:132px .82fr .98fr .98fr 54px .98fr 1.08fr;grid-template-areas:'search passenger return departure swap destination origin';gap:11px;align-items:end}
+.avanik-search-form>[data-city-field="origin"]{grid-area:origin}
+.avanik-search-form>[data-city-field="destination"]{grid-area:destination}
+.avanik-search-form>.avanik-field--date:nth-of-type(3){grid-area:departure}
+.avanik-search-form>.avanik-field--date:nth-of-type(4){grid-area:return}
+.avanik-search-form>.avanik-swap-btn{grid-area:swap}
+.avanik-search-form>.avanik-passenger-field{grid-area:passenger}
+.avanik-search-form>.avanik-search-btn{grid-area:search}
+
 .avanik-input-wrap{position:relative}
 .avanik-city-trigger,.avanik-date-trigger{appearance:none;border:0;background:transparent;width:100%;height:44px;display:flex;align-items:center;justify-content:space-between;gap:7px;padding:0;color:#182a40;font:600 13px Vazirmatn,Arial,sans-serif;cursor:pointer;text-align:right}
 .avanik-city-trigger span:first-child,.avanik-date-trigger span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.avanik-city-menu{position:absolute;right:0;left:0;top:73px;display:none;background:#fff;border:1px solid #e0e6ed;border-radius:12px;padding:6px;box-shadow:0 18px 45px rgba(8,43,82,.16);z-index:120;max-height:260px;overflow:auto}
+
+/* 1) City dropdown: compact like the date control, not a tall oversized panel. */
+.avanik-city-menu{position:absolute;right:0;left:0;top:58px;display:none;background:#fff;border:1px solid #e0e6ed;border-radius:10px;padding:5px;box-shadow:0 14px 32px rgba(8,43,82,.14);z-index:120;max-height:190px;overflow-y:auto;overflow-x:hidden}
 .avanik-field.city-open .avanik-city-menu{display:block}
-.avanik-city-option{display:flex;width:100%;border:0;background:#fff;border-radius:8px;padding:10px 11px;color:#20334a;font:600 12px Vazirmatn;cursor:pointer;text-align:right}
+.avanik-city-option{display:flex;width:100%;min-height:36px;box-sizing:border-box;border:0;background:#fff;border-radius:7px;padding:7px 10px;color:#20334a;font:600 12px Vazirmatn;cursor:pointer;text-align:right;align-items:center}
 .avanik-city-option:hover,.avanik-city-option.is-selected{background:#f1f6fb;color:var(--avanik-navy)}
+
+/* 2) Swap icon between origin and destination. */
+.avanik-swap-btn{width:54px;height:48px;border:1px solid #e0e6ed;border-radius:50%;background:#fff;color:var(--avanik-navy);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 16px rgba(8,43,82,.08);align-self:end;margin-bottom:0;z-index:3}
+.avanik-swap-btn:hover{background:#f4f8fb;transform:translateY(-1px)}
+.avanik-swap-btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* Date picker */
 .avanik-date-popover{position:fixed;z-index:10000;right:50%;top:50%;width:350px;max-width:calc(100vw - 30px);transform:translate(50%,-50%);background:#fff;border:1px solid #e0e6ed;border-radius:18px;padding:14px;box-shadow:0 25px 80px rgba(8,43,82,.25);display:none;direction:rtl}
 .avanik-date-popover.is-open{display:block;animation:avanikDateIn .16s ease-out}
 .avanik-date-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
@@ -23,9 +47,27 @@
 .avanik-calendar-head{display:grid;grid-template-columns:38px 1fr 38px;align-items:center;text-align:center;margin-bottom:7px}.avanik-calendar-head button{border:1px solid #e2e7ed;background:#fff;width:34px;height:34px;border-radius:9px;color:#20344b;font-size:22px;cursor:pointer}.avanik-calendar-head strong{font-size:13px;color:#20344b}
 .avanik-calendar-week,.avanik-calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.avanik-calendar-week{margin-bottom:4px}.avanik-calendar-week span{text-align:center;color:#8a96a5;font-size:10px;font-weight:800;padding:4px 0}
 .avanik-calendar-grid button{height:38px;border:0;border-radius:9px;background:#fff;color:#26394f;font:600 12px Vazirmatn;cursor:pointer}.avanik-calendar-grid button:hover{background:#edf4fb}.avanik-calendar-grid button.is-today{box-shadow:inset 0 0 0 1px var(--avanik-gold)}.avanik-calendar-grid button.is-selected{background:var(--avanik-navy);color:#fff}.avanik-calendar-grid button.is-disabled{color:#c4cad2;cursor:not-allowed;background:#fafafa}.avanik-calendar-grid button.is-empty{visibility:hidden}
+
+/* Passenger control stays compact and sits immediately before Search. */
 .avanik-passenger-field{position:relative}.avanik-passenger-trigger{cursor:pointer}.avanik-passenger-popover{top:57px}.avanik-passenger-done{width:100%;height:38px;margin-top:7px;border:0;border-radius:9px;background:var(--avanik-navy);color:#fff;font:800 12px Vazirmatn;cursor:pointer}
+
+/* Login */
 .avanik-login-modal{position:fixed;inset:0;z-index:11000;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(7,25,44,.48);backdrop-filter:blur(5px);direction:rtl}.avanik-login-modal.is-open{display:flex;animation:avanikFadeIn .16s ease-out}
 .avanik-login-card{position:relative;width:390px;max-width:100%;background:#fff;border:1px solid #e4e9ef;border-radius:22px;padding:28px;box-shadow:0 28px 90px rgba(4,25,48,.24)}.avanik-login-close{position:absolute;top:13px;left:13px;border:0;background:#f3f6f8;color:#637287;width:32px;height:32px;border-radius:9px;font-size:21px;cursor:pointer}.avanik-login-icon{width:54px;height:54px;margin:0 auto 12px;border-radius:16px;display:grid;place-items:center;background:#eef5fb;color:var(--avanik-navy);font-size:27px}.avanik-login-card h2{text-align:center;margin:0 0 7px;color:#102944;font-size:21px}.avanik-login-card>p{text-align:center;margin:0 0 20px;color:#7a8796;font-size:12px;line-height:1.9}.avanik-login-form{display:grid;gap:12px}.avanik-login-form label{display:grid;gap:6px}.avanik-login-form label span{font-size:11px;font-weight:800;color:#44566c}.avanik-login-form input{width:100%;height:46px;border:1px solid #dfe5ec;border-radius:11px;background:#fbfcfd;padding:0 12px;outline:0;font:600 13px Vazirmatn;box-sizing:border-box}.avanik-login-form input:focus{border-color:#9bb0c5;box-shadow:0 0 0 3px rgba(8,43,82,.06)}.avanik-login-form>button{height:47px;border:0;border-radius:11px;background:var(--avanik-navy);color:#fff;font:800 13px Vazirmatn;cursor:pointer;margin-top:3px}
 @keyframes avanikFadeIn{from{opacity:0}to{opacity:1}}@keyframes avanikDateIn{from{opacity:0;transform:translate(50%,-47%)}to{opacity:1;transform:translate(50%,-50%)}}
-@media(max-width:1100px){.avanik-search-form{grid-template-columns:repeat(3,1fr)}.avanik-swap-btn{display:none}.avanik-search-btn{grid-column:1/-1;width:180px}}
-@media(max-width:760px){.avanik-header--hero .avanik-nav{transform:translateY(8px)}.avanik-header--hero .avanik-menu-list a{padding-top:0;padding-bottom:0}.avanik-header--hero .avanik-header-user{margin-top:0}.avanik-search-tabs{overflow:auto;justify-content:flex-start}.avanik-search-form{grid-template-columns:1fr}.avanik-search-btn{width:100%;grid-column:auto}.avanik-date-popover{width:calc(100vw - 24px)}}
+
+@media(max-width:1100px){
+  .avanik-search-form{grid-template-columns:repeat(3,1fr);grid-template-areas:'origin destination swap' 'departure return passenger' 'search search search'}
+  .avanik-swap-btn{display:flex;width:48px;height:48px;justify-self:center}
+  .avanik-search-btn{width:180px;grid-area:search;justify-self:start}
+}
+@media(max-width:760px){
+  .avanik-header--hero .avanik-nav{transform:translateY(15px)}
+  .avanik-header--hero .avanik-menu-list a{padding-top:0;padding-bottom:0}
+  .avanik-header--hero .avanik-header-user{margin-top:15px}
+  .avanik-search-tabs{overflow:auto;justify-content:flex-start}
+  .avanik-search-form{grid-template-columns:1fr;grid-template-areas:'origin' 'destination' 'swap' 'departure' 'return' 'passenger' 'search'}
+  .avanik-swap-btn{justify-self:center;transform:rotate(90deg)}
+  .avanik-search-btn{width:100%;grid-column:auto;justify-self:stretch}
+  .avanik-date-popover{width:calc(100vw - 24px)}
+}
