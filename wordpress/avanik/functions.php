@@ -216,7 +216,6 @@ require_once __DIR__ . '/inc/ModerationFilters.php';
 \Avanik\PassengerAuditLog::install();
 \Avanik\PaymentIdempotency::install();
 \Avanik\PassengerRequirements::register();
-\Avanik\PassengerCustomFields::register();
 \Avanik\PassengerSecurityAdmin::register();
 \Avanik\PassengerSecurityAuditAdmin::register();
 \Avanik\AgencyProductDashboard::register();
