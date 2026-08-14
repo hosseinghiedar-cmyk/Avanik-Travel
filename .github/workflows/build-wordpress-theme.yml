@@ -1,0 +1,46 @@
+name: Build Avanik WordPress Theme ZIP
+
+on:
+  push:
+    paths:
+      - 'wordpress/avanik/**'
+      - '.github/workflows/build-wordpress-theme.yml'
+  workflow_dispatch:
+
+jobs:
+  build-theme:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate WordPress theme files
+        run: |
+          set -euo pipefail
+          test -f wordpress/avanik/style.css
+          test -f wordpress/avanik/functions.php
+          test -f wordpress/avanik/index.php
+          test -f wordpress/avanik/header.php
+          test -f wordpress/avanik/footer.php
+          find wordpress/avanik -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Build installable ZIP
+        run: |
+          set -euo pipefail
+          rm -rf package
+          mkdir -p package
+          cp -a wordpress/avanik package/avanik
+          cd package
+          zip -qr ../avanik-v0.4.1.zip avanik
+          cd ..
+          sha256sum avanik-v0.4.1.zip | tee avanik-v0.4.1.sha256
+
+      - name: Upload installable WordPress theme
+        uses: actions/upload-artifact@v4
+        with:
+          name: avanik-v0.4.1-wordpress-theme
+          path: |
+            avanik-v0.4.1.zip
+            avanik-v0.4.1.sha256
