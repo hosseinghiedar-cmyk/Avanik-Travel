@@ -1,0 +1,143 @@
+(function(){
+  'use strict';
+
+  const domestic = [
+    ['Tehran','تهران'],['Mashhad','مشهد'],['Isfahan','اصفهان'],['Shiraz','شیراز'],['Tabriz','تبریز'],
+    ['Karaj','کرج'],['Ahvaz','اهواز'],['Qom','قم'],['Kermanshah','کرمانشاه'],['Rasht','رشت']
+  ];
+  const international = [
+    ['Istanbul','استانبول'],['Baku','باکو'],['Dubai','دبی'],['Doha','دوحه'],['Tbilisi','تفلیس'],
+    ['Yerevan','ایروان'],['Muscat','مسقط'],['Baghdad','بغداد'],['Kuwait City','کویت'],['Riyadh','ریاض']
+  ];
+  const faDigits = s => String(s).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+  const pad = n => String(n).padStart(2,'0');
+
+  function gregorianToJalali(gy, gm, gd){
+    const gdm=[0,31,59,90,120,151,181,212,243,273,304,334];
+    let jy=gy<=1600?0:979; gy-=gy<=1600?621:1600;
+    const gy2=gm>2?gy+1:gy;
+    let days=365*gy+Math.floor((gy2+3)/4)-Math.floor((gy2+99)/100)+Math.floor((gy2+399)/400)-80+gd+gdm[gm-1];
+    jy+=33*Math.floor(days/12053); days%=12053;
+    jy+=4*Math.floor(days/1461); days%=1461;
+    if(days>365){jy+=Math.floor((days-1)/365);days=(days-1)%365;}
+    const jm=days<186?1+Math.floor(days/31):7+Math.floor((days-186)/30);
+    const jd=1+(days<186?days%31:(days-186)%30);
+    return [jy,jm,jd];
+  }
+  function jalaliToGregorian(jy,jm,jd){
+    let gy=jy<=979?621:1600; jy-=jy<=979?0:979;
+    const days=-355668+365*jy+Math.floor(jy/33)*8+Math.floor((jy%33+3)/4)+jd+(jm<7?(jm-1)*31:(jm-7)*30+186);
+    gy+=400*Math.floor(days/146097); let d=days%146097;
+    if(d>36524){gy+=100*Math.floor(--d/36524);d%=36524;if(d>=365)d++;}
+    gy+=4*Math.floor(d/1461);d%=1461;
+    if(d>365){gy+=Math.floor((d-1)/365);d=(d-1)%365;}
+    let gd=d+1; const leap=(gy%4===0&&gy%100!==0)||gy%400===0; const md=[0,31,leap?29:28,31,30,31,30,31,31,30,31,30,31];
+    let gm=1; while(gd>md[gm]){gd-=md[gm];gm++;} return [gy,gm,gd];
+  }
+  const isoDate = (d) => d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+  const startOfDay = d => new Date(d.getFullYear(),d.getMonth(),d.getDate());
+  const today = startOfDay(new Date());
+
+  function initCities(){
+    const root=document.querySelector('[data-av-search]'); if(!root)return;
+    let type='domestic';
+    const fields=['origin','destination'];
+    function renderCities(){
+      const cities=type==='domestic'?domestic:international;
+      fields.forEach(key=>{
+        const menu=root.querySelector('[data-city-menu="'+key+'"]'); if(!menu)return;
+        menu.innerHTML=cities.map(([value,label])=>'<button type="button" class="av-city-option" data-city-value="'+value+'" data-city-name="'+label+'">'+label+'</button>').join('');
+        menu.querySelectorAll('.av-city-option').forEach(btn=>btn.addEventListener('click',()=>{
+          root.querySelector('[data-city-label="'+key+'"]').textContent=btn.dataset.cityName;
+          root.querySelector('[data-city-input="'+key+'"]').value=btn.dataset.cityValue;
+          root.querySelector('[data-city-field="'+key+'"]').classList.remove('is-open');
+        }));
+      });
+      const labels=root.querySelectorAll('[data-city-label]');
+      if(type==='international'){
+        labels[0].textContent='تهران'; root.querySelector('[data-city-input="origin"]').value='Tehran';
+        labels[1].textContent='استانبول'; root.querySelector('[data-city-input="destination"]').value='Istanbul';
+      }else{
+        labels[0].textContent='تهران'; root.querySelector('[data-city-input="origin"]').value='Tehran';
+        labels[1].textContent='مشهد'; root.querySelector('[data-city-input="destination"]').value='Mashhad';
+      }
+    }
+    root.querySelectorAll('[data-av-city-trigger]').forEach(btn=>btn.addEventListener('click',e=>{
+      e.preventDefault(); const field=btn.closest('[data-city-field]');
+      root.querySelectorAll('[data-city-field].is-open').forEach(x=>x!==field&&x.classList.remove('is-open')); field.classList.toggle('is-open');
+    }));
+    document.addEventListener('click',e=>{if(!e.target.closest('[data-city-field]'))root.querySelectorAll('[data-city-field].is-open').forEach(x=>x.classList.remove('is-open'));});
+    root.querySelectorAll('[data-flight-type]').forEach(btn=>btn.addEventListener('click',()=>{
+      root.querySelectorAll('[data-flight-type]').forEach(x=>x.classList.remove('is-active'));btn.classList.add('is-active');type=btn.dataset.flightType;renderCities();
+    }));
+    renderCities();
+  }
+
+  function initPassengers(){
+    const root=document.querySelector('[data-av-search]'); const pop=document.querySelector('[data-av-passenger-popover]'); if(!root||!pop)return;
+    const counts={adult:1,child:0,infant:0};
+    const max={adult:9,child:8,infant:4};
+    const labels={adult:'بزرگسال',child:'کودک',infant:'نوزاد'};
+    function refresh(){
+      Object.keys(counts).forEach(k=>{const el=pop.querySelector('[data-passenger-count="'+k+'"]');if(el)el.textContent=faDigits(counts[k]);});
+      const total=counts.adult+counts.child+counts.infant; root.querySelector('[data-av-passengers-label]').textContent=faDigits(counts.adult)+' بزرگسال'+(total>1?'، '+faDigits(counts.child)+' کودک، '+faDigits(counts.infant)+' نوزاد':'');
+      root.querySelector('[data-av-passengers-value]').value=JSON.stringify(counts);
+    }
+    function position(){const r=root.querySelector('[data-av-passengers-open]').getBoundingClientRect();pop.style.top=Math.min(window.innerHeight-pop.offsetHeight-12,r.bottom+8)+'px';pop.style.left=Math.max(12,Math.min(window.innerWidth-pop.offsetWidth-12,r.left))+'px';}
+    root.querySelector('[data-av-passengers-open]').addEventListener('click',()=>{pop.classList.add('is-open');pop.setAttribute('aria-hidden','false');position();});
+    pop.querySelector('[data-av-passengers-close]').addEventListener('click',()=>{pop.classList.remove('is-open');pop.setAttribute('aria-hidden','true');});
+    pop.querySelector('[data-av-passengers-done]').addEventListener('click',()=>{pop.classList.remove('is-open');pop.setAttribute('aria-hidden','true');refresh();});
+    pop.querySelectorAll('[data-passenger-plus]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.passengerPlus;if(counts[k]<max[k])counts[k]++;refresh();}));
+    pop.querySelectorAll('[data-passenger-minus]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.passengerMinus;const min=k==='adult'?1:0;if(counts[k]>min)counts[k]--;refresh();}));
+    window.addEventListener('resize',()=>pop.classList.contains('is-open')&&position()); refresh();
+  }
+
+  function initDatePicker(){
+    const root=document.querySelector('[data-av-search]');const pop=document.querySelector('[data-av-date-popover]');if(!root||!pop)return;
+    let mode='jalali', selected=null, view=new Date(today);
+    const title=pop.querySelector('[data-cal-title]'), grid=pop.querySelector('[data-cal-grid]');
+    function position(){const r=root.querySelector('[data-av-date-open]').getBoundingClientRect();pop.style.top=Math.min(window.innerHeight-pop.offsetHeight-12,r.bottom+8)+'px';pop.style.left=Math.max(12,Math.min(window.innerWidth-pop.offsetWidth-12,r.left))+'px';}
+    function same(a,b){return a&&b&&a.getTime()===b.getTime();}
+    function daysInMonth(y,m){return new Date(y,m,0).getDate();}
+    function render(){
+      let y,m,d;if(mode==='jalali'){[y,m,d]=gregorianToJalali(view.getFullYear(),view.getMonth()+1,view.getDate());title.textContent=faDigits(y+'/'+pad(m));}else{y=view.getFullYear();m=view.getMonth()+1;title.textContent=faDigits(y+'/'+pad(m));}
+      const first=new Date(view.getFullYear(),view.getMonth(),1); let offset=mode==='gregorian'?first.getDay():((first.getDay()+1)%7);
+      if(mode==='jalali'){const firstJ=jalaliToGregorian(y,m,1);offset=(new Date(firstJ[0],firstJ[1]-1,firstJ[2]).getDay()+1)%7;}
+      const count=mode==='jalali'?(m<=6?31:(m<=11?30:((y%33===1||y%33===5||y%33===9||y%33===13||y%33===17||y%33===22||y%33===26||y%33===30)?30:29))):daysInMonth(y,m);
+      let html='';for(let i=0;i<offset;i++)html+='<span></span>';
+      for(let day=1;day<=count;day++){
+        let g;if(mode==='jalali'){const a=jalaliToGregorian(y,m,day);g=new Date(a[0],a[1]-1,a[2]);}else g=new Date(y,m-1,day);
+        const disabled=g<today; const sel=same(g,selected); const td=same(g,today);
+        html+='<button type="button" class="'+(disabled?'is-disabled ':'')+(sel?'is-selected ':'')+(td?'is-today':'')+'" '+(disabled?'disabled ':'')+'data-gdate="'+isoDate(g)+'">'+faDigits(day)+'</button>';
+      }
+      grid.innerHTML=html;
+      grid.querySelectorAll('button:not([disabled])').forEach(b=>b.addEventListener('click',()=>{const [gy,gm,gd]=b.dataset.gdate.split('-').map(Number);selected=new Date(gy,gm-1,gd);root.querySelector('[data-av-date-label]').textContent=mode==='jalali'?faDigits(gregorianToJalali(gy,gm,gd).join('/')):faDigits(b.dataset.gdate);root.querySelector('[data-av-date-value]').value=b.dataset.gdate;pop.classList.remove('is-open');pop.setAttribute('aria-hidden','true');}));
+    }
+    function shift(delta){if(mode==='gregorian')view=new Date(view.getFullYear(),view.getMonth()+delta,1);else{let [jy,jm]=gregorianToJalali(view.getFullYear(),view.getMonth()+1,1);jm+=delta;if(jm<1){jy--;jm=12}if(jm>12){jy++;jm=1}const a=jalaliToGregorian(jy,jm,1);view=new Date(a[0],a[1]-1,a[2]);}render();}
+    root.querySelector('[data-av-date-open]').addEventListener('click',()=>{pop.classList.add('is-open');pop.setAttribute('aria-hidden','false');position();render();});
+    pop.querySelector('[data-av-popover-close]').addEventListener('click',()=>{pop.classList.remove('is-open');pop.setAttribute('aria-hidden','true');});
+    pop.querySelector('[data-cal-prev]').addEventListener('click',()=>shift(-1));pop.querySelector('[data-cal-next]').addEventListener('click',()=>shift(1));
+    pop.querySelectorAll('[data-date-mode]').forEach(btn=>btn.addEventListener('click',()=>{mode=btn.dataset.dateMode;pop.querySelectorAll('[data-date-mode]').forEach(x=>x.classList.remove('is-active'));btn.classList.add('is-active');render();}));
+    window.addEventListener('resize',()=>pop.classList.contains('is-open')&&position());render();
+  }
+
+  function initServiceTabs(){
+    const root=document.querySelector('[data-av-search]');if(!root)return;
+    const tabs=root.querySelectorAll('[data-service]');const flightOnly=root.querySelectorAll('[data-flight-only]');
+    const submit=root.querySelector('.av-search-submit span:first-child');
+    tabs.forEach(tab=>tab.addEventListener('click',()=>{
+      tabs.forEach(x=>{x.classList.remove('is-active');x.setAttribute('aria-selected','false')});tab.classList.add('is-active');tab.setAttribute('aria-selected','true');
+      const flight=tab.dataset.service==='flight';flightOnly.forEach(x=>x.style.display=flight?'':'none');
+      if(submit)submit.textContent=tab.dataset.service==='hotel'?'جستجوی هتل':tab.dataset.service==='tour'?'جستجوی تور':'جستجو';
+    }));
+  }
+
+  function initLogin(){
+    const modal=document.querySelector('[data-av-login-modal]');if(!modal)return;
+    document.querySelectorAll('.av-header__actions .av-btn--outline').forEach(btn=>{btn.setAttribute('href','#');btn.addEventListener('click',e=>{e.preventDefault();modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');});});
+    modal.querySelector('[data-av-login-close]').addEventListener('click',()=>{modal.classList.remove('is-open');modal.setAttribute('aria-hidden','true');});
+    modal.addEventListener('click',e=>{if(e.target===modal){modal.classList.remove('is-open');modal.setAttribute('aria-hidden','true');}});
+  }
+
+  document.addEventListener('DOMContentLoaded',()=>{initCities();initPassengers();initDatePicker();initServiceTabs();initLogin();});
+})();

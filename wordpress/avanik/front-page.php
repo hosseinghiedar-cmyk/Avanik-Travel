@@ -3,52 +3,95 @@ defined('ABSPATH') || exit;
 get_header();
 ?>
 <div class="av-home">
-  <section class="av-hero">
+  <section class="av-hero av-hero--home">
     <div class="av-hero__image" aria-hidden="true"></div>
     <div class="av-container av-hero__content">
-      <h1 class="av-hero__title">سفر بعدی شما از اینجا شروع می‌شود</h1>
-      <p class="av-hero__subtitle">رزرو بلیط هواپیما، هتل و تور با آوانیک</p>
+      <div class="av-hero__copy">
+        <span class="av-hero__eyebrow">آوانیک پرواز</span>
+        <h1 class="av-hero__title">سفر بعدی شما از اینجا شروع می‌شود</h1>
+        <p class="av-hero__subtitle">رزرو بلیط هواپیما، هتل و تور با آوانیک</p>
+      </div>
     </div>
   </section>
 
   <section class="av-hero__search" aria-label="جستجوی سفر">
-    <div class="av-search-card">
-      <div class="av-search-tabs" role="tablist">
-        <button class="av-search-tab is-active" type="button">پرواز داخلی</button>
-        <button class="av-search-tab" type="button">پرواز خارجی</button>
-        <button class="av-search-tab" type="button">هتل داخلی</button>
-        <button class="av-search-tab" type="button">هتل خارجی</button>
-        <button class="av-search-tab" type="button">تور</button>
+    <div class="av-search-card" data-av-search>
+      <div class="av-search-tabs" role="tablist" aria-label="نوع خدمات">
+        <button class="av-search-tab is-active" data-service="flight" type="button" role="tab" aria-selected="true">✈ پرواز</button>
+        <button class="av-search-tab" data-service="hotel" type="button" role="tab" aria-selected="false">▣ هتل</button>
+        <button class="av-search-tab" data-service="tour" type="button" role="tab" aria-selected="false">☼ تور</button>
       </div>
-      <div class="av-search-options">
-        <label class="av-radio"><input type="radio" name="trip_type" checked> یک طرفه</label>
-        <label class="av-radio"><input type="radio" name="trip_type"> رفت و برگشت</label>
+
+      <div class="av-search-subtabs" data-flight-only>
+        <button class="av-search-subtab is-active" data-flight-type="domestic" type="button">پرواز داخلی</button>
+        <button class="av-search-subtab" data-flight-type="international" type="button">پرواز خارجی</button>
       </div>
-      <form class="av-search-form" action="<?php echo esc_url(home_url('/flight-search')); ?>" method="get">
-        <label class="av-field">
+
+      <div class="av-search-options" data-flight-only>
+        <label class="av-radio"><input type="radio" name="trip_type" value="oneway" checked> <span>یک طرفه</span></label>
+        <label class="av-radio"><input type="radio" name="trip_type" value="roundtrip"> <span>رفت و برگشت</span></label>
+      </div>
+
+      <form class="av-search-form" action="<?php echo esc_url(home_url('/flight-search')); ?>" method="get" data-av-search-form>
+        <label class="av-field av-field--select" data-city-field="origin">
           <span class="av-field__label">مبدا</span>
-          <span class="av-field__value">انتخاب شهر یا فرودگاه</span>
-          <input type="hidden" name="origin" value="">
+          <button class="av-field__control" type="button" data-av-city-trigger="origin"><span data-city-label="origin">تهران</span><span class="av-field__icon">⌄</span></button>
+          <input type="hidden" name="origin" value="Tehran" data-city-input="origin">
+          <div class="av-city-menu" data-city-menu="origin"></div>
         </label>
-        <label class="av-field">
+        <label class="av-field av-field--select" data-city-field="destination">
           <span class="av-field__label">مقصد</span>
-          <span class="av-field__value">انتخاب شهر یا فرودگاه</span>
-          <input type="hidden" name="destination" value="">
+          <button class="av-field__control" type="button" data-av-city-trigger="destination"><span data-city-label="destination">مشهد</span><span class="av-field__icon">⌄</span></button>
+          <input type="hidden" name="destination" value="Mashhad" data-city-input="destination">
+          <div class="av-city-menu" data-city-menu="destination"></div>
         </label>
-        <label class="av-field">
+        <label class="av-field av-field--date">
           <span class="av-field__label">تاریخ رفت</span>
-          <span class="av-field__value">انتخاب تاریخ</span>
-          <input type="hidden" name="departure" value="">
+          <button class="av-field__control" type="button" data-av-date-open><span data-av-date-label>انتخاب تاریخ</span><span class="av-field__icon">▣</span></button>
+          <input type="hidden" name="departure" value="" data-av-date-value>
         </label>
-        <label class="av-field">
+        <label class="av-field av-field--passengers">
           <span class="av-field__label">مسافران</span>
-          <span class="av-field__value">۱ بزرگسال</span>
-          <input type="hidden" name="passengers" value="1">
+          <button class="av-field__control" type="button" data-av-passengers-open><span data-av-passengers-label>۱ بزرگسال</span><span class="av-field__icon">⌄</span></button>
+          <input type="hidden" name="passengers" value="1" data-av-passengers-value>
         </label>
-        <button class="av-btn av-btn--primary av-search-submit" type="submit">جستجوی پرواز</button>
+        <button class="av-btn av-btn--primary av-search-submit" type="submit"><span>جستجو</span><span>←</span></button>
       </form>
+
+      <div class="av-search-note" data-flight-only>تاریخ انتخابی باید از امروز به بعد باشد.</div>
     </div>
   </section>
+
+  <div class="av-popover av-date-popover" data-av-date-popover aria-hidden="true">
+    <div class="av-popover__head"><strong>انتخاب تاریخ</strong><button type="button" class="av-popover__close" data-av-popover-close>×</button></div>
+    <div class="av-date-switch"><button type="button" class="is-active" data-date-mode="jalali">شمسی</button><button type="button" data-date-mode="gregorian">میلادی</button></div>
+    <div class="av-calendar-head"><button type="button" data-cal-prev>‹</button><strong data-cal-title></strong><button type="button" data-cal-next>›</button></div>
+    <div class="av-calendar-week"><span>ش</span><span>ی</span><span>د</span><span>س</span><span>چ</span><span>پ</span><span>ج</span></div>
+    <div class="av-calendar-grid" data-cal-grid></div>
+  </div>
+
+  <div class="av-popover av-passenger-popover" data-av-passenger-popover aria-hidden="true">
+    <div class="av-popover__head"><strong>تعداد مسافران</strong><button type="button" class="av-popover__close" data-av-passengers-close>×</button></div>
+    <div class="av-passenger-row"><div><strong>بزرگسال</strong><small>۱۲ سال به بالا</small></div><div class="av-stepper"><button type="button" data-passenger-minus="adult">−</button><b data-passenger-count="adult">1</b><button type="button" data-passenger-plus="adult">+</button></div></div>
+    <div class="av-passenger-row"><div><strong>کودک</strong><small>۲ تا ۱۱ سال</small></div><div class="av-stepper"><button type="button" data-passenger-minus="child">−</button><b data-passenger-count="child">0</b><button type="button" data-passenger-plus="child">+</button></div></div>
+    <div class="av-passenger-row"><div><strong>نوزاد</strong><small>زیر ۲ سال</small></div><div class="av-stepper"><button type="button" data-passenger-minus="infant">−</button><b data-passenger-count="infant">0</b><button type="button" data-passenger-plus="infant">+</button></div></div>
+    <button class="av-btn av-btn--primary av-passenger-done" type="button" data-av-passengers-done>تأیید</button>
+  </div>
+
+  <div class="av-login-modal" data-av-login-modal aria-hidden="true">
+    <div class="av-login-card">
+      <button type="button" class="av-login-close" data-av-login-close>×</button>
+      <div class="av-login-card__icon">♙</div>
+      <h2>ورود و ثبت‌نام آوانیک</h2>
+      <p>برای مدیریت سفرها و دریافت اطلاع‌رسانی‌ها اطلاعات خود را وارد کنید.</p>
+      <form action="<?php echo esc_url(home_url('/login')); ?>" method="get" class="av-login-form">
+        <label><span>نام</span><input type="text" name="first_name" autocomplete="given-name" placeholder="نام خود را وارد کنید" required></label>
+        <label><span>نام خانوادگی</span><input type="text" name="last_name" autocomplete="family-name" placeholder="نام خانوادگی را وارد کنید" required></label>
+        <label><span>شماره موبایل</span><input type="tel" name="mobile" inputmode="tel" autocomplete="tel" placeholder="۰۹۱۲۱۲۳۴۵۶۷" required></label>
+        <button class="av-btn av-btn--primary" type="submit">ادامه</button>
+      </form>
+    </div>
+  </div>
 
   <section class="av-services av-container">
     <div class="av-service-grid">
@@ -61,11 +104,7 @@ get_header();
 
   <section class="av-airlines av-container">
     <h2 class="av-airlines__title">ایرلاین‌های طرف قرارداد</h2>
-    <div class="av-airlines__grid">
-      <div class="av-airline">آتا</div><div class="av-airline">ماهان</div><div class="av-airline">معراج</div>
-      <div class="av-airline">Emirates</div><div class="av-airline">Qatar Airways</div><div class="av-airline">Turkish Airlines</div>
-      <div class="av-airline">flydubai</div><div class="av-airline">Air Arabia</div>
-    </div>
+    <div class="av-airlines__grid"><div class="av-airline">آتا</div><div class="av-airline">ماهان</div><div class="av-airline">معراج</div><div class="av-airline">Emirates</div><div class="av-airline">Qatar Airways</div><div class="av-airline">Turkish Airlines</div><div class="av-airline">flydubai</div><div class="av-airline">Air Arabia</div></div>
   </section>
 </div>
 <?php get_footer(); ?>
