@@ -1,13 +1,15 @@
 <?php
-/** Avanik Travel v0.4.2 design refinement bootstrap. */
+/** Avanik Travel v0.5.0 — Elementor-ready home builder bootstrap. */
 if (!defined('ABSPATH')) exit;
-define('AVANIK_VERSION','0.4.2');
+define('AVANIK_VERSION','0.5.0');
 define('AVANIK_DIR',get_template_directory());
 define('AVANIK_URI',get_template_directory_uri());
 $avanik_prefix='Avanik'.chr(92);
-spl_autoload_register(function($class){$prefix='Avanik'.chr(92);if(strpos($class,$prefix)!==0)return;$short=substr($class,strlen($prefix));foreach([AVANIK_DIR.'/inc/'.$short.'.php',AVANIK_DIR.'/inc/'.preg_replace('/(?<!^)([A-Z])/','-$1',$short).'.php'] as $file){if(is_file($file)){require_once $file;return;}}});
+spl_autoload_register(function($class){$prefix='Avanik'.chr(92);if(strpos($class,$prefix)!==0)return;$short=substr($class,strlen($class));foreach([AVANIK_DIR.'/inc/'.$short.'.php',AVANIK_DIR.'/inc/'.preg_replace('/(?<!^)([A-Z])/','-$1',$short).'.php'] as $file){if(is_file($file)){require_once $file;return;}}});
 require_once AVANIK_DIR.'/inc/ThemeSettings.php';
+require_once AVANIK_DIR.'/inc/ElementorIntegration.php';
 $settingsClass=$avanik_prefix.'ThemeSettings';if(class_exists($settingsClass))$settingsClass::boot();
+$elementorClass=$avanik_prefix.'ElementorIntegration';if(class_exists($elementorClass))$elementorClass::boot();
 add_action('after_setup_theme',function(){add_theme_support('title-tag');add_theme_support('post-thumbnails');add_theme_support('custom-logo',['height'=>70,'width'=>220,'flex-height'=>true,'flex-width'=>true]);add_theme_support('html5',['search-form','comment-form','comment-list','gallery','caption','style','script']);register_nav_menus(['primary'=>'منوی اصلی آوانیک']);});
 add_action('wp_enqueue_scripts',function(){
     wp_enqueue_style('avanik-font','https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap',[],null);
