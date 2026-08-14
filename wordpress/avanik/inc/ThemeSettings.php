@@ -11,7 +11,7 @@ final class ThemeSettings {
     public static function menus(): void {
         add_menu_page('آوانیک پرواز آسیا','آوانیک','manage_options','avanik-dashboard',[self::class,'dashboard'],'dashicons-airplane',3);
         add_submenu_page('avanik-dashboard','داشبورد آوانیک','داشبورد','manage_options','avanik-dashboard',[self::class,'dashboard']);
-        add_submenu_page('avanik-dashboard','تنظیمات قالب آوانیک','تنظیمات قالب','manage_options','avanik-settings',[self::class,'settings'],'manage_options');
+        add_submenu_page('avanik-dashboard','تنظیمات قالب آوانیک','تنظیمات قالب','manage_options','avanik-settings',[self::class,'settings']);
         add_menu_page('ارائه‌دهندگان','ارائه‌دهندگان','manage_options','avanik-providers',[self::class,'providers'],'dashicons-networking',4);
         add_menu_page('اعلان‌ها','اعلان‌ها','manage_options','avanik-notifications',[self::class,'notifications'],'dashicons-bell',5);
     }
