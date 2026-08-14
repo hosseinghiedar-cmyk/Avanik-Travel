@@ -13,25 +13,41 @@ jobs:
     permissions:
       contents: read
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Download theme files from GitHub API
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          rm -rf workspace tree.json
+          mkdir -p workspace/avanik
+          curl -L --fail -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/git/trees/${GITHUB_SHA}?recursive=1" -o tree.json
+          jq -r '.tree[] | select(.type=="blob") | select(.path | startswith("wordpress/avanik/")) | .path' tree.json > theme-files.txt
+          test -s theme-files.txt
+          while IFS= read -r path; do
+            rel="${path#wordpress/avanik/}"
+            mkdir -p "workspace/avanik/$(dirname "$rel")"
+            curl -L --fail -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github.raw+json" \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/contents/${path}?ref=${GITHUB_SHA}" \
+              -o "workspace/avanik/$rel"
+          done < theme-files.txt
 
       - name: Validate WordPress theme files
         run: |
           set -euo pipefail
-          test -f wordpress/avanik/style.css
-          test -f wordpress/avanik/functions.php
-          test -f wordpress/avanik/index.php
-          test -f wordpress/avanik/header.php
-          test -f wordpress/avanik/footer.php
-          find wordpress/avanik -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+          test -f workspace/avanik/style.css
+          test -f workspace/avanik/functions.php
+          test -f workspace/avanik/index.php
+          test -f workspace/avanik/header.php
+          test -f workspace/avanik/footer.php
+          find workspace/avanik -type f -name '*.php' -print0 | xargs -0 -n1 php -l
 
       - name: Build installable ZIP
         run: |
           set -euo pipefail
           rm -rf package
           mkdir -p package
-          cp -a wordpress/avanik package/avanik
+          cp -a workspace/avanik package/avanik
           cd package
           zip -qr ../avanik-v0.4.1.zip avanik
           cd ..
