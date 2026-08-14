@@ -1,3 +1,4 @@
+# Packaging workflow for the current Avanik hosting release.
 name: Avanik Hosting Release Verify
 
 on:
