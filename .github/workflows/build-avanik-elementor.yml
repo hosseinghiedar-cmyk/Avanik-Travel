@@ -1,0 +1,51 @@
+name: Build Avanik Elementor Theme
+on:
+  push:
+    branches: [elementor-theme-final-v060]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Setup PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+      - name: Validate theme structure
+        shell: bash
+        run: |
+          test -f wordpress/avanik/style.css
+          test -f wordpress/avanik/functions.php
+          test -f wordpress/avanik/index.php
+          test -f wordpress/avanik/front-page.php
+          test -f wordpress/avanik/inc/Elementor.php
+          test -f wordpress/avanik/inc/Elementor/WidgetSearch.php
+          test -f wordpress/avanik/inc/Elementor/WidgetHero.php
+          test -f wordpress/avanik/inc/Elementor/WidgetHeader.php
+          test -f wordpress/avanik/inc/Elementor/WidgetFooter.php
+      - name: PHP syntax check
+        shell: bash
+        run: |
+          set -e
+          find wordpress/avanik -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Build WordPress theme ZIP
+        shell: bash
+        run: |
+          rm -rf dist
+          mkdir -p dist
+          cp -a wordpress/avanik dist/avanik
+          find dist/avanik -type f -name '.DS_Store' -delete
+          cd dist
+          zip -qr ../Avanik-Travel-Elementor-v0.6.0.zip avanik
+          cd ..
+          unzip -t Avanik-Travel-Elementor-v0.6.0.zip
+      - name: Upload theme artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Avanik-Travel-Elementor-v0.6.0
+          path: Avanik-Travel-Elementor-v0.6.0.zip
+          if-no-files-found: error
