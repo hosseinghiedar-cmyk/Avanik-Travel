@@ -1,17 +1,18 @@
 <?php
 namespace Avanik;
 defined('ABSPATH') || exit;
-
 final class ElementorIntegration {
     public static function boot(): void {
-        add_action('wp_enqueue_scripts', [__CLASS__, 'assets']);
+        add_action('wp_enqueue_scripts', [__CLASS__, 'assets'], 20);
         add_action('elementor/elements/categories_registered', [__CLASS__, 'category']);
         add_action('elementor/widgets/register', [__CLASS__, 'widgets']);
     }
     public static function assets(): void {
-        wp_register_style('avanik-elementor', get_template_directory_uri() . '/assets/css/elementor-builder.css', [], '0.6.0');
-        wp_register_script('avanik-elementor', get_template_directory_uri() . '/assets/js/elementor-builder.js', [], '0.6.0', true);
-        if (did_action('elementor/loaded')) { wp_enqueue_style('avanik-elementor'); wp_enqueue_script('avanik-elementor'); }
+        $dir = get_template_directory_uri();
+        $file = get_template_directory() . '/assets/css/avanik-elementor-builder.css';
+        $js = get_template_directory() . '/assets/js/elementor-builder.js';
+        if (file_exists($file)) wp_enqueue_style('avanik-elementor', $dir . '/assets/css/avanik-elementor-builder.css', ['avanik-style'], (string) filemtime($file));
+        if (file_exists($js)) wp_enqueue_script('avanik-elementor', $dir . '/assets/js/elementor-builder.js', [], (string) filemtime($js), true);
     }
     public static function category($elements_manager): void { $elements_manager->add_category('avanik', ['title'=>'آوانیک','icon'=>'fa fa-plane']); }
     public static function widgets($widgets_manager): void {
