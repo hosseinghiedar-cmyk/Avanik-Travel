@@ -2,6 +2,11 @@
 Theme Name: Avanik Travel
 Theme URI: https://github.com/hosseinghiedar-cmyk/Avanik-Travel
 Author: Avanik Travel
-Version: 0.2.8
+Description: Avanik Travel WordPress theme with optional Elementor builder integration.
+Version: 0.6.0
+Requires at least: 6.4
+Requires PHP: 8.1
 Text Domain: avanik
 */
+
+html{direction:rtl}body{margin:0}.avanik-elementor-page{width:100%}.avanik-elementor-page .elementor{width:100%}
