@@ -1,0 +1,60 @@
+name: Build Avanik WordPress Theme ZIP
+
+on:
+  push:
+    branches:
+      - feature/elementor-ready-home-builder-v050
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+
+      - name: Validate theme structure
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -d wordpress/avanik
+          test -f wordpress/avanik/style.css
+          test -f wordpress/avanik/functions.php
+          test -f wordpress/avanik/index.php
+          test -f wordpress/avanik/front-page.php
+          test -f wordpress/avanik/inc/ElementorSearchWidget.php
+          test -f wordpress/avanik/assets/js/avanik-elementor-builder.js
+          test -f wordpress/avanik/assets/css/avanik-elementor-builder.css
+
+      - name: PHP syntax check
+        shell: bash
+        run: |
+          set -euo pipefail
+          find wordpress/avanik -type f -name '*.php' -print0 | while IFS= read -r -d '' file; do
+            php -l "$file"
+          done
+
+      - name: Build WordPress installable ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf build
+          mkdir -p build/package
+          cp -a wordpress/avanik build/package/avanik
+          cd build/package
+          zip -qr ../Avanik-Travel-Elementor-Ready-v0.5.2.zip avanik
+          cd ../..
+          unzip -t build/Avanik-Travel-Elementor-Ready-v0.5.2.zip
+
+      - name: Upload installable theme ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: Avanik-Travel-Elementor-Ready-v0.5.2
+          path: build/Avanik-Travel-Elementor-Ready-v0.5.2.zip
+          if-no-files-found: error
+          retention-days: 30
